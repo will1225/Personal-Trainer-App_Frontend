@@ -44,3 +44,4 @@ expo-env.d.ts
 .vscode/
 launch.json
 settings.json
+%ProgramData%/Microsoft/Windows/UUS/State/_active.uusver
