@@ -4,59 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "../../components";
 import { TouchableOpacity } from "react-native";
 import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
-
-
-/**
- * API function to register a user 
- * @param email 
- * @param password 
- * @param password2 
- * @param firstName 
- * @param lastName 
- * @param dob 
- * @param gender 
- * @returns promise data
- */
-const createUser = async (
-  email: string,
-  password: string,
-  password2: string,
-  firstName: string,
-  lastName: string,
-  dob: string,
-  gender: string
-) => {
-  try {
-    const response = await fetch(
-      "https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/signup",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          password2,
-          firstName,
-          lastName,
-          dob,
-          gender,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Sign-up failed");
-    }
-
-    const data = await response.json();
-    return data; // Assume API returns ok 200
-  } catch (error: any) {
-    throw new Error(error.message || "Something went wrong");
-  }
-};
+import * as user from "../../app/controllers/user";
+import BackButton from "../../components/BackButton";
 
 /**
  * Sign up screen.
@@ -124,7 +73,7 @@ const SignUp = () => {
 
     // API call
     try {
-      const result = await createUser(
+      const result = await user.createUser(
         form.email,
         form.password,
         form.password2,
@@ -147,6 +96,7 @@ const SignUp = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
+        <BackButton />
         <View
           className="w-full flex justify-center items-center h-full px-4 my-6"
           style={{

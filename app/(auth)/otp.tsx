@@ -4,67 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { CustomButton, FormField } from "../../components";
 import { View, Text, Alert, Image, TouchableOpacity } from "react-native";
-
-
-/**
- * API function to verify OTP 
- * @param otp 
- * @returns promise data
- */
-const verifyOtp = async (otp: string) => {
-  try {
-    const response = await fetch(
-      `https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/verify/${otp}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "OTP Verification Failed");
-    }
-
-    // API returns status code 200 and message
-    const data = await response.json();
-    return data;
-  } catch (error: any) {
-    throw new Error(error.message || "Something went wrong");
-  }
-};
-
-/**
- * API function to resend the OTP code to the user's email
- * @param email 
- * @returns promise data
- */
-const resendOtp = async (email: string) => {
-  try {
-    const response = await fetch(
-      `https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/otp/send/${email}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Resend OTP Failed");
-    }
-
-    // API returns status code 200 and message
-    const data = await response.json();
-    return data;
-  } catch (error: any) {
-    throw new Error(error.message || "Something went wrong");
-  }
-};
+import * as otp from "../../app/controllers/otp";
+import BackButton from "../../components/BackButton";
 
 /**
  * OTP Verification Screen.
@@ -77,11 +18,11 @@ const Otp = () => {
 
   // State variables
   const [isSubmitting, setSubmitting] = useState(false);
-  const [otp, setOtp] = useState("");
+  const [otpCode, setOtp] = useState("");
 
   // OTP submission handling
   const submit = async () => {
-    if (!otp) {
+    if (!otpCode) {
       Alert.alert("Error", "Please enter the verification code");
       return;
     }
@@ -90,9 +31,9 @@ const Otp = () => {
 
     try {
       // API call
-      const result = await verifyOtp(otp);
+      const result = await otp.verifyOtp(otpCode);
       if (result.status) {
-        router.replace("/homePage" as Href<string>);
+        router.replace({ pathname: "/(tabs)/home" });
       }
     } catch (error: any) {
       Alert.alert("Error", error.message);
@@ -110,7 +51,7 @@ const Otp = () => {
 
     try {
       // API call to resend OTP
-      await resendOtp(email as string);
+      await otp.resendOtp(email as string);
       Alert.alert("Success", "OTP has been resent");
     } catch (error: any) {
       Alert.alert("Error", error.message);
@@ -123,6 +64,7 @@ const Otp = () => {
         contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
         enableOnAndroid={true}
       >
+        <BackButton />
         <View className="w-full flex justify-center items-center px-4 my-6">
           <View className="w-full flex justify-center items-center px-4 mb-6">
             <Text className="text-3xl font-bold text-center">
@@ -137,16 +79,16 @@ const Otp = () => {
           </View>
 
           <Text className="text-2xl font-semibold mt-10 font-semibold text-center w-full">
-            Email Verification 
+            Email Verification
           </Text>
 
           <Text className="text-xl mt-5 mb-5 font-semibold text-center w-full">
-            {email} 
+            {email}
           </Text>
 
           <FormField
             title="Enter Verification Code"
-            value={otp}
+            value={otpCode}
             handleChangeText={(e) => setOtp(e)}
             keyboardType="numeric"
             placeholder={"Enter the 6 digit code"}

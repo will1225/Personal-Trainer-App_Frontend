@@ -4,20 +4,8 @@ import { router, Link, Href } from "expo-router";
 import { View, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton } from "../components";
-import * as SecureStore from "expo-secure-store";
+import * as user from "../app/controllers/user"; 
 
-/**
- * Method to retrieve user token from expo secure storage
- * @returns String
- */
-const getToken = async () => {
-  try {
-    return await SecureStore.getItemAsync("userToken");
-  } catch (error) {
-    console.error("Error retrieving token:", error);
-    return null;
-  }
-};
 
 /**
  * Landing screen
@@ -33,7 +21,7 @@ const LandingPage = () => {
   if (skipLandingPage) {
     useEffect(() => {
       const checkToken = async () => {
-        const token = await getToken();
+        const token = await user.getToken();
         if (token) {
           router.replace("/homePage" as Href<string>);
         }

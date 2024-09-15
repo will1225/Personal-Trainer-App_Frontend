@@ -4,43 +4,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "@/components";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Href, router, useLocalSearchParams } from "expo-router";
-
-
-/**
- * API call to submit new password with OTP
- * @param otp 
- * @param password 
- * @param password2 
- * @returns 
- */
-const changePasswordApi = async (
-  otp: string,
-  password: string,
-  password2: string
-) => {
-  try {
-    const response = await fetch(
-      "https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/forgot",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ otp, password, password2 }),
-      }
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Failed to reset password");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error: any) {
-    throw new Error(error.message || "Something went wrong");
-  }
-};
+import * as user from "../../app/controllers/user";
+import BackButton from "../../components/BackButton";
 
 const ChangePassword = () => {
   const { email } = useLocalSearchParams(); // Get email from previous screen
@@ -78,7 +43,7 @@ const ChangePassword = () => {
     setSubmitting(true);
 
     try {
-      const result = await changePasswordApi(otp, password, password2);
+      const result = await user.changePasswordApi(otp, password, password2);
       if (result.status) {
         Alert.alert("Success", "Password reset successfully!");
         router.replace("/sign-in" as Href<string>);
@@ -96,6 +61,7 @@ const ChangePassword = () => {
         contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
         enableOnAndroid={true}
       >
+        <BackButton />
         <View className="w-full flex justify-center items-center px-4 my-6">
           <View className="w-full flex justify-center items-center px-4 mb-6">
             <Text className="text-3xl font-bold text-center">
@@ -113,7 +79,7 @@ const ChangePassword = () => {
             Change Password
           </Text>
           <Text className="text-lg mt-2 w-full">
-            Resetting the password for {"\n"} 
+            Resetting the password for {"\n"}
             {email}
           </Text>
 
