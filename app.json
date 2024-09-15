@@ -13,9 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
+      "bundleIdentifier": "com.pta.app",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.pta.app",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -27,10 +29,27 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "1062613968533759",
+          "clientToken": "e8d2b447289666efc676cdf593fac566",
+          "displayName": "Personal Trainer App",
+          "scheme": "fb1062613968533759"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "6a76cfec-6428-4107-a422-c6ebb8b4fad1"
+      }
     }
   }
 }
