@@ -39,3 +39,9 @@ yarn-error.*
 
 expo-env.d.ts
 # @end expo-cli
+
+# VSCode settings and workspace files
+.vscode/
+launch.json
+settings.json
+%ProgramData%/Microsoft/Windows/UUS/State/_active.uusver
