@@ -5,16 +5,6 @@ import { CustomButton, FormField } from "../../components";
 import { TouchableOpacity } from "react-native";
 import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
 
-// Define types
-interface FormState {
-  email: string;
-  password: string;
-  password2: string;
-  firstName: string;
-  lastName: string;
-  dob: string; // ISO format
-  gender: string;
-}
 
 /**
  * API function to register a user 
@@ -77,7 +67,7 @@ const SignUp = () => {
 
   // State variables
   const [isSubmitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState<FormState>({
+  const [form, setForm] = useState({
     email: "",
     password: "",
     password2: "",

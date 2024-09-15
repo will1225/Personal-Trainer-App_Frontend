@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { router, Link, Href } from "expo-router";
-import { View, Text, Image, Button } from "react-native";
+import { View, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton } from "../components";
 import * as SecureStore from "expo-secure-store";
@@ -27,7 +27,7 @@ const LandingPage = () => {
   const image = require("../assets/images/download.jpeg");
 
   // Flag to skip landing screen if token presents, must set to true in production
-  let skipLandingPage = false; 
+  let skipLandingPage = false;
 
   // Check stored token on app, skip landing page if already logged in
   if (skipLandingPage) {

@@ -1,17 +1,10 @@
 import { useState } from "react";
-import { Href, router } from "expo-router";
+import { Href, router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { CustomButton, FormField } from "../../components";
 import { View, Text, Alert, Image, TouchableOpacity } from "react-native";
-import { useRoute } from '@react-navigation/native';
-import { StackScreenProps } from '@react-navigation/stack';
 
-// Define route parameter types for passing email passing from previous screens
-type RootStackParamList = {
-  otp: { email: string };
-};
-type OTPRouteProp = StackScreenProps<RootStackParamList, 'otp'>;
 
 /**
  * API function to verify OTP 
@@ -80,8 +73,7 @@ const resendOtp = async (email: string) => {
  */
 const Otp = () => {
   const image = require("../../assets/images/neonDumbell.png");
-  const { params } = useRoute<OTPRouteProp['route']>();
-  const { email } = params;
+  const { email } = useLocalSearchParams(); // Get email from previous screen
 
   // State variables
   const [isSubmitting, setSubmitting] = useState(false);
@@ -118,7 +110,7 @@ const Otp = () => {
 
     try {
       // API call to resend OTP
-      await resendOtp(email);
+      await resendOtp(email as string);
       Alert.alert("Success", "OTP has been resent");
     } catch (error: any) {
       Alert.alert("Error", error.message);
@@ -144,11 +136,11 @@ const Otp = () => {
             />
           </View>
 
-          <Text className="text-2xl font-semibold mt-10 font-psemibold text-center w-full">
+          <Text className="text-2xl font-semibold mt-10 font-semibold text-center w-full">
             Email Verification 
           </Text>
 
-          <Text className="text-xl mt-5 mb-5 font-psemibold text-center w-full">
+          <Text className="text-xl mt-5 mb-5 font-semibold text-center w-full">
             {email} 
           </Text>
 
