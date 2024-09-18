@@ -2,7 +2,7 @@ import { Button, Linking, StyleSheet } from 'react-native';
 
 import EditScreenInfo from '@/components/EditScreenInfo';
 import { Text, View } from '@/components/Themed';
-import { Link } from 'expo-router';
+import { Link, Href } from 'expo-router';
 import { AccessToken, LoginButton, LoginResult } from 'react-native-fbsdk-next';
 
 export default function TabOneScreen() {
@@ -22,7 +22,10 @@ export default function TabOneScreen() {
         Hello!!!!
       </Link>
       <LoginButton onLoginFinished={onLoginFinished} onLogoutFinished={() => console.log("User logged out")} />
-      <Text style={styles.title}>Tab One</Text>
+      <Text style={styles.title}>Tab One1</Text>
+      <Link href={"../two" as Href<string>} className="text-lg font-psemibold text-secondary">
+          Profile Entry
+      </Link>
       <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
       <EditScreenInfo path="app/(tabs)/index.tsx" />
 

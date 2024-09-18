@@ -1,15 +1,100 @@
+import { useState } from "react";
 import { StyleSheet } from 'react-native';
+import { TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { CustomButton, FormField } from "../../components";
+import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
+import BackButton from "../../components/BackButton";
+import { Profile } from '../controllers/profile';
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
 
 export default function TabTwoScreen() {
+  const [isSubmitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState({dob: "", gender: "",});
+
+  // Handle Date change
+  const handleDateChange = (date: Date) => {
+    setForm({ ...form, dob: date.toISOString() });
+  };
+
+  const submit = async () => {
+    const {dob, gender } = form;
+
+    // Check empty fields
+    if (!dob || !gender) {
+      Alert.alert("Error", "Choose The Date and Gender");
+      return;
+    }
+
+    // API call
+    try {
+      setSubmitting(true);
+      const result = await Profile.createProfile(form.dob, form.gender);
+    } catch (error: any) {
+      Alert.alert("Error", error.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/two.tsx" />
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView>
+      <BackButton />
+      <View className="w-full flex justify-center items-center h-full px-4 my-6">
+        {/* Date of Birth Field */}
+        <FormField
+          title="Date of Birth"
+          value={form.dob ? new Date(form.dob).toDateString() : ""}
+          handleChangeText={() => {}}
+          placeholder={"Select Date of Birth"}
+          isDatePicker
+          onDateChange={handleDateChange}
+        />
+
+        {/* Gender Selection */}
+        <View className="w-full flex flex-row justify-between items-center mt-10">
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              alignItems: "center",
+              backgroundColor: form.gender === "M" ? "#7dd3fc" : "transparent",
+              padding: 15,
+              marginTop: 30,
+              borderRadius: 5,
+            }}
+            onPress={() => setForm({ ...form, gender: "M" })}
+          >
+            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Male</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              flex: 1,
+              alignItems: "center",
+              backgroundColor: form.gender === "F" ? "#f9a8d4" : "transparent",
+              padding: 15,
+              marginTop: 30,
+              borderRadius: 5,
+            }}
+            onPress={() => setForm({ ...form, gender: "F" })}
+          >
+            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Female</Text>
+          </TouchableOpacity>
+        </View>
+
+        <CustomButton
+            title="Submit Profile"
+            handlePress={submit}
+            containerStyles="w-[250] mt-20"
+            isLoading={isSubmitting}
+          />
+      </View>
+      
+   
+    </ScrollView>
+  </SafeAreaView>
   );
 }
 
