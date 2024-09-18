@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "../../components";
-import { TouchableOpacity } from "react-native";
 import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
 import * as user from "../../app/controllers/user";
 import BackButton from "../../components/BackButton";
@@ -21,23 +20,16 @@ const SignUp = () => {
     password: "",
     password2: "",
     firstName: "",
-    lastName: "",
-    dob: "",
-    gender: "",
+    lastName: ""
   });
 
   // Regex for email and password validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Email validation regex
-  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/; // At least 1 uppercase and 1 number, minimum 8 chars
-
-  // Handle Date change
-  const handleDateChange = (date: Date) => {
-    setForm({ ...form, dob: date.toISOString() });
-  };
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+[\]{};':"\\|,.<>\/?~-]{8,}$/; // At least 1 uppercase and 1 number, minimum 8 chars
 
   // Form submission handling
   const submit = async () => {
-    const { email, password, password2, firstName, lastName, dob, gender } =
+    const { email, password, password2, firstName, lastName } =
       form;
 
     // Check empty fields
@@ -46,9 +38,7 @@ const SignUp = () => {
       !password ||
       !password2 ||
       !firstName ||
-      !lastName ||
-      !dob ||
-      !gender
+      !lastName
     ) {
       Alert.alert("Error", "Please fill in all fields");
       return;
@@ -78,9 +68,7 @@ const SignUp = () => {
         form.password,
         form.password2,
         form.firstName,
-        form.lastName,
-        form.dob,
-        form.gender
+        form.lastName
       );
 
       if (result.status) {
@@ -148,45 +136,6 @@ const SignUp = () => {
             handleChangeText={(e) => setForm({ ...form, lastName: e })}
             placeholder={"Enter Last Name"}
           />
-
-          <FormField
-            title="Date of Birth"
-            value={form.dob ? new Date(form.dob).toDateString() : ""}
-            handleChangeText={() => {}}
-            placeholder={"Select Date of Birth"}
-            isDatePicker
-            onDateChange={handleDateChange}
-          />
-
-          <View className="w-full flex flex-row justify-between items-center mt-10">
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                alignItems: "center",
-                backgroundColor:
-                  form.gender === "M" ? "#7dd3fc" : "transparent",
-                padding: 10,
-                borderRadius: 5,
-              }}
-              onPress={() => setForm({ ...form, gender: "M" })}
-            >
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>Male</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={{
-                flex: 1,
-                alignItems: "center",
-                backgroundColor:
-                  form.gender === "F" ? "#f9a8d4" : "transparent",
-                padding: 10,
-                borderRadius: 5,
-              }}
-              onPress={() => setForm({ ...form, gender: "F" })}
-            >
-              <Text style={{ fontSize: 16, fontWeight: "bold" }}>Female</Text>
-            </TouchableOpacity>
-          </View>
 
           <CustomButton
             title="Sign Up"
