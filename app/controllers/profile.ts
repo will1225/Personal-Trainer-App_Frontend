@@ -33,10 +33,9 @@ export class Profile {
     }
 
     static async createProfile(dob: string, gender: string) {
-
         try {
             const response = await fetch(
-              "http://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/profile/enter",
+              "https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/profile/enter",
               {
                 method: "POST",
                 headers: {
@@ -51,7 +50,7 @@ export class Profile {
             if (!response.ok) {
               throw new Error(`HTTP error! Status: ${response.status}`);
             }
-        
+
             // Check if the response has JSON content
             const contentType = response.headers.get("Content-Type") || "";
             if (contentType.includes("application/json")) {
