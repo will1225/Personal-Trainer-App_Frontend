@@ -7,7 +7,6 @@ const LogoutButton = () => {
     <TouchableOpacity
       style={styles.button}
       onPress={async () => {
-        console.log("Pressed");
         await user.clearAllTokenData();        
       }}
     >

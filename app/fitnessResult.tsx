@@ -26,7 +26,7 @@ const fitnessResult = () => {
     const getBodyFatPercentage = async () => {
       const result = await fitnessUtil.fetchFitnessResult(measurementId as string);
       setBodyFat(result.bodyFatPercent);
-      setMuscleMass(result.leanMuscleMass);
+      setMuscleMass(result.muscleMass);
       setClassification(result.classification); 
       setRanges(result.ranges.classifications || []);
     };

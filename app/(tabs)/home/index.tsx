@@ -41,7 +41,7 @@ export default function TabOneScreen() {
               className="w-full h-[200px]"
             />
             <Link
-              href={"../toBeDone" as Href<string>}
+              href={"../three" as Href<string>}
               className="bg-primary text-2xl font-psemibold text-white absolute"
             >
               Current Week Routine
@@ -55,7 +55,7 @@ export default function TabOneScreen() {
               className="w-full h-[200px]"
             />
             <Link
-              href={"../two" as Href<string>}
+              href={"../four" as Href<string>}
               className="bg-primary text-2xl font-psemibold text-white absolute"
             >
               Progress Analysis
