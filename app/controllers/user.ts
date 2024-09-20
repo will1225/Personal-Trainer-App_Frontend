@@ -31,6 +31,9 @@ export const clearAllTokenData = async () => {
       console.log("Clearing Facebook access token...");
       LoginManager.logOut(); // Logs out and clears session
     }
+
+    // Redirect to Landing Page
+    router.replace({ pathname: "/" });
   } catch (error) {
     console.error("Error clearing data: ", error);
   }

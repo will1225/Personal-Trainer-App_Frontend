@@ -1,51 +1,92 @@
-import { Button, Linking, StyleSheet } from 'react-native';
-
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
-import { Link, Href } from 'expo-router';
-import { AccessToken, LoginButton, LoginResult } from 'react-native-fbsdk-next';
+import { Href, Link } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { View, Text, ScrollView, Image } from "react-native";
+import LogoutButton from "../../../components/LogoutButton";
 
 export default function TabOneScreen() {
-
-  const onLoginFinished = async (err: Record<string, unknown>, result: LoginResult) => {
-    const data = await AccessToken.getCurrentAccessToken();
-    const accessToken = data?.accessToken.toString();
-    fetch(`https://graph.facebook.com/me?fields=id,name,picture,email&access_token=${accessToken}`).then(res => res.json()).then(userData => {
-      console.log(userData)
-    })
-
-  }
+  const image1 = require("../../../assets/images/HomePagePic1.jpeg");
+  const image2 = require("../../../assets/images/HomePagePic2.jpeg");
+  const image3 = require("../../../assets/images/HomePagePic3.webp");
+  const image4 = require("../../../assets/images/HomePagePic4.jpeg");
 
   return (
-    <View style={styles.container}>
-      <Link push href="/home/hello" style={{color: "white", fontWeight: "bold", marginVertical: 10}} >
-        Hello!!!!
-      </Link>
-      <LoginButton onLoginFinished={onLoginFinished} onLogoutFinished={() => console.log("User logged out")} />
-      <Text style={styles.title}>Tab One1</Text>
-      <Link href={"../two" as Href<string>} className="text-lg font-psemibold text-secondary">
-          Profile Entry
-      </Link>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/index.tsx" />
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ padding: 15 }}>
+        <LogoutButton />
+      </View>
+      <ScrollView>
+        <View className="w-full flex justify-center items-center h-full my-4">
+          <Text className="text-3xl font-semibold font-psemibold text-center w-full mb-8">
+            Home
+          </Text>
 
-    </View>
+          <View className="w-full justify-center items-center flex ">
+            <Image
+              source={image1}
+              resizeMode="cover"
+              className="w-full h-[200px]"
+            />
+            <Link
+              href={"../two" as Href<string>}
+              className="bg-primary text-2xl font-psemibold text-white absolute"
+            >
+              Get Started!
+            </Link>
+          </View>
+
+          <View className="w-full justify-center items-center flex">
+            <Image
+              source={image2}
+              resizeMode="cover"
+              className="w-full h-[200px]"
+            />
+            <Link
+              href={"../toBeDone" as Href<string>}
+              className="bg-primary text-2xl font-psemibold text-white absolute"
+            >
+              Current Week Routine
+            </Link>
+          </View>
+
+          <View className="w-full justify-center items-center flex">
+            <Image
+              source={image3}
+              resizeMode="cover"
+              className="w-full h-[200px]"
+            />
+            <Link
+              href={"../two" as Href<string>}
+              className="bg-primary text-2xl font-psemibold text-white absolute"
+            >
+              Progress Analysis
+            </Link>
+          </View>
+
+          <View className="w-full justify-center items-center flex">
+            <Image
+              source={image4}
+              resizeMode="cover"
+              className="w-full h-[200px]"
+            />
+            <Link
+              href={"../toBeDone" as Href<string>}
+              className="bg-primary text-2xl font-psemibold text-white absolute"
+            >
+              Something else
+            </Link>
+          </View>
+
+          <View className="flex justify-center pt-5 flex-row gap-2">
+            <Text className="text-lg font-pregular">Contact us</Text>
+            <Link
+              href={"../toBeDone" as Href<string>}
+              className="text-lg font-psemibold text-secondary"
+            >
+              link
+            </Link>
+          </View>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
-  },
-});

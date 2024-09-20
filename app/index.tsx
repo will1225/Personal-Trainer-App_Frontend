@@ -15,7 +15,7 @@ const LandingPage = () => {
   const image = require("../assets/images/download.jpeg");
 
   // Flag to skip landing screen if token presents, must set to true in production
-  let skipLandingPage = false;
+  let skipLandingPage = true;
 
   // Check stored token on app, skip landing page if already logged in
   if (skipLandingPage) {
@@ -23,7 +23,25 @@ const LandingPage = () => {
       const checkToken = async () => {
         const token = await user.getToken();
         if (token) {
-          router.replace("/homePage" as Href<string>);
+          try {
+            const response = await fetch(
+              "https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/authenticate",
+              {
+                method: "GET",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Authorization": `Bearer ${token}`
+                }
+              }
+            );
+        
+            if (response.ok) {
+              console.log("Token verified");
+              router.replace({ pathname: "/(tabs)/home" });
+            }
+          } catch (error: any) {
+            throw new Error(error.message || "Something went wrong");    
+          }      
         }
       };
       checkToken();
