@@ -1,31 +1,130 @@
-import { StyleSheet } from 'react-native';
+import { useState } from "react";
+import {
+  StyleSheet,
+  TextInput,
+  Button,
+  Alert,
+  View,
+  ScrollView,
+  SafeAreaView,
+} from "react-native";
+import { Text } from "@/components/Themed";
+import BackButton from "../../components/BackButton";
+import { BodyMeasurements } from "../controllers/BodyMeasurement";
 
-import EditScreenInfo from '@/components/EditScreenInfo';
-import { Text, View } from '@/components/Themed';
+export default function BodyMeasurementsScreen() {
+  const [thighSize, setThighSize] = useState("");
+  const [chestSize, setChestSize] = useState("");
+  const [error, setError] = useState("");
 
-export default function TabThreeScreen() {
+  const validateInput = () => {
+    const thigh = parseFloat(thighSize);
+    const chest = parseFloat(chestSize);
+
+    if (isNaN(thigh) || thigh <= 0) {
+      setError("Please enter a valid thigh size.");
+      return false;
+    }
+
+    if (isNaN(chest) || chest <= 0) {
+      setError("Please enter a valid chest size.");
+      return false;
+    }
+
+    setError("");
+    return true;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateInput()) return;
+
+    try {
+      const measurements = new BodyMeasurements(
+        parseFloat(thighSize),
+        parseFloat(chestSize)
+      );
+      await BodyMeasurements.submitMeasurements(
+        measurements.thighSize,
+        measurements.chestSize
+      );
+      Alert.alert("Success", "Measurements submitted successfully!", [
+        { text: "OK", onPress: () => {} },
+      ]);
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error", error.message);
+      } else {
+        Alert.alert("Error", "An unknown error occurred.");
+      }
+    }
+  };
+
+  const handleThighSizeChange = (input: string) => {
+    // Only update state if input is numeric or empty
+    if (/^\d*\.?\d*$/.test(input)) {
+      setThighSize(input);
+    }
+  };
+
+  const handleChestSizeChange = (input: string) => {
+    // Only update state if input is numeric or empty
+    if (/^\d*\.?\d*$/.test(input)) {
+      setChestSize(input);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Tab Three</Text>
-      <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" />
-      <EditScreenInfo path="app/(tabs)/two.tsx" />
-    </View>
+    <SafeAreaView style={styles.container}>
+      <BackButton />
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.title}>Enter Your Body Measurements</Text>
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+
+        <TextInput
+          style={styles.input}
+          placeholder="Thigh Size (in cm)"
+          value={thighSize}
+          onChangeText={handleThighSizeChange}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Chest Size (in cm)"
+          value={chestSize}
+          onChangeText={handleChestSizeChange}
+          keyboardType="numeric"
+        />
+
+        <Button title="Submit" onPress={handleSubmit} />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    padding: 20,
+  },
+  content: {
+    flexGrow: 1,
+    justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    marginBottom: 20,
   },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: '80%',
+  input: {
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    width: "100%",
+  },
+  error: {
+    color: "red",
+    marginBottom: 10,
   },
 });

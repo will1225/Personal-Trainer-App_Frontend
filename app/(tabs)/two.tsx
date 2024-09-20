@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "../../components";
-import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
+import { View, Text, ScrollView, Alert } from "react-native";
 import BackButton from "../../components/BackButton";
-import { Profile } from '../controllers/profile';
-
+import { Profile } from "../controllers/profile";
+import { useRouter } from "expo-router"; // Import useRouter
 
 export default function TabTwoScreen() {
   const [isSubmitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({dob: "", gender: "",});
+  const [form, setForm] = useState({ dob: "", gender: "" });
+  const router = useRouter(); // Initialize useRouter
 
   // Handle Date change
   const handleDateChange = (date: Date) => {
@@ -18,7 +19,7 @@ export default function TabTwoScreen() {
   };
 
   const submit = async () => {
-    const {dob, gender } = form;
+    const { dob, gender } = form;
 
     // Check empty fields
     if (!dob || !gender) {
@@ -29,88 +30,93 @@ export default function TabTwoScreen() {
     // API call
     try {
       setSubmitting(true);
-      const result = await Profile.createProfile(form.dob, form.gender);
+      await Profile.createProfile(form.dob, form.gender);
+
+      // Navigate to BodyMeasurements screen after successful profile creation
+      router.replace({ pathname: "../(tabs)/three" }); // Adjust the path as needed
     } catch (error: any) {
-      Alert.alert("Error", error.message);
+      Alert.alert(
+        "Error",
+        error instanceof Error ? error.message : "An unknown error occurred."
+      );
     } finally {
       setSubmitting(false);
     }
   };
 
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
-      <BackButton />
-      <View className="w-full flex justify-center items-center h-full px-4 my-6">
-        {/* Date of Birth Field */}
-        <FormField
-          title="Date of Birth"
-          value={form.dob ? new Date(form.dob).toDateString() : ""}
-          handleChangeText={() => {}}
-          placeholder={"Select Date of Birth"}
-          isDatePicker
-          onDateChange={handleDateChange}
-        />
+        <BackButton />
+        <View className="w-full flex justify-center items-center h-full px-4 my-6">
+          {/* Date of Birth Field */}
+          <FormField
+            title="Date of Birth"
+            value={form.dob ? new Date(form.dob).toDateString() : ""}
+            handleChangeText={() => {}}
+            placeholder={"Select Date of Birth"}
+            isDatePicker
+            onDateChange={handleDateChange}
+          />
 
-        {/* Gender Selection */}
-        <View className="w-full flex flex-row justify-between items-center mt-10">
-          <TouchableOpacity
-            style={{
-              flex: 1,
-              alignItems: "center",
-              backgroundColor: form.gender === "M" ? "#7dd3fc" : "transparent",
-              padding: 15,
-              marginTop: 30,
-              borderRadius: 5,
-            }}
-            onPress={() => setForm({ ...form, gender: "M" })}
-          >
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Male</Text>
-          </TouchableOpacity>
+          {/* Gender Selection */}
+          <View className="w-full flex flex-row justify-between items-center mt-10">
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                alignItems: "center",
+                backgroundColor:
+                  form.gender === "M" ? "#7dd3fc" : "transparent",
+                padding: 15,
+                marginTop: 30,
+                borderRadius: 5,
+              }}
+              onPress={() => setForm({ ...form, gender: "M" })}
+            >
+              <Text style={{ fontSize: 16, fontWeight: "bold" }}>Male</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={{
-              flex: 1,
-              alignItems: "center",
-              backgroundColor: form.gender === "F" ? "#f9a8d4" : "transparent",
-              padding: 15,
-              marginTop: 30,
-              borderRadius: 5,
-            }}
-            onPress={() => setForm({ ...form, gender: "F" })}
-          >
-            <Text style={{ fontSize: 16, fontWeight: "bold" }}>Female</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity
+              style={{
+                flex: 1,
+                alignItems: "center",
+                backgroundColor:
+                  form.gender === "F" ? "#f9a8d4" : "transparent",
+                padding: 15,
+                marginTop: 30,
+                borderRadius: 5,
+              }}
+              onPress={() => setForm({ ...form, gender: "F" })}
+            >
+              <Text style={{ fontSize: 16, fontWeight: "bold" }}>Female</Text>
+            </TouchableOpacity>
+          </View>
 
-        <CustomButton
+          <CustomButton
             title="Submit Profile"
             handlePress={submit}
             containerStyles="w-[250] mt-20"
             isLoading={isSubmitting}
           />
-      </View>
-      
-   
-    </ScrollView>
-  </SafeAreaView>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   separator: {
     marginVertical: 30,
     height: 1,
-    width: '80%',
+    width: "80%",
   },
 });
