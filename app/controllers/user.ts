@@ -17,6 +17,28 @@ export const getToken = async () => {
 };
 
 /**
+ * Method to save the token generated from the backend (not facebook token) to secure store
+ * @param req 
+ */
+export const saveBackendToken = async (req: Response) => {
+  try {
+    const cookiesHeader = req.headers.get("set-cookie");
+
+    if (cookiesHeader) {
+      // Extract token from the cookiesHeader
+      const tokenMatch = cookiesHeader.match(/token=([^;]+)/);
+
+      if (tokenMatch && tokenMatch[1]) {
+        const token = tokenMatch[1];
+        await SecureStore.setItemAsync("userToken", token); // Store the token
+      }
+    }
+  } catch (err) {
+    console.error("Error saving backend token:", err);
+  }
+};
+
+/**
  * Method to clear token data
  */
 export const clearAllTokenData = async () => {
@@ -69,23 +91,7 @@ export const loginUser = async (email: string, password: string) => {
     }
 
     const data = await response.json();
-
-    // TODO: Temporary storing solution, change it to API method after upstream is ready
-    const cookiesHeader = response.headers.get("set-cookie");
-    if (cookiesHeader) {
-      // Extract token from the cookiesHeader
-      const tokenMatch = cookiesHeader.match(/token=([^;]+)/);
-      if (tokenMatch && tokenMatch[1]) {
-        const token = tokenMatch[1];
-        await SecureStore.setItemAsync("userToken", token); // Store the token
-      }
-    }
-    /*
-      // Extract token from response
-      if (data.token) {
-        await SecureStore.setItemAsync('userToken', data.token);
-      }
-      */
+    saveBackendToken(response);
 
     return data;
   } catch (error: any) {
@@ -122,7 +128,7 @@ export const createUser = async (
           password,
           password2,
           firstName,
-          lastName
+          lastName,
         }),
       }
     );
@@ -216,6 +222,7 @@ export const facebookLogin = async (error: any, result: LoginResult) => {
 
         // Direct to Home page if succeeded
         if (result.status) {
+          saveBackendToken(response);          
           Alert.alert("Success", "Logged in with Facebook");
           router.replace({ pathname: "/(tabs)/home" });
         } else {
