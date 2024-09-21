@@ -2,66 +2,107 @@ import { router } from "expo-router";
 import { getToken } from "./user";
 
 export class BodyMeasurements {
-  private _thighSize: number;
-  private _chestSize: number;
+  private _weight!: number; // Added weight
+  private _chest!: number; // Changed from _chestSize to _chest
+  private _abdomen!: number; // Changed from _abdomenSize to _abdomen
+  private _thigh!: number; // Changed from _thighSize to _thigh
 
-  constructor(thighSize: number, chestSize: number) {
-    this._thighSize = thighSize;
-    this._chestSize = chestSize;
+  constructor(weight: number, chest: number, abdomen: number, thigh: number) {
+    this.weight = weight; // Set weight
+    this.chest = chest; // Set chest
+    this.abdomen = abdomen; // Set abdomen
+    this.thigh = thigh; // Set thigh
   }
 
-  // Getter for thighSize
-  get thighSize(): number {
-    return this._thighSize;
+  // Getter for weight
+  get weight(): number {
+    return this._weight;
   }
 
-  // Setter for thighSize
-  set thighSize(value: number) {
+  // Setter for weight
+  set weight(value: number) {
     if (value <= 0) {
-      throw new Error("Thigh size must be greater than zero.");
+      throw new Error("Weight must be greater than zero.");
     }
-    this._thighSize = value;
+    this._weight = value;
   }
 
-  // Getter for chestSize
-  get chestSize(): number {
-    return this._chestSize;
+  // Getter for chest
+  get chest(): number {
+    return this._chest;
   }
 
-  // Setter for chestSize
-  set chestSize(value: number) {
+  // Setter for chest
+  set chest(value: number) {
     if (value <= 0) {
       throw new Error("Chest size must be greater than zero.");
     }
-    this._chestSize = value;
+    this._chest = value;
   }
 
-  // Method to submit measurements to the server
-  static async submitMeasurements(thighSize: number, chestSize: number) {
+  // Getter for abdomen
+  get abdomen(): number {
+    return this._abdomen;
+  }
+
+  // Setter for abdomen
+  set abdomen(value: number) {
+    if (value <= 0) {
+      throw new Error("Abdomen size must be greater than zero.");
+    }
+    this._abdomen = value;
+  }
+
+  // Getter for thigh
+  get thigh(): number {
+    return this._thigh;
+  }
+
+  // Setter for thigh
+  set thigh(value: number) {
+    if (value <= 0) {
+      throw new Error("Thigh size must be greater than zero.");
+    }
+    this._thigh = value;
+  }
+
+  static async submitMeasurements(
+    weight: number, // Added weight parameter
+    chest: number, // Changed from chestSize to chest
+    abdomen: number, // Changed from abdomenSize to abdomen
+    thigh: number, // Changed from thighSize to thigh
+    bodyFatPercentage?: number,
+    leanMuscleMass?: number
+  ) {
     try {
       const response = await fetch(
-        "http://your-api-url.com/dev/user/measurements/submit",
+        "https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/BodyMeasurement/enter",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${await getToken()}`,
           },
-          body: JSON.stringify({ thighSize, chestSize }),
+          body: JSON.stringify({
+            weight, // Send weight
+            chest, // Send chest
+            abdomen, // Send abdomen
+            thigh, // Send thigh
+            bodyFatPercentage,
+            leanMuscleMass,
+          }),
         }
       );
 
-      // Check if the response is OK (status code 2xx)
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      // Check if the response has JSON content
       const contentType = response.headers.get("Content-Type") || "";
       if (contentType.includes("application/json")) {
         const res = await response.json();
         if (res.status) {
-          router.replace({ pathname: "../(tabs)/index" }); // Navigate on success
+          router.replace({ pathname: "../(tabs)/Home" });
         } else {
           throw new Error(res.error || "Submission failed");
         }
