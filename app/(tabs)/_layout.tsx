@@ -52,6 +52,7 @@ export default function TabLayout() {
         name="two"
         options={{
           title: 'Get Started',
+          headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
@@ -59,6 +60,7 @@ export default function TabLayout() {
         name="three"
         options={{
           title: 'Current Routine',
+          headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="calendar" color={color} />,
         }}  
       />
@@ -66,6 +68,7 @@ export default function TabLayout() {
         name="four"
         options={{
           title: 'Analysis',
+          headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="bar-chart" color={color} />,
         }}  
       />

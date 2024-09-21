@@ -1,13 +1,31 @@
 import { Href, Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Image } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { BackHandler } from "react-native";
 import LogoutButton from "../../../components/LogoutButton";
+import React from "react";
 
 export default function TabOneScreen() {
   const image1 = require("../../../assets/images/HomePagePic1.jpeg");
   const image2 = require("../../../assets/images/HomePagePic2.jpeg");
   const image3 = require("../../../assets/images/HomePagePic3.webp");
   const image4 = require("../../../assets/images/HomePagePic4.jpeg");
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        return true; // Disable back button functionality
+      };
+
+      // Handle back button is being pressed on Home Page
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+
+      // Clean up event listener
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, [])
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

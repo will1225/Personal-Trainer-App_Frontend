@@ -31,7 +31,3 @@ export const fetchFitnessResult = async (measurementId: string) => {
       throw new Error(error.message || "Something went wrong");
     }
   };
-
-  export const saveResult = async (bodyFatPercent: number, leanMuscleMass: number) => {
-
-  }

@@ -33,7 +33,8 @@ const Otp = () => {
       // API call
       const result = await otp.verifyOtp(otpCode);
       if (result.status) {
-        router.replace({ pathname: "/(tabs)/home" });
+        Alert.alert("Verify Success", "Please Log in");
+        router.replace({ pathname: "/sign-in" });
       }
     } catch (error: any) {
       Alert.alert("Error", error.message);
