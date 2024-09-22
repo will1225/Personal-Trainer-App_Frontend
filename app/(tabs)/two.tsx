@@ -9,6 +9,7 @@ import { Profile } from '../controllers/profile';
 
 
 export default function TabTwoScreen() {
+  const image = require("../../assets/images/neonDumbell.png");
   const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({dob: "", gender: "",});
 
@@ -42,7 +43,17 @@ export default function TabTwoScreen() {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
       <BackButton />
+      
       <View className="w-full flex justify-center items-center h-full px-4 my-6">
+        <Text className="text-2xl font-bold text-center">
+              Profile Entry
+        </Text>
+
+        <Image
+              source={image}
+              resizeMode="contain"
+              className="w-[200px] h-[50px] justify-center mt-9"
+        />
         {/* Date of Birth Field */}
         <FormField
           title="Date of Birth"
