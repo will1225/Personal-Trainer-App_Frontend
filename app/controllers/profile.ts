@@ -56,7 +56,7 @@ export class Profile {
             if (contentType.includes("application/json")) {
               const res = await response.json();
               if (res.status) {
-                router.replace({ pathname: "../(tabs)/index" });
+                router.replace({ pathname: "../../bodyMeasurement" });
               } else {
                 throw new Error(res.error || "Submission failed");
               }

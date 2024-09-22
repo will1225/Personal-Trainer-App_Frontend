@@ -17,6 +17,8 @@ interface FormFieldProps extends TextInputProps {
   handleChangeText: (text: string) => void;
   isDatePicker?: boolean;
   onDateChange?: (date: Date) => void;
+  editable?: boolean;
+  containerStyles?: string;
 }
 
 /**
@@ -31,6 +33,8 @@ const FormField: React.FC<FormFieldProps> = ({
   handleChangeText,
   isDatePicker = false,
   onDateChange,
+  editable = true,
+  containerStyles,
   ...props
 }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -64,20 +68,25 @@ const FormField: React.FC<FormFieldProps> = ({
   };
 
   return (
-    <View className="mt-7">
+    <View className={`mt-7 ${containerStyles}`}>
       <Text className="text-base font-pmedium">{title}</Text>
 
       {/* Standard field */}
-      <View className="w-full h-12 px-4 rounded-2xl border-2 border-black-200 focus:border-secondary flex flex-row items-center">
+      <View className={`w-full h-12 px-4 rounded-2xl border-2 ${
+          editable ? 'border-black-200' : 'border-gray-300'
+        } flex flex-row items-center`}
+        style={{
+          backgroundColor: editable ? 'white' : 'lightgray',
+        }}>
         <TextInput
           className="flex-1 font-psemibold text-base"
           value={value}
           placeholder={placeholder}
           placeholderTextColor="#7B7B8B"
-          onChangeText={handleChangeText}
+          onChangeText={editable ? handleChangeText : undefined}
           secureTextEntry={title === "Password" || title === "Confirm Password" && !showPassword}
-          editable={!isDatePicker} // Disable keyboard input
-          style={{ color: value ? "black" : "#7B7B8B" }}
+          editable={editable && !isDatePicker} // Disable keyboard input
+          style={{ color: editable ? "black" : "#7B7B8B" }}
           {...props}
         />
 

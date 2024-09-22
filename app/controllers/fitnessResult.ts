@@ -7,10 +7,10 @@ export const fetchFitnessResult = async (measurementId: string) => {
     try {
       const response = await fetch(
         // local testing
-        // `http://10.10.6.150:8080/user/result/${measurementId}`,
+        // `http://10.10.6.150:8080/measurement/result/${measurementId}`,
   
         // Production
-        `https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/result/${measurementId}`,
+        `https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/measurement/result/${measurementId}`,
         {
           method: "GET",
           headers: {
