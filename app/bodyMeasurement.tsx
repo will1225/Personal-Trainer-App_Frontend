@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "../components";
@@ -6,6 +6,7 @@ import Modal from "react-native-modal";
 import BackButton from "../components/BackButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as measurement from "./controllers/bodyMeasurement";
+import { userGlobalState } from "./controllers/globalState";
 import {
   View,
   Text,
@@ -17,17 +18,22 @@ import {
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
+
 /**
  * Body Measurement screen.
  * @returns void
  */
 const BodyMeasurement = () => {
   const image = require("../assets/images/neonDumbell.png");
-  const imageC = require("../assets/images/chest.png");
-  const imageA = require("../assets/images/abd.png");
-  const imageT = require("../assets/images/thigh.png");
+  const maleC = require("../assets/images/chest.png");
+  const maleA = require("../assets/images/abd.png");
+  const maleT = require("../assets/images/thigh.png");
+  const femaleTricep = require("../assets/images/tricepFemale.jpg");
+  const femaleSuprailiac = require("../assets/images/suprailiacFemale.jpg");
+  const femaleThigh = require("../assets/images/thighFemale.jpg");
 
   // State variables
+  const [globalState, setGlobalState] = useState<Record<string, any> | null>(null); //
   const [isSubmitting, setSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
@@ -44,6 +50,16 @@ const BodyMeasurement = () => {
     text: "",
     image: null,
   });
+
+  // Use globalState to get the current user data
+  useEffect(() => {
+    userGlobalState().then(data => {
+      setGlobalState(data || null); 
+      console.log(data);
+    });    
+  }, []);
+
+  const gender = globalState?.profile?.gender;  
 
   // Form submission handling
   const submit = async () => {
@@ -89,25 +105,19 @@ const BodyMeasurement = () => {
       }
     } else {
       if (!weight || !chest || !abdomen || !thigh) {
-        Alert.alert(
-          "Error",
-          "Please fill in all fields for weight, chest, abdomen, and thigh."
-        );
+        Alert.alert("Error", "Please fill in all fields.");
         return;
       }
       if (chestValue < 1 || chestValue > 80) {
-        Alert.alert("Error", "Chest measurement must be between 1mm and 80mm.");
+        Alert.alert("Error", "Measurement must be between 1mm and 80mm.");
         return;
       }
       if (abdomenValue < 1 || abdomenValue > 80) {
-        Alert.alert(
-          "Error",
-          "Abdomen measurement must be between 1mm and 80mm."
-        );
+        Alert.alert("Error", "Measurement must be between 1mm and 80mm.");
         return;
       }
       if (thighValue < 1 || thighValue > 80) {
-        Alert.alert("Error", "Thigh measurement must be between 1mm and 80mm.");
+        Alert.alert("Error", "Measurement must be between 1mm and 80mm.");
         return;
       }
     }
@@ -144,23 +154,35 @@ const BodyMeasurement = () => {
     switch (part) {
       case "chest":
         setModalContent({
-          title: "How to Measure Chest",
-          text: "Diagonal fold, midway between upper armpit and nipple",
-          image: imageC,
+          title:
+            gender === "M"
+              ? "How to Measure Chest"
+              : "How to Measure Tricep",
+          text:
+            gender === "M"
+              ? "Diagonal fold, midway between upper armpit and nipple"
+              : "Vertical fold, midway between elbow and shoulder",
+          image: gender === "M" ? maleC : femaleTricep,
         });
         break;
       case "abdomen":
         setModalContent({
-          title: "How to Measure Abdomen",
-          text: "Vertical fold, one inch to the right of navel",
-          image: imageA,
+          title:
+            gender === "M"
+              ? "How to Measure Abdomen"
+              : "How to Measure Suprailiac",
+          text:
+            gender === "M"
+              ? "Vertical fold, one inch to the right of navel"
+              : "Diagonal fold, directly above iliac crest",
+          image: gender === "M" ? maleA : femaleSuprailiac,
         });
         break;
       case "thigh":
         setModalContent({
           title: "How to Measure Thigh",
           text: "Vertical fold, midway between knee cap and top of thigh",
-          image: imageT,
+          image: gender === "M" ? maleT : femaleThigh,
         });
         break;
     }
@@ -210,7 +232,7 @@ const BodyMeasurement = () => {
 
           <View className="flex-row items-center">
             <FormField
-              title="Chest"
+              title={gender === "M" ? "Chest" : "Tricep"}
               value={form.chest}
               handleChangeText={(e) => setForm({ ...form, chest: e })}
               keyboardType="numeric"
@@ -234,7 +256,7 @@ const BodyMeasurement = () => {
 
           <View className="flex-row items-center">
             <FormField
-              title="Abdomen"
+              title={gender === "M" ? "Abdomen" : "Suprailiac"}
               value={form.abdomen}
               handleChangeText={(e) => setForm({ ...form, abdomen: e })}
               keyboardType="numeric"
