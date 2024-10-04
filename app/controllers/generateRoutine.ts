@@ -184,17 +184,33 @@ export const fetchExercise = async (
  * @returns scheduleDays[]
  */
 export const getDayNames = (startDateStr: string, daysPerWeek: number) => {
-  const startDate = new Date(startDateStr);
-    
-  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];   
-  const dayGap = Math.ceil(7 / daysPerWeek); // spread through the week
-  const scheduleDays = [];
+    const startDate = new Date(startDateStr);
+    const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const scheduleDays = [];
   
-  for (let i = 0; i < daysPerWeek; i++) {
-    const newDate = new Date(startDate);
-    newDate.setDate(startDate.getDate() + i * dayGap);
-    scheduleDays.push(dayNames[newDate.getDay()]);
-  }
-  
-  return scheduleDays;
+    let currentDate = new Date(startDate);
+
+    if (daysPerWeek <= 4) {
+        // Spread days one day apart when less than 4 days
+        for (let i = 0; i < daysPerWeek; i++) {
+        scheduleDays.push(dayNames[currentDate.getDay()]);
+        currentDate.setDate(currentDate.getDate() + 2); 
+        }
+    } else {
+        // Spread across the full week for more than 4 days
+        const interval = Math.floor(6 / (daysPerWeek - 2)); 
+        const extraDays = 6 % (daysPerWeek - 2); // Distribute leftover 
+
+        scheduleDays.push(dayNames[startDate.getDay()]); // Start with the first day
+
+        for (let i = 1; i < daysPerWeek - 1; i++) {
+        const gap = interval + (i <= extraDays ? 1 : 0);
+        currentDate.setDate(currentDate.getDate() + gap);
+        scheduleDays.push(dayNames[currentDate.getDay()]);
+        }
+
+        scheduleDays.push(dayNames[startDate.getDay()]); // End with the last day
+    }
+
+    return scheduleDays;
 };
