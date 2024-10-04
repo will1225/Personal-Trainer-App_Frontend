@@ -164,7 +164,7 @@ const fitnessResult = () => {
 
           <CustomButton
             title="Get Personalized Routine"
-            handlePress={() => router.push("/(tabs)/home" as Href<string>)}
+            handlePress={() => router.push("/generateRoutine" as Href<string>)}
             containerStyles="w-[230px]"
           />
         </View>

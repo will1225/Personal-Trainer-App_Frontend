@@ -54,15 +54,17 @@ const FormField: React.FC<FormFieldProps> = ({
       const pickedDate = new Date(selectedDate);
       pickedDate.setHours(0, 0, 0, 0);
 
-      // Check if the selected date is greater than today
-      if (pickedDate.getTime() > today.getTime()) {
+      // Change validation based on title of date input
+      if (title === "Start Date" && pickedDate.getTime() < today.getTime()) {
+        setError("Selected date must be today or a future date.");
+      } else if (title === "Date of Birth" && pickedDate.getTime() > today.getTime()) {
         setError("Selected date cannot be in the future.");
       } else {
         setError(null);
         setDate(selectedDate);
-        onDateChange?.(selectedDate); // Call the handler passed as prop
-        const formattedDate = selectedDate.toISOString().split("T")[0]; // Format YYYY-MM-DD
-        handleChangeText(formattedDate); // Set formatted date to parent component
+        onDateChange?.(selectedDate);
+        const formattedDate = selectedDate.toISOString().split("T")[0]; 
+        handleChangeText(formattedDate);
       }
     }
   };
