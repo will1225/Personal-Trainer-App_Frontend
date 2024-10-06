@@ -1,14 +1,14 @@
 import * as user from "./user";
 
 // Production/Testing flag
-let production = true; // Set to true in Production
+let production = false; // Set to true in Production
 let endpoint = production ? `https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev` : `http://10.10.6.150:8080`; // Replace with your own ip4 address for test
 
 /**
  * Timeout mechanism to prevent infinite loading if there are any connection issues to the backend.
  * @returns 
  */
-const fetchWithTimeout = async (url: string, options: RequestInit) => {
+export const fetchWithTimeout = async (url: string, options: RequestInit) => {
     return new Promise<Response>(async (resolve, reject) => {
       const controller = new AbortController();
       const id = setTimeout(() => {
