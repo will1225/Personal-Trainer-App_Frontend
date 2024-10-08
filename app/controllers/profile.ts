@@ -68,5 +68,38 @@ export class Profile {
             console.error(err.message + ": Submit Failed");
           }
     }
+
+    static async setProfileByToken(setProfile: any) {
+      console.log("Setting profile");
+      const res = await fetch("https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/profile?initBodyMeasurement=true", {
+        method: 'GET',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${await getToken()}`
+        }
+      });
+
+      const data = await res.json();
+      console.log(data.data)
+      setProfile(data.data);
+    }
+
+    static async update({gender, dob}: {gender?: string, dob?: Date}) {
+      const res = await fetch("https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/profile/update", {
+        method: 'PATCH',
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${await getToken()}`
+        },
+        body: JSON.stringify({
+          gender,
+          dob
+        })
+      });
+
+      const data = await res.json();
+
+      return data;
+    }
 }
     

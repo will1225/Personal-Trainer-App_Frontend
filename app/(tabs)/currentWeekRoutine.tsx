@@ -1,10 +1,10 @@
-import { View, Text, SafeAreaView, ScrollView, Alert } from "react-native";
+import { View, Text, SafeAreaView, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Image } from "react-native";
-import { Href, router } from "expo-router";
-import * as currentWeekRoutine from "./controllers/currentWeekRoutine";
-import * as generateRoutine from "./controllers/generateRoutine";
+// import { Href, router } from "expo-router";
+import * as currentWeekRoutine from "../controllers/currentWeekRoutine";
+import * as generateRoutine from "../controllers/generateRoutine";
 
 type WeeklyRoutine = {
     startDate: string;

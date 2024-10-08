@@ -8,7 +8,7 @@ let endpoint = production ? `https://7u45qve0xl.execute-api.ca-central-1.amazona
  * Timeout mechanism to prevent infinite loading if there are any connection issues to the backend.
  * @returns 
  */
-const fetchWithTimeout = async (url: string, options: RequestInit) => {
+export const fetchWithTimeout = async (url: string, options: RequestInit) => {
     return new Promise<Response>(async (resolve, reject) => {
       const controller = new AbortController();
       const id = setTimeout(() => {
