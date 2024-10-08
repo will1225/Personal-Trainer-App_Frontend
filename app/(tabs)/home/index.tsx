@@ -59,7 +59,7 @@ export default function TabOneScreen() {
               className="w-full h-[200px]"
             />
             <Link
-              href={"../../currentWeekRoutine" as Href<string>}
+              href={"../three" as Href<string>}
               className="bg-primary text-2xl font-psemibold text-white absolute"
             >
               Current Week Routine

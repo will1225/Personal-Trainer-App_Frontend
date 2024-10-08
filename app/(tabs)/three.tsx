@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Image } from "react-native";
@@ -33,7 +33,7 @@ type WeeklyRoutine = {
 };
   
 const CurrentWeeklyRoutine = () => {
-    const image1 = require("../assets/images/HomePagePic1.jpeg");
+    const image1 = require("../../assets/images/HomePagePic1.jpeg");
 
     const [weeklyRoutine, setWeeklyRoutine] = useState<WeeklyRoutine | null>(null);
     const [error, setError] = useState<string | null>(null);
