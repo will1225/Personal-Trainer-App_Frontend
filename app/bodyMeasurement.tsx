@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link, router } from "expo-router";
+import { useState } from "react";
+import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "../components";
 import Modal from "react-native-modal";
 import BackButton from "../components/BackButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as measurement from "./controllers/bodyMeasurement";
-import { userGlobalState } from "./controllers/globalState";
 import {
   View,
   Text,
@@ -17,6 +16,10 @@ import {
   Linking,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useAtom } from "jotai";
+import { profileAtom } from "@/store";
+import { useQuery } from "react-query";
+import { Profile } from "./controllers/profile";
 
 
 /**
@@ -33,9 +36,9 @@ const BodyMeasurement = () => {
   const femaleThigh = require("../assets/images/thighFemale.jpg");
 
   // State variables
-  const [globalState, setGlobalState] = useState<Record<string, any> | null>(null); //
   const [isSubmitting, setSubmitting] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [profile, setProfile] = useAtom(profileAtom);
   const [form, setForm] = useState({
     weight: "",
     chest: "",
@@ -51,15 +54,12 @@ const BodyMeasurement = () => {
     image: null,
   });
 
-  // Use globalState to get the current user data
-  useEffect(() => {
-    userGlobalState().then(data => {
-      setGlobalState(data || null); 
-      console.log(data);
-    });    
-  }, []);
-
-  const gender = globalState?.profile?.gender;  
+  // Get gender from the profile atom
+  useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => Profile.setProfileByToken(setProfile)
+  });
+  const gender = profile?.gender;  
 
   // Form submission handling
   const submit = async () => {

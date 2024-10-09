@@ -1,7 +1,7 @@
 import { View, Text, SafeAreaView, ScrollView, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
-import { Href, router, useLocalSearchParams } from "expo-router";
+import { Href, Link, router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import { StatusBar } from "expo-status-bar";
 import * as fitnessUtil from "./controllers/fitnessResult";
@@ -46,7 +46,7 @@ const fitnessResult = () => {
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
       >
-        <View className="w-full flex justify-center items-center px-4 mb-8">
+        <View className="w-full flex justify-center items-center px-4 mb-8 mt-16">
           <Text className="text-3xl font-bold text-center mb-8">
             Your Current Fitness Level
           </Text>
@@ -160,13 +160,17 @@ const fitnessResult = () => {
 
           <Text className="text-xl text-left mb-8">
             Ready to get in shape?
-          </Text>
+          </Text>          
 
           <CustomButton
             title="Get Personalized Routine"
             handlePress={() => router.push("/generateRoutine" as Href<string>)}
             containerStyles="w-[230px]"
           />
+          
+          <Link href={"/(tabs)/home" as Href<string>} className="text-lg font-psemibold text-grey mt-4 mb-8">
+            I'll do it later.
+          </Link>
         </View>
       </ScrollView>
       <StatusBar backgroundColor="#161622" style="light" />

@@ -5,12 +5,26 @@ import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import LogoutButton from "../../../components/LogoutButton";
 import React from "react";
+import { useAtom } from "jotai";
+import { profileAtom } from "@/store";
+import { useQuery } from "react-query";
+import { Profile } from "@/app/controllers/profile";
 
 export default function TabOneScreen() {
   const image1 = require("../../../assets/images/HomePagePic1.jpeg");
   const image2 = require("../../../assets/images/HomePagePic2.jpeg");
   const image3 = require("../../../assets/images/HomePagePic3.webp");
   const image4 = require("../../../assets/images/HomePagePic4.jpeg");
+
+  // Get global user profile data
+  const [profile, setProfile] = useAtom(profileAtom);
+  useQuery(
+    "profile", // queryKey
+    () => Profile.setProfileByToken(setProfile), // queryFn
+    {
+      refetchOnWindowFocus: true, // Refetch the latest data when this page is loaded
+    }
+  );
 
   useFocusEffect(
     React.useCallback(() => {
@@ -34,23 +48,29 @@ export default function TabOneScreen() {
       </View>
       <ScrollView>
         <View className="w-full flex justify-center items-center h-full my-4">
-          <Text className="text-3xl font-semibold font-psemibold text-center w-full mb-8">
+          <Text className="text-3xl font-semibold font-psemibold text-center w-full mb-4">
             Home
           </Text>
 
-          <View className="w-full justify-center items-center flex ">
-            <Image
-              source={image1}
-              resizeMode="cover"
-              className="w-full h-[200px]"
-            />
-            <Link
-              href={"../two" as Href<string>}
-              className="bg-primary text-2xl font-psemibold text-white absolute"
-            >
-              Get Started!
-            </Link>
-          </View>
+          <Text className="text-xl font-semibold font-psemibold text-center w-full mb-6">
+            { profile?.updatedAt ?  `Welcome back, ${profile.firstName}!` : `Welcome!`}
+          </Text>
+
+          { !profile?.initBodyMeasurement ? (
+            <View className="w-full justify-center items-center flex ">
+              <Image
+                source={image1}
+                resizeMode="cover"
+                className="w-full h-[200px]"
+              />
+              <Link
+                href={"../two" as Href<string>}
+                className="bg-primary text-2xl font-psemibold text-white absolute"
+              >
+                Get Started!
+              </Link>
+            </View>
+          ) : null }
 
           <View className="w-full justify-center items-center flex">
             <Image
