@@ -192,7 +192,7 @@ const GenerateRoutine = () => {
 
       if (result) {
         Alert.alert("Success", "Routine saved successfully!");
-        router.push("/(tabs)/home" as Href<string>); // TODO: Change to Current Week Routine page when ready
+        router.push("/(tabs)/three" as Href<string>);
       } else {
         Alert.alert("Error", "Failed to save routine.");
       }
