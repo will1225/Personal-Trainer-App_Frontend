@@ -35,4 +35,4 @@ export const fetchCurrentWeeklyRoutine = async () => {
       console.error("Error fetching current week's routine:", error);
       return null;
     }
-  };
+};
