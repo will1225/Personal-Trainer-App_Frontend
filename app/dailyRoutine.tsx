@@ -5,13 +5,14 @@ import { Dropdown } from "react-native-element-dropdown";
 import { Image } from "react-native";
 import { CustomButton, FormField } from "@/components";
 import { Href, router } from "expo-router";
-import { getDailyRoutine } from "./controllers/dailyRoutine";
+import { getDailyRoutine, saveDailyRoutine } from "./controllers/dailyRoutine";
 import { getOneExercise } from "./controllers/dailyRoutine";
 import RefreshButton from '../components/RefreshButton'; 
 import VideoRefreshButton from '../components/VideoRefreshButton'; 
 
 type ExerciseDetail = {
   exerciseDetailId: number;
+  exerciseId: number;
   exerciseName: string;
   sets: number;
   reps: number;
@@ -47,6 +48,15 @@ type WorkoutEnv = {
   description: string;
 }
 
+type saveRoutine = {
+    exerciseDetailId: number,
+    sets: number,
+    reps: number,
+    youtubeURL: string,
+    dailyRoutineId: number,
+    exerciseId: number
+}
+
 // Daily Routine Detail Page
 const dailyRoutineDetail = () => {
   const image1 = require("../assets/images/HomePagePic1.jpeg");
@@ -54,9 +64,7 @@ const dailyRoutineDetail = () => {
   const dayName = "Monday";
 
   const [isSubmitting, setSubmitting] = useState(false);
-  const [buttonPressed, setButtonPressed] = useState(false);  
   const [exerciseDetails, setExerciseDetails] = useState<ExerciseDetail[]>([]);
-
   
   useEffect(() => {
     const fetchData = async () => {
@@ -97,6 +105,7 @@ const dailyRoutineDetail = () => {
             
             const newExerciseDetail: ExerciseDetail = {
                 exerciseDetailId: Number(detail.id),
+                exerciseId: Number(detail.execise.id),
                 exerciseName: detail.exercise.name,
                 sets: Number(detail.sets),
                 reps: Number(detail.reps),
@@ -144,7 +153,6 @@ const dailyRoutineDetail = () => {
         detail.workoutEnvs[0].id,
         muscleGroupIds
     )
-    
 
     console.log(newExercise);
 
@@ -182,6 +190,7 @@ const dailyRoutineDetail = () => {
 
     const newExerciseDetail: ExerciseDetail = {
         exerciseDetailId: id,
+        exerciseId: Number(newExercise.id),
         exerciseName: newExercise.name,
         sets: Number(newExercise.defaultSets),
         reps: Number(newExercise.defaultReps),
@@ -209,7 +218,42 @@ const dailyRoutineDetail = () => {
     console.log("Refresh Video Pressed");
   }
 
-  let topPosn = 0;
+  const handleSaveRoutine = async() => {
+    try {
+        setSubmitting(true);
+
+        const data: saveRoutine[] = [];
+
+        exerciseDetails.forEach(detail => {
+            const dailyRoutineData = {
+                exerciseDetailId: detail.exerciseDetailId,
+                sets: detail.sets,
+                reps: detail.reps,
+                youtubeURL: detail.youtubeURL,
+                dailyRoutineId: dailyRoutineId,
+                exerciseId: detail.exerciseId
+            }
+
+            data.push(dailyRoutineData);
+        })
+        
+  
+        // API call
+        const result = await saveDailyRoutine(data);
+
+  
+        if (result) {
+          Alert.alert("Success", "Daily Routine saved successfully!");
+          router.push("/(tabs)/three" as Href<string>);
+        }
+
+      } catch (error) {
+        console.error("Error saving routine:", error);
+        Alert.alert("Error", "An error occurred while saving the routine.");
+      } finally {
+        setSubmitting(false);
+      }
+  }
 
   
   return (
@@ -329,6 +373,23 @@ const dailyRoutineDetail = () => {
 
                 
             ))}
+            
+                <View className="mt-2 items-center">
+                    <Text className="font-bold text-lg text-center mb-4">
+                        Confirm your routine for this week!
+                    </Text>
+                    <CustomButton
+                        title="Save"
+                        handlePress={handleSaveRoutine}
+                        containerStyles="w-52 bg-green-800"
+                        isLoading={isSubmitting}
+                    />
+                    <Text className="font-psemibold text-base text-center px-8 mt-4">
+                        Don't forget to update your results in Current Week Routine after one week!
+                    </Text>
+                </View>
+
+           
 
 
 
