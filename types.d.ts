@@ -44,3 +44,40 @@ export interface BodyMeasurementProps {
     profile?: ProfileProps,
     date: Date
 }
+
+export interface WeeklyRoutineProps {
+    id: number;
+    startDate: string; 
+    endDate: string;
+    daysPerWeek: number;
+    dailyRoutines: DailyRoutineProps[];
+}
+
+export interface DailyRoutineProps {
+    id: number,
+    dayNumber: number;
+    dayName: string;
+    exerciseDetails: ExerciseDetailProps[];
+}
+
+
+export interface ExerciseDetailProps {
+    id: number,
+    sets: number;
+    reps: number;
+    youtubeURL: string;
+    exercise: ExerciseProps;
+}
+
+export interface ExerciseProps {
+    id: number;
+    name: string;
+    muscleGroups: MuscleGroupProps[];
+    sets: number;
+    reps: number;
+}
+
+export interface MuscleGroupProps {
+    id: number;
+    description: string;
+}

@@ -3,41 +3,13 @@ import React, { useEffect, useState } from "react";
 import { Image } from "react-native";
 import { Bar } from "react-native-progress";
 // import { Href, router } from "expo-router";
-import { CustomButton, FormField } from "@/components";
+import { CustomButton } from "@/components";
 import BackButton from "../../components/BackButton";
 import * as currentWeekRoutine from "../controllers/currentWeekRoutine";
 import * as generateRoutine from "../controllers/generateRoutine";
+import { useAtom } from "jotai";
+import { currentWeekRoutineAtom } from "../../store";
 
-type WeeklyRoutine = {
-  startDate: string;
-  endDate: string;
-  daysPerWeek: number;
-  dailyRoutines: DailyRoutine[];
-};
-
-type ExerciseDetail = {
-  exerciseId: number;
-  sets: number;
-  reps: number;
-  youtubeURL: string;
-  exercise: Exercise;
-};
-
-type Exercise = {
-  exerciseId: number;
-  name: string;
-  muscleGroups: MuscleGroup[];
-};
-
-type DailyRoutine = {
-  dayNumber: number;
-  exerciseDetails: ExerciseDetail[];
-};
-
-type MuscleGroup = {
-  id: number;
-  description: string;
-};
 
 // Helper function for displaying the date range
 const formatDateRange = (startDate: string, endDate: string): string => {
@@ -76,17 +48,17 @@ const calculateProgress = (trainingDays: string[], startDateStr: string, current
   return totalDays > 0 ? completedDays / totalDays : 0; // Prevent division by zero
 };
 
-
 // PLaceholder for handling the submit button
 const handleUpdate = async () => {
     // TO-DO: Implement the logic!
     console.log("Update Pressed!");
 };
 
+
 const CurrentWeeklyRoutine = () => {
   const image1 = require("../../assets/images/HomePagePic1.jpeg");
 
-  const [weeklyRoutine, setWeeklyRoutine] = useState<WeeklyRoutine | null>(null);
+  const [weeklyRoutine, setWeeklyRoutine] = useAtom(currentWeekRoutineAtom);
 
   useEffect(() => {
     const getCurrentWeeklyRoutine = async () => {
@@ -106,7 +78,7 @@ const CurrentWeeklyRoutine = () => {
     };
 
     getCurrentWeeklyRoutine();
-  }, []);
+  }, [setWeeklyRoutine]);
 
   if (!weeklyRoutine) {
     return (
@@ -183,8 +155,8 @@ const CurrentWeeklyRoutine = () => {
                   <Text className="text-lg text-center mb-2">
                     {Array.from(
                       new Set(
-                        routine.exerciseDetails.flatMap((exercise) =>
-                          exercise.exercise.muscleGroups.map((mg) => mg.description)
+                        routine.exerciseDetails.flatMap((detail) =>
+                          detail.exercise.muscleGroups.map((mg) => mg.description)
                         )
                       )
                     ).join(" & ")}
