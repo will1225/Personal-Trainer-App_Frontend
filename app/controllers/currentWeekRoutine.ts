@@ -24,7 +24,6 @@ export const fetchCurrentWeeklyRoutine = async () => {
   
       if (!response.ok) {
         const errorData = await response.json();
-        console.error(errorData);
         throw new Error(errorData.error || "Fetching weekly routine failed");
       }
   
@@ -35,4 +34,4 @@ export const fetchCurrentWeeklyRoutine = async () => {
       console.error("Error fetching current week's routine:", error);
       return null;
     }
-  };
+};
