@@ -1,14 +1,15 @@
-import { View, Text, SafeAreaView, ScrollView} from "react-native";
+import { View, Text, SafeAreaView, ScrollView, Touchable, TouchableOpacity} from "react-native";
 import React, { useEffect, useState } from "react";
 import { Image } from "react-native";
 import { Bar } from "react-native-progress";
-import { Href, router } from "expo-router";
+import { router } from "expo-router";
 import { CustomButton } from "@/components";
 import BackButton from "../../components/BackButton";
 import * as currentWeekRoutine from "../controllers/currentWeekRoutine";
 import * as generateRoutine from "../controllers/generateRoutine";
 import { useAtom } from "jotai";
 import { currentWeekRoutineAtom } from "../../store";
+import dailyRoutineDetail from "../dailyRoutine";
 
 
 // Helper function for displaying the date range
@@ -57,12 +58,14 @@ const handleUpdate = async () => {
 
 const CurrentWeeklyRoutine = () => {
   const image1 = require("../../assets/images/HomePagePic1.jpeg");
-
+    
   const [weeklyRoutine, setWeeklyRoutine] = useAtom(currentWeekRoutineAtom);
   const [trainingDays, setTrainingDays] = useState<string[]>([]);;
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const getCurrentWeeklyRoutine = async () => {
+      setLoading(true);
       try {
         const data = await currentWeekRoutine.fetchCurrentWeeklyRoutine();
         if (data) {
@@ -74,6 +77,8 @@ const CurrentWeeklyRoutine = () => {
         }
       } catch (error) {
         console.error("An error occurred while fetching current weekly routine", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -87,12 +92,14 @@ const CurrentWeeklyRoutine = () => {
       <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>
         <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-28">
           <BackButton />
-          <Text className="text-3xl font-bold text-center">
-            Current Week's Routine
-          </Text>
-          
-          {weeklyRoutine ? (
+        
+          {loading ? ( 
+            <Text className="text-lg text-center mt-4">Loading...</Text>
+          ) : weeklyRoutine ? (
             <>
+              <Text className="text-3xl font-bold text-center">
+                Current Week's Routine
+              </Text>
               <Text className="text-lg font-semibold mt-2">
                 {formatDateRange(weeklyRoutine.startDate, weeklyRoutine.endDate)}
               </Text>
@@ -140,63 +147,79 @@ const CurrentWeeklyRoutine = () => {
                       Day {routine.dayNumber} - {trainingDays[dayIndex]}
                     </Text>
 
-                    {/* Muscle Groups Header */}
-                    <Text className="text-lg text-center mb-2">
-                      {Array.from(
-                        new Set(
-                          routine.exerciseDetails.flatMap((detail) =>
-                            detail.exercise.muscleGroups.map((mg) => mg.description)
+                    {/* Clickable area */}
+                    <TouchableOpacity
+                        onPress={() => {
+                          router.push({
+                            pathname: '../dailyRoutine',
+                            params: {
+                              dailyRoutineId: routine.id,
+                              dayName: trainingDays[dayIndex],
+                            }
+                          });
+                        }}
+                      >
+                      {/* Muscle Groups Header */}
+                      <Text className="text-lg text-center mb-2">
+                        {Array.from(
+                          new Set(
+                            routine.exerciseDetails.flatMap((detail) =>
+                              detail.exercise.muscleGroups.map((mg) => mg.description)
+                            )
                           )
-                        )
-                      ).join(" & ")}
-                    </Text>
+                        ).join(" & ")}
+                      </Text>
 
-                    {/* Exercise Details blocks */}
-                    {routine.exerciseDetails.map((exercise, index) => (
-                      <View key={index} className="flex-row mb-1 items-center">
-                        <Image source={image1} className="w-[70] h-[70] mr-2" />
+                      {/* Exercise Details blocks */}
+                      {routine.exerciseDetails.map((exercise, index) => (
+                        
+                          <View key={index} className="flex-row mb-1 items-center">
+                          <Image source={image1} className="w-[70] h-[70] mr-2" />
 
-                        <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[65px]"
-                          style={{ backgroundColor: "#e5e5e5" }}>
-                          {/* Exercise Details header */}
-                          <View
-                            className="flex-row mb-1 items-center rounded h-7"
-                            style={{ backgroundColor: "#0369a1" }}
-                          >
-                            <Text className="flex-[2] text-center font-semibold text-white">
-                              Exercise
-                            </Text>
-                            <Text className="flex-[1] text-center font-semibold text-white">
-                              Sets
-                            </Text>
-                            <Text className="flex-[1] text-center font-semibold text-white">
-                              Reps
-                            </Text>
-                          </View>
+                          <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[65px]"
+                            style={{ backgroundColor: "#e5e5e5" }}>
+                            {/* Exercise Details header */}
+                            <View
+                              className="flex-row mb-1 items-center rounded h-7"
+                              style={{ backgroundColor: "#0369a1" }}
+                            >
+                              <Text className="flex-[2] text-center font-semibold text-white">
+                                Exercise
+                              </Text>
+                              <Text className="flex-[1] text-center font-semibold text-white">
+                                Sets
+                              </Text>
+                              <Text className="flex-[1] text-center font-semibold text-white">
+                                Reps
+                              </Text>
+                            </View>
 
-                          {/* Data row */}
-                          <View className="flex-row items-center">
-                            <Text className="flex-[2] text-center">
-                              {exercise.exercise.name}
-                            </Text>
-                            <Text className="flex-[1] text-center">
-                              {exercise.sets}
-                            </Text>
-                            <Text className="flex-[1] text-center">
-                              {exercise.reps}
-                            </Text>
+                            {/* Data row */}
+                            <View className="flex-row items-center">
+                              <Text className="flex-[2] text-center">
+                                {exercise.exercise.name}
+                              </Text>
+                              <Text className="flex-[1] text-center">
+                                {exercise.sets}
+                              </Text>
+                              <Text className="flex-[1] text-center">
+                                {exercise.reps}
+                              </Text>
+                            </View>
                           </View>
                         </View>
-                      </View>
-                    ))}
+                      ))}
+                  </TouchableOpacity>
                   </View>
                 ))}
               </View>
             </>
           ) : (
             <>
+              <Text className="text-3xl font-bold text-center">
+                No Current Routine Found
+              </Text>
               <Text className="text-lg text-center mt-4">
-                No weekly routine found{'\n'}
                 Create a personalized weekly routine  
               </Text>
               <CustomButton
