@@ -214,3 +214,33 @@ export const getDayNames = (startDateStr: string, daysPerWeek: number) => {
 
     return scheduleDays;
 };
+
+/**
+ * Method to fetch a random video data by exerciseId via API call.
+ * @param exerciseId 
+ * @returns promise
+ */
+export const fetchVideoData = async (exerciseId: number) => {
+  try {
+    const response = await fetchWithTimeout(
+      `${endpoint}/video/random/${exerciseId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Fetching video data failed");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching video data:", error);
+    return null;
+  }
+};

@@ -19,6 +19,7 @@ type ExerciseDetail = {
   sets: number;
   reps: number;
   youtubeURL: string;
+  thumbnailURL: string;
 };
 
 type DailyRoutine = {
@@ -152,12 +153,18 @@ const GenerateRoutine = () => {
         const selectedExercises = fetchedExercises.sort(() => 0.5 - Math.random()).slice(0, 4);
 
         // Level 3: Create Exercise Details and assign selectedExercises to each
-        // TODO: Change youtubeURL to actual URL when ready
-        const exerciseDetails = selectedExercises.map((exercise: any) => ({
-          exerciseId: exercise.id,
-          sets: exercise.defaultSets,
-          reps: exercise.defaultReps,
-          youtubeURL: `https://youtube.com/watch?v=${exercise.exerciseId}`,
+        const exerciseDetails = await Promise.all(selectedExercises.map(async (exercise: any) => {
+
+          // API call: Get YouTube video data
+          const videoData = await generateRoutine.fetchVideoData(exercise.id);
+  
+          return {
+            exerciseId: exercise.id,
+            sets: exercise.defaultSets,
+            reps: exercise.defaultReps,
+            youtubeURL: videoData.data.url,        
+            thumbnailURL: videoData.data.thumbnail 
+          };
         }));
 
         // Bundle each Daily Routine with the assigned Exercise Details
@@ -321,8 +328,8 @@ const GenerateRoutine = () => {
                     {routine.exerciseDetails.map((exercise, index) => (
                       <View key={index} className="flex-row mb-1 items-center">
                         
-                        {/* TODO: Update to YouTube Thumbnails later on*/}
-                        <Image source={image1} className="w-[70] h-[70] mr-2" />
+                        {/* YouTube Thumbnails */}
+                        <Image source={{ uri: exercise.thumbnailURL }} className="w-[70] h-[70] mr-2" resizeMode="cover" />
 
                         <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[65px]" style={{ backgroundColor: "#e5e5e5" }}>
                           
