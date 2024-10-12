@@ -24,7 +24,6 @@ export const fetchCurrentWeeklyRoutine = async () => {
   
       if (!response.ok) {
         const errorData = await response.json();
-        console.error(errorData);
         throw new Error(errorData.error || "Fetching weekly routine failed");
       }
   
