@@ -1,23 +1,39 @@
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity} from "react-native";
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Alert} from "react-native";
 import React, { useEffect, useState } from "react";
 import { Image } from "react-native";
 import { Bar } from "react-native-progress";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { CustomButton } from "@/components";
 import BackButton from "../../components/BackButton";
 import * as currentWeekRoutine from "../controllers/currentWeekRoutine";
 import * as generateRoutine from "../controllers/generateRoutine";
 import { useAtom } from "jotai";
-import { currentWeekRoutineAtom } from "../../store";
+import { currentWeekRoutineAtom, profileAtom } from "../../store";
+import { useQuery } from "react-query";
+import { Profile } from "../controllers/profile";
 
 
 // Current Week's Routine Page Generation
 const CurrentWeeklyRoutine = () => {    
   const placeholderImage = require("../../assets/images/HomePagePic1.jpeg");
 
+  const [profile, setProfile] = useAtom(profileAtom);
   const [weeklyRoutine, setWeeklyRoutine] = useAtom(currentWeekRoutineAtom);
   const [trainingDays, setTrainingDays] = useState<string[]>([]);;
   const [loading, setLoading] = useState<boolean>(true);
+
+  // Query the profile information
+  const { refetch } = useQuery(
+    "profile", 
+    () => Profile.setProfileByToken(setProfile),
+  );
+
+  // Refetch most recent profile info when the page is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
 
   useEffect(() => {
     const getCurrentWeeklyRoutine = async () => {
@@ -48,7 +64,6 @@ const CurrentWeeklyRoutine = () => {
 
     getCurrentWeeklyRoutine();
   }, [setWeeklyRoutine]);
-
 
   // Helper function for displaying the date range
   const formatDateRange = (startDate: string, endDate: string): string => {
@@ -92,7 +107,23 @@ const CurrentWeeklyRoutine = () => {
   return totalDays > 0 ? completedDays / totalDays : 0;
   };
 
-  // PLaceholder for handling the update button
+  const handleGenerateRoutinePress = () => {
+    if (profile.bodyMeasurementId === null) {
+      Alert.alert("Provide your body measurements", 
+        "Sorry, we can't generate a tailored routine without knowing your body measurements.",
+        [{ text: "OK",
+            onPress: () => {
+              router.push("../bodyMeasurement"); 
+            }},
+          { text: "Cancel", style: "cancel"},]
+      );
+    } else {
+      router.push("../generateRoutine");
+    }
+  }
+
+
+  // Placeholder for handling the update button
   const handleUpdate = async () => {
     // TO-DO: Implement the logic!
     console.log("Update Pressed!");
@@ -245,7 +276,7 @@ const CurrentWeeklyRoutine = () => {
               <CustomButton
                 title="Generate Routine"
                 containerStyles="w-52 mt-4"
-                handlePress={() => router.push("../generateRoutine")} 
+                handlePress={handleGenerateRoutinePress} 
               />
           </>
           )}
