@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView, Touchable, TouchableOpacity} from "react-native";
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity} from "react-native";
 import React, { useEffect, useState } from "react";
 import { Image } from "react-native";
 import { Bar } from "react-native-progress";
@@ -9,56 +9,12 @@ import * as currentWeekRoutine from "../controllers/currentWeekRoutine";
 import * as generateRoutine from "../controllers/generateRoutine";
 import { useAtom } from "jotai";
 import { currentWeekRoutineAtom } from "../../store";
-import dailyRoutineDetail from "../dailyRoutine";
 
 
-// Helper function for displaying the date range
-const formatDateRange = (startDate: string, endDate: string): string => {
-    const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
-    const start = new Date(startDate).toLocaleDateString(undefined, options);
-    const end = new Date(endDate).toLocaleDateString(undefined, options);
-  
-    return `${start} - ${end}`;
-};
+// Current Week's Routine Page Generation
+const CurrentWeeklyRoutine = () => {    
+  const placeholderImage = require("../../assets/images/HomePagePic1.jpeg");
 
-// Helper function for calculating progress
-const calculateProgress = (trainingDays: string[], startDateStr: string, currentDate: Date): number => {
-  const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-  const startDate = new Date(startDateStr);
-  
-  let completedDays = 0;
-
-  // Map training days to their actual date
-  trainingDays.forEach(day => {
-    const dayIndex = dayNames.indexOf(day); 
-    
-    // Calculate the day of the week adjusted for Monday start
-    const currentDayIndex = (startDate.getDay() + 6) % 7;
-
-    // Calculate the date of the training day based on the start date
-    const trainingDayDate = new Date(startDate);
-    trainingDayDate.setDate(startDate.getDate() + ((dayIndex - currentDayIndex + 6) % 7));
-
-    // Check if the training day has passed
-    if (trainingDayDate < currentDate) {
-      completedDays += 1;
-    }
-  });
-
-  const totalDays = trainingDays.length;
-  return totalDays > 0 ? completedDays / totalDays : 0; // Prevent division by zero
-};
-
-// PLaceholder for handling the submit button
-const handleUpdate = async () => {
-    // TO-DO: Implement the logic!
-    console.log("Update Pressed!");
-};
-
-
-const CurrentWeeklyRoutine = () => {
-  const image1 = require("../../assets/images/HomePagePic1.jpeg");
-    
   const [weeklyRoutine, setWeeklyRoutine] = useAtom(currentWeekRoutineAtom);
   const [trainingDays, setTrainingDays] = useState<string[]>([]);;
   const [loading, setLoading] = useState<boolean>(true);
@@ -74,6 +30,14 @@ const CurrentWeeklyRoutine = () => {
           setTrainingDays(generateRoutine.getDayNames(data.startDate, data.daysPerWeek));
         } else {
           console.error("No associated weekly routine found!");
+           // Reset atom to default values if no routine is found
+           setWeeklyRoutine({
+            id: 0,
+            startDate: "",
+            endDate: "",
+            daysPerWeek: 0,
+            dailyRoutines: [],
+          });
         }
       } catch (error) {
         console.error("An error occurred while fetching current weekly routine", error);
@@ -85,7 +49,57 @@ const CurrentWeeklyRoutine = () => {
     getCurrentWeeklyRoutine();
   }, [setWeeklyRoutine]);
 
+
+  // Helper function for displaying the date range
+  const formatDateRange = (startDate: string, endDate: string): string => {
+    const options: Intl.DateTimeFormatOptions = { month: 'long', day: 'numeric' };
+    const start = new Date(startDate).toLocaleDateString(undefined, options);
+    const end = new Date(endDate).toLocaleDateString(undefined, options);
+
+    return `${start} - ${end}`;
+  };
+
+  // Helper function for calculating progress
+  const calculateProgress = (trainingDays: string[], startDateStr: string, currentDate: Date): number => {
+  // Function to remove time component from a date
+  const removeTime = (date: Date): Date => {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  };
+
+  const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+  const startDate = new Date(startDateStr);
+
+  let completedDays = 0;
+
+  // Map training days to their actual date
+  trainingDays.forEach(day => {
+    const dayIndex = dayNames.indexOf(day); 
+    
+    // Calculate the day of the week adjusted for Monday start
+    const startDayIndex = (startDate.getDay() + 6) % 7;
+
+    // Calculate the date of the training day based on the start date
+    const trainingDayDate = new Date(startDate);
+    trainingDayDate.setDate(startDate.getDate() + ((dayIndex - startDayIndex + 7) % 7));
+
+    // Check if the training day has passed
+    if (removeTime(trainingDayDate) < removeTime(currentDate)) {
+      completedDays += 1;
+    }
+  });
+
+  const totalDays = trainingDays.length;
+  return totalDays > 0 ? completedDays / totalDays : 0;
+  };
+
+  // PLaceholder for handling the update button
+  const handleUpdate = async () => {
+    // TO-DO: Implement the logic!
+    console.log("Update Pressed!");
+  };
+
   const progress = weeklyRoutine ? calculateProgress(trainingDays, weeklyRoutine.startDate, new Date()) : 0;
+
 
   return (
     <SafeAreaView className="flex-1">
@@ -142,9 +156,21 @@ const CurrentWeeklyRoutine = () => {
               <View className="w-full py-2 mt-4">
                 {weeklyRoutine.dailyRoutines.map((routine, dayIndex) => (
                   <View key={dayIndex} className="mb-5">
+
                     {/* Day header */}
                     <Text className="text-xl font-semibold mb-2 text-center mt-6">
                       Day {routine.dayNumber} - {trainingDays[dayIndex]}
+                    </Text>
+
+                    {/* Muscle Groups Header */}
+                    <Text className="text-lg text-center mb-2">
+                      {Array.from(
+                        new Set(
+                          routine.exerciseDetails.flatMap((detail) =>
+                            detail.exercise.muscleGroups.map((mg) => mg.description)
+                          )
+                        )
+                      ).join(" & ")}
                     </Text>
 
                     {/* Clickable area */}
@@ -159,22 +185,16 @@ const CurrentWeeklyRoutine = () => {
                           });
                         }}
                       >
-                      {/* Muscle Groups Header */}
-                      <Text className="text-lg text-center mb-2">
-                        {Array.from(
-                          new Set(
-                            routine.exerciseDetails.flatMap((detail) =>
-                              detail.exercise.muscleGroups.map((mg) => mg.description)
-                            )
-                          )
-                        ).join(" & ")}
-                      </Text>
-
+                      
                       {/* Exercise Details blocks */}
                       {routine.exerciseDetails.map((exercise, index) => (
-                        
-                          <View key={index} className="flex-row mb-1 items-center">
-                          <Image source={image1} className="w-[70] h-[70] mr-2" />
+                        <View key={index} className="flex-row mb-1 items-center">
+                          {/* YouTube Thumbnails */}
+                          <Image 
+                            source={exercise.thumbnailURL ? { uri: exercise.thumbnailURL } : placeholderImage} 
+                            className="w-[70] h-[70] mr-2" 
+                            resizeMode="cover" 
+                          />
 
                           <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[65px]"
                             style={{ backgroundColor: "#e5e5e5" }}>

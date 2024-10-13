@@ -60,12 +60,12 @@ export interface DailyRoutineProps {
     exerciseDetails: ExerciseDetailProps[];
 }
 
-
 export interface ExerciseDetailProps {
     id: number,
     sets: number;
     reps: number;
     youtubeURL: string;
+    thumbnailURL?: string; 
     exercise: ExerciseProps;
 }
 
