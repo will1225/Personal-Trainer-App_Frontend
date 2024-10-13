@@ -3,7 +3,7 @@ import { View, TouchableOpacity, Image } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 type RefreshIconProps = {
-  onRefresh: () => void
+  onRefresh: () => void;
   style?: any
   color?: string
 };

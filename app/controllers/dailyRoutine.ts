@@ -1,4 +1,4 @@
-import { fetchWithTimeout } from "./generateRoutine";
+import { fetchWithTimeout, fetchVideoData } from "./generateRoutine";
 
 // Production/Testing flag
 let production = false; // Set to true in Production
@@ -88,15 +88,26 @@ export const getDailyRoutine = async (id: number) => {
   }
 
   export const saveDailyRoutine = async (data: saveRoutine[]) => {
-    const response = await fetch('/api/exerciseDetails', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    });
+    try{
+      const response = await fetchWithTimeout(
+        `${endpoint}/routine/updateDailyRoutine`,
+        {
+          method: 'PUT',
+          headers: { 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify(data),
+        });
+    
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Error while saving daily routine:", errorData.error || "Fetching DailyRoutine failed");
+          return false; // Return false on error
+      }
   
-    if (!response.ok) {
-      console.error('Failed to update exercise details');
+      return true; // Return true on success
+    } catch (error) {
+      console.log(error);
+      return false;
     }
-
-    return response.ok
   }

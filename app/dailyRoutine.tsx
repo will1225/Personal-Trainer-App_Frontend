@@ -1,14 +1,15 @@
 import { View, Text, SafeAreaView, ScrollView, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
-import { Dropdown } from "react-native-element-dropdown";
-import { Image } from "react-native";
-import { CustomButton, FormField } from "@/components";
-import { Href, router } from "expo-router";
+import { Image, TouchableOpacity } from "react-native";
+import { CustomButton} from "@/components";
+import { Href, router, useLocalSearchParams } from "expo-router";
 import { getDailyRoutine, saveDailyRoutine } from "./controllers/dailyRoutine";
 import { getOneExercise } from "./controllers/dailyRoutine";
 import RefreshButton from '../components/RefreshButton'; 
 import VideoRefreshButton from '../components/VideoRefreshButton'; 
+import { fetchVideoData } from "./controllers/generateRoutine";
+import Modal from "react-native-modal";
 
 type ExerciseDetail = {
   exerciseDetailId: number;
@@ -17,6 +18,7 @@ type ExerciseDetail = {
   sets: number;
   reps: number;
   youtubeURL: string;
+  thumbnailURL: string;
   level: Level;
   requiredEquip: Equipment;
   workoutEnvs: WorkoutEnv[];
@@ -60,161 +62,195 @@ type saveRoutine = {
 // Daily Routine Detail Page
 const dailyRoutineDetail = () => {
   const image1 = require("../assets/images/HomePagePic1.jpeg");
-  const dailyRoutineId = 42;
-  const dayName = "Monday";
+  const params = useLocalSearchParams();
+  const dailyRoutineId = params.dailyRoutineId ? Number(params.dailyRoutineId) : 99;
+  const dayName = params.dayName ? Number(params.dayName) : "Friday";
 
   const [isSubmitting, setSubmitting] = useState(false);
   const [exerciseDetails, setExerciseDetails] = useState<ExerciseDetail[]>([]);
+  const [showModal, setShowModal] = useState(false);
+  const [modalContent, setModalContent] = useState<ExerciseDetail>();
   
   useEffect(() => {
     const fetchData = async () => {
         try {
-        const response = await getDailyRoutine(dailyRoutineId);
-      
-        response.forEach((detail: any) => {
-            
-            const level: Level = {
-                id: Number(detail.exercise.level.id),
-                description: detail.exercise.level.description
+            const response = await getDailyRoutine(dailyRoutineId);
+        
+            if (!response) {
+                console.log("Empty Data Received")
             }
 
-            const equip: Equipment = {
-                id: Number(detail.exercise.requiredEquipment.id),
-                description: detail.exercise.requiredEquipment.description
-            }
-
-            const newWorkoutEnv: WorkoutEnv[] = [];
-
-            detail.exercise.workoutEnvironments.forEach((e: any) => {
-                const newEnv = {
-                    id: Number(e.workoutEnvironment.id),
-                    description: e.workoutEnvironment.description,
+            response.forEach((detail: any) => {
+                const level: Level = {
+                    id: Number(detail.exercise.level.id),
+                    description: detail.exercise.level.description
                 }
-                newWorkoutEnv.push(newEnv);
-            })
 
-            const newMuscleGroup: MuscleGroup[] = [];
-
-            detail.exercise.muscleGroups.forEach((w: any) => {
-                const newEnv = {
-                    id: Number(w.muscleGroup.id),
-                    description: w.muscleGroup.description
+                const equip: Equipment = {
+                    id: Number(detail.exercise.requiredEquipment.id),
+                    description: detail.exercise.requiredEquipment.description
                 }
-                newMuscleGroup.push(newEnv);
-            })
-            
-            const newExerciseDetail: ExerciseDetail = {
-                exerciseDetailId: Number(detail.id),
-                exerciseId: Number(detail.execise.id),
-                exerciseName: detail.exercise.name,
-                sets: Number(detail.sets),
-                reps: Number(detail.reps),
-                youtubeURL: detail.youtubeURL,
-                level: level,
-                requiredEquip: equip,
-                workoutEnvs: newWorkoutEnv,
-                muscleGroups: newMuscleGroup
-            };
 
-            setExerciseDetails(prevDetails => [...prevDetails, newExerciseDetail]);
-        })
+                const newWorkoutEnv: WorkoutEnv[] = [];
+
+                detail.exercise.workoutEnvironments.forEach((e: any) => {
+                    const newEnv = {
+                        id: Number(e.workoutEnvironment.id),
+                        description: e.workoutEnvironment.description,
+                    }
+                    newWorkoutEnv.push(newEnv);
+                })
+
+                const newMuscleGroup: MuscleGroup[] = [];
+
+                detail.exercise.muscleGroups.forEach((w: any) => {
+                    const newEnv = {
+                        id: Number(w.muscleGroup.id),
+                        description: w.muscleGroup.description
+                    }
+                    newMuscleGroup.push(newEnv);
+                })
+                
+                console.log(detail.exercise.videos[0].url);
+                const newExerciseDetail: ExerciseDetail = {
+                    exerciseDetailId: Number(detail.id),
+                    exerciseId: Number(detail.exercise.id),
+                    exerciseName: detail.exercise.name,
+                    sets: Number(detail.sets),
+                    reps: Number(detail.reps),
+                    youtubeURL: detail.exercise.videos[0].url,
+                    thumbnailURL: detail.exercise.videos[0].thumbnail,
+                    level: level,
+                    requiredEquip: equip,
+                    workoutEnvs: newWorkoutEnv,
+                    muscleGroups: newMuscleGroup
+                };
+                
+                setExerciseDetails(prevDetails => [...prevDetails, newExerciseDetail]);
+            })
 
         } catch (error) {
-            console.error("Error fetching data", error);
+            console.error("Error fetching Daily Routine", error);
         }
     };  
     fetchData();
   }, []);
   
 
-  const refreshExercise = async (id: number) => {
+  const refreshExercise = async (exerciseDetailId: number) => {
 
-    if (id == 0) {
-        console.log("Refresh Exercise Pressed");
+    if (exerciseDetailId == 0) {
+        console.log("Refresh Exercise Button Pressed");
         return;
     }
 
     try {
-    const detail = exerciseDetails.find(detail => detail.exerciseDetailId === id);
+        const detail = exerciseDetails.find(detail => detail.exerciseDetailId === exerciseDetailId);
 
-    if (!detail) {
-        throw new Error(`Exercise detail with id ${id} not found`);
-    }
-
-    const muscleGroupIds = detail?.muscleGroups.map(muscle => muscle.id)
-
-    
-    const newExercise = await getOneExercise(
-        undefined,
-        undefined,
-        undefined,
-        detail.level.id,
-        undefined,
-        detail.workoutEnvs[0].id,
-        muscleGroupIds
-    )
-
-    console.log(newExercise);
-
-    const newYoutubeUrl = "https://www.youtube.com/watch?v="
-    
-    const level: Level = {
-        id: Number(newExercise.level.id),
-        description: newExercise.level.description
-    }
-
-    const equip: Equipment = {
-        id: Number(newExercise.requiredEquipment.id),
-        description: newExercise.requiredEquipment.description
-    }
-
-    const newWorkoutEnv: WorkoutEnv[] = [];
-
-    newExercise.workoutEnvironments.forEach((e: any) => {
-        const newEnv = {
-            id: Number(e.workoutEnvironment.id),
-            description: e.workoutEnvironment.description,
+        if (!detail) {
+            throw new Error(`Exercise detail with id ${exerciseDetailId} not found`);
         }
-        newWorkoutEnv.push(newEnv);
-    })
 
-    const newMuscleGroup: MuscleGroup[] = [];
-
-    newExercise.muscleGroups.forEach((w: any) => {
-        const newEnv = {
-            id: Number(w.muscleGroup.id),
-            description: w.muscleGroup.description
-        }
-        newMuscleGroup.push(newEnv);
-    })
-
-    const newExerciseDetail: ExerciseDetail = {
-        exerciseDetailId: id,
-        exerciseId: Number(newExercise.id),
-        exerciseName: newExercise.name,
-        sets: Number(newExercise.defaultSets),
-        reps: Number(newExercise.defaultReps),
-        youtubeURL: newYoutubeUrl,
-        level: level,
-        requiredEquip: equip,
-        workoutEnvs: newWorkoutEnv,
-        muscleGroups: newMuscleGroup
-    };
-
-    setExerciseDetails(prevDetails =>
-        prevDetails.map(d =>
-          d.exerciseDetailId === newExerciseDetail.exerciseDetailId ? newExerciseDetail : d
+        const muscleGroupIds = detail?.muscleGroups.map(muscle => muscle.id)
+        
+        const newExercise = await getOneExercise(
+            undefined,
+            undefined,
+            undefined,
+            detail.level.id,
+            undefined,
+            detail.workoutEnvs[0].id,
+            muscleGroupIds
         )
-    );
 
-        console.log("Refresh Exercise Pressed");
+        const level: Level = {
+            id: Number(newExercise.level.id),
+            description: newExercise.level.description
+        }
+
+        const equip: Equipment = {
+            id: Number(newExercise.requiredEquipment.id),
+            description: newExercise.requiredEquipment.description
+        }
+
+        const newWorkoutEnv: WorkoutEnv[] = [];
+
+        newExercise.workoutEnvironments.forEach((e: any) => {
+            const newEnv = {
+                id: Number(e.workoutEnvironment.id),
+                description: e.workoutEnvironment.description,
+            }
+            newWorkoutEnv.push(newEnv);
+        })
+
+        const newMuscleGroup: MuscleGroup[] = [];
+
+        newExercise.muscleGroups.forEach((w: any) => {
+            const newEnv = {
+                id: Number(w.muscleGroup.id),
+                description: w.muscleGroup.description
+            }
+            newMuscleGroup.push(newEnv);
+        })
+
+        
+        const newExerciseDetail: ExerciseDetail = {
+            exerciseDetailId: exerciseDetailId,
+            exerciseId: Number(newExercise.id),
+            exerciseName: newExercise.name,
+            sets: Number(newExercise.defaultSets),
+            reps: Number(newExercise.defaultReps),
+            youtubeURL: newExercise.videos[0].url,
+            thumbnailURL: newExercise.videos[0].thumbnail,
+            level: level,
+            requiredEquip: equip,
+            workoutEnvs: newWorkoutEnv,
+            muscleGroups: newMuscleGroup
+        };
+
+        setExerciseDetails(prevDetails =>
+            prevDetails.map(d =>
+            d.exerciseDetailId === newExerciseDetail.exerciseDetailId ? newExerciseDetail : d
+            )
+        );
+
+            console.log("Refresh Exercise Pressed");
 
     } catch (err) {
-        console.log(err);
+        console.log("Error: ", err);
     }
   }
 
-  const refreshVideo = async () => {
+  const refreshVideo = async (exerciseId: number) => {
+
+    const videoData = await fetchVideoData(exerciseId);
+    if (!videoData || videoData.length === 0) {
+        console.log("No video data found for this exercise");
+        return;
+    }
+
+    // Extract the new video URL and thumbnail from the fetched video data
+    const newVideoURL = videoData.data.url;
+    const newThumbnailURL = videoData.data.thumbnail;
+
+    console.log("Exercise ID:", exerciseId);
+    console.log(exerciseDetails[0]);
+
+    // Update only the youtubeURL and thumbnailURL in the state
+    setExerciseDetails(prevDetails =>
+        prevDetails.map(detail =>
+            detail.exerciseId === exerciseId
+                ? {
+                      ...detail,                // Spread the existing details
+                      youtubeURL: newVideoURL,   // Update youtubeURL
+                      thumbnailURL: newThumbnailURL // Update thumbnailURL
+                  }
+                : detail // If not the same exerciseDetailId, leave unchanged
+        )
+    );
+    console.log("after");
+    console.log(exerciseDetails[0]);
+
     console.log("Refresh Video Pressed");
   }
 
@@ -237,25 +273,32 @@ const dailyRoutineDetail = () => {
             data.push(dailyRoutineData);
         })
         
-  
         // API call
         const result = await saveDailyRoutine(data);
 
-  
         if (result) {
-          Alert.alert("Success", "Daily Routine saved successfully!");
-          router.push("/(tabs)/three" as Href<string>);
+            Alert.alert("Success", "Daily Routine saved successfully!");
+            router.push("/(tabs)/three" as Href<string>);
+        } else {
+            Alert.alert("Update Daily Routine Failed");
         }
 
       } catch (error) {
         console.error("Error saving routine:", error);
         Alert.alert("Error", "An error occurred while saving the routine.");
+        
       } finally {
         setSubmitting(false);
       }
   }
 
-  
+  const displayModal = (exerciseDetailId: any) => {
+    const detail = exerciseDetails.find(detail => detail.exerciseDetailId === exerciseDetailId);
+    console.log(detail);
+    setModalContent(detail);
+    setShowModal(true);
+  };
+
   return (
     <SafeAreaView className="flex-1">
       <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>
@@ -313,7 +356,7 @@ const dailyRoutineDetail = () => {
 
             <View className="w-full flex-row text-left mt-2" >    
                 <VideoRefreshButton 
-                    onRefresh={refreshVideo}
+                    onRefresh={()=>{}}
                     style= {{
                         paddingTop: 2
                      }}
@@ -330,7 +373,7 @@ const dailyRoutineDetail = () => {
                     <View className="relative mr-2">
                         
                         <VideoRefreshButton 
-                            onRefresh={refreshVideo}
+                            onRefresh={() => refreshVideo(item.exerciseId)}
                             style={{
                                 position: 'absolute',
                                 top: 2, // Adjust this value to create enough space between icons
@@ -339,13 +382,13 @@ const dailyRoutineDetail = () => {
                                 borderRadious: 10
                             }} 
                         />
-                        <Image source={image1} className="w-[70] h-[70] z-0 relative" />
+                        <Image source={{ uri: item.thumbnailURL }} className="w-[75] min-h-[95px] z-0 relative" />
                     </View>
 
-                    <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[65px]" style={{ backgroundColor: "#e5e5e5" }}>
+                    <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[95px]" style={{ backgroundColor: "#e5e5e5" }}>
                     
                         {/* Exercise Details header*/}
-                        <View className="flex-row mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
+                        <View className="flex-row flex-[1] mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
                             <Text className="flex-[2] text-center font-semibold text-white">
                             Exercise
                             </Text>
@@ -356,8 +399,7 @@ const dailyRoutineDetail = () => {
                             Reps
                             </Text>
                         </View>
-
-                        <View className="flex-row items-center">
+                        <View className="flex-row flex-[3] items-center">
                             <Text className="flex-[2] text-center">
                                 {item.exerciseName}
                             </Text>
@@ -367,31 +409,57 @@ const dailyRoutineDetail = () => {
                             <Text className="flex-[1] text-center">
                                 {item.reps}
                             </Text>
-                          </View>
+                        </View>
+                        <TouchableOpacity className="flex-[1]" onPress={() => displayModal(item.exerciseDetailId)}>
+                                <Text style={{ color: '#0369a1' }} >See Exercise Detail</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
-
                 
             ))}
             
                 <View className="mt-2 items-center">
-                    <Text className="font-bold text-lg text-center mb-4">
-                        Confirm your routine for this week!
-                    </Text>
                     <CustomButton
                         title="Save"
                         handlePress={handleSaveRoutine}
                         containerStyles="w-52 bg-green-800"
                         isLoading={isSubmitting}
                     />
-                    <Text className="font-psemibold text-base text-center px-8 mt-4">
-                        Don't forget to update your results in Current Week Routine after one week!
-                    </Text>
                 </View>
 
-           
-
-
+                <Modal
+                    isVisible={showModal}
+                    onBackdropPress={() => setShowModal(false)}
+                    >
+                <View style={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>
+                        {modalContent?.exerciseName}
+                    </Text>
+                    <Text className="text-lg font-pregular">
+                        Required Equip: {modalContent?.requiredEquip.description}
+                    </Text>
+                    <Text className="text-lg font-pregular">
+                        Sets: {modalContent?.sets}
+                    </Text>
+                    <Text className="text-lg font-pregular">
+                        Reps: {modalContent?.reps}
+                    </Text>
+                    <Text className="text-lg font-pregular">
+                        Level: {modalContent?.level.description}
+                    </Text>
+                    <Text className="text-lg font-pregular">
+                        Env: {modalContent?.workoutEnvs.map(env => env.description).join(', ')}
+                    </Text>
+                    <Text className="text-lg font-pregular">
+                        Part: {modalContent?.muscleGroups.map(muscle => muscle.description).join(', ')}
+                    </Text>
+                
+                    <CustomButton
+                    title="Close"
+                    handlePress={() => setShowModal(false)}
+                    />
+                </View>
+                </Modal>
 
         </View>
       </ScrollView>
