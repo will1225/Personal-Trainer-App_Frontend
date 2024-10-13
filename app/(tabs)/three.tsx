@@ -109,7 +109,7 @@ const CurrentWeeklyRoutine = () => {
         
           {loading ? ( 
             <Text className="text-lg text-center mt-4">Loading...</Text>
-          ) : weeklyRoutine ? (
+          ) : weeklyRoutine.id != 0 ? (
             <>
               <Text className="text-3xl font-bold text-center">
                 Current Week's Routine
