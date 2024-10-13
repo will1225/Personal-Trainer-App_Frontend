@@ -10,6 +10,8 @@ import RefreshButton from '../components/RefreshButton';
 import VideoRefreshButton from '../components/VideoRefreshButton'; 
 import { fetchVideoData } from "./controllers/generateRoutine";
 import Modal from "react-native-modal";
+import YoutubeVideoPlayer from "../components/YoutubeVideoPlayer";
+import YouTubeVideoPlayer from "../components/YoutubeVideoPlayer";
 
 type ExerciseDetail = {
   exerciseDetailId: number;
@@ -63,13 +65,15 @@ type saveRoutine = {
 const dailyRoutineDetail = () => {
   const image1 = require("../assets/images/HomePagePic1.jpeg");
   const params = useLocalSearchParams();
-  const dailyRoutineId = params.dailyRoutineId ? Number(params.dailyRoutineId) : 99;
-  const dayName = params.dayName ? Number(params.dayName) : "Friday";
+  const dailyRoutineId = params.dailyRoutineId ? Number(params.dailyRoutineId): 0;
+  const dayName = params.dayName
 
   const [isSubmitting, setSubmitting] = useState(false);
   const [exerciseDetails, setExerciseDetails] = useState<ExerciseDetail[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState<ExerciseDetail>();
+  const [showVideoModal, setShowVideoModel] = useState(false);
+  const [detailIdforVideo, setDetailIdforVideo] = useState<number>();
   
   useEffect(() => {
     const fetchData = async () => {
@@ -111,7 +115,6 @@ const dailyRoutineDetail = () => {
                     newMuscleGroup.push(newEnv);
                 })
                 
-                console.log(detail.exercise.videos[0].url);
                 const newExerciseDetail: ExerciseDetail = {
                     exerciseDetailId: Number(detail.id),
                     exerciseId: Number(detail.exercise.id),
@@ -213,7 +216,6 @@ const dailyRoutineDetail = () => {
             d.exerciseDetailId === newExerciseDetail.exerciseDetailId ? newExerciseDetail : d
             )
         );
-
             console.log("Refresh Exercise Pressed");
 
     } catch (err) {
@@ -266,6 +268,7 @@ const dailyRoutineDetail = () => {
                 sets: detail.sets,
                 reps: detail.reps,
                 youtubeURL: detail.youtubeURL,
+                thumbnailURL: detail.thumbnailURL,
                 dailyRoutineId: dailyRoutineId,
                 exerciseId: detail.exerciseId
             }
@@ -298,6 +301,11 @@ const dailyRoutineDetail = () => {
     setModalContent(detail);
     setShowModal(true);
   };
+
+  const handleYoutubeVideo = (exerciseDetailId: any) => {
+    setDetailIdforVideo(exerciseDetailId);
+    setShowVideoModel(true)
+  }
 
   return (
     <SafeAreaView className="flex-1">
@@ -368,7 +376,7 @@ const dailyRoutineDetail = () => {
             </View>
 
             {exerciseDetails.map((item, index) => (
-            
+                
                 <View key={item.exerciseDetailId} className="w-full flex-row">
                     <View className="relative mr-2">
                         
@@ -382,7 +390,12 @@ const dailyRoutineDetail = () => {
                                 borderRadious: 10
                             }} 
                         />
-                        <Image source={{ uri: item.thumbnailURL }} className="w-[75] min-h-[95px] z-0 relative" />
+                        <TouchableOpacity onPress={() => handleYoutubeVideo(item.exerciseDetailId)}>
+                            <Image 
+                                source={{ uri: item.thumbnailURL }} 
+                                className="w-[75] min-h-[95px] z-1 relative" 
+                            />
+                        </TouchableOpacity>
                     </View>
 
                     <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[95px]" style={{ backgroundColor: "#e5e5e5" }}>
@@ -455,10 +468,30 @@ const dailyRoutineDetail = () => {
                     </Text>
                 
                     <CustomButton
-                    title="Close"
-                    handlePress={() => setShowModal(false)}
+                        title="Close"
+                        handlePress={() => setShowModal(false)}
                     />
                 </View>
+                </Modal>
+                    <Modal
+                        isVisible={showVideoModal}
+                        onBackdropPress={() => setShowVideoModel(false)}
+                    >
+                    <View style={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}>
+                        <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>
+                            {modalContent?.exerciseName}
+                        </Text>
+                       
+                       <YouTubeVideoPlayer 
+                        youtubeURL={exerciseDetails.find(
+                            detail => detail.exerciseDetailId === detailIdforVideo)?.youtubeURL
+                            }/>
+
+                        <CustomButton
+                            title="Close"
+                            handlePress={() => setShowVideoModel(false)}
+                        />
+                    </View>
                 </Modal>
 
         </View>
@@ -468,19 +501,3 @@ const dailyRoutineDetail = () => {
 };
 
 export default dailyRoutineDetail;
-
-
-{/* For Reference
-            <Text>YouTube URL: {item.youtubeURL}</Text>
-            <Text>Level: {item.level.description}</Text>
-            <Text>Required Equipment: {item.requiredEquip.description}</Text>
-            <Text>Workout Environments:</Text>
-            {item.workoutEnvs.map((env) => (
-                <Text key={env.id}> {env.description}</Text>
-            ))}
-
-            <Text>Muscle Groups:</Text>
-            {item.muscleGroups.map((group) => (
-                <Text key={group.id}> {group.description}</Text>
-            ))}
-*/}

@@ -75,7 +75,7 @@ export const getDailyRoutine = async (id: number) => {
       
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.error || "Fetching DailyRoutine failed");
+            throw new Error(errorData.error || "Fetching new Exercise failed");
           }
       
           const data = await response.json();
@@ -101,7 +101,7 @@ export const getDailyRoutine = async (id: number) => {
     
         if (!response.ok) {
           const errorData = await response.json();
-          console.error("Error while saving daily routine:", errorData.error || "Fetching DailyRoutine failed");
+          console.error("Error while saving daily routine:", errorData.error || "Saving Daily Routine failed");
           return false; // Return false on error
       }
   
