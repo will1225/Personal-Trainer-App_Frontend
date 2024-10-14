@@ -6,7 +6,6 @@ let production = false; // Set to true in Production
 let endpoint = production ? `https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev` : `http://10.10.4.173:8080`; // Replace with your own ip4 address for test
 
 
-
 export class CurrentWeekRoutine {
 
     // Method to fetch Current Weekly Routine from the backend
@@ -23,6 +22,8 @@ export class CurrentWeekRoutine {
         }
       );
 
+      const res = await response.json();
+
       if (!response.ok) {
         // Check for 404 status and reset atom to default values if no routine found
         if (response.status === 404) {
@@ -34,19 +35,12 @@ export class CurrentWeekRoutine {
             dailyRoutines: [],
           });
         }
-      
-        const res = await response.json();
         throw new Error(res.error || "Fetching weekly routine failed");
       }
 
-      const weeklyRoutine = await response.json();
-      setWeeklyRoutine(weeklyRoutine.data)
+      setWeeklyRoutine(res.data)
     } catch (error) {
       console.error("Error fetching current week's routine:", error);
     }
   };
-
-
-
-
 }
