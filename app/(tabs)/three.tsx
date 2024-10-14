@@ -1,16 +1,14 @@
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Alert} from "react-native";
-import React, { useEffect, useState } from "react";
-import { Image } from "react-native";
+import React from "react";
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Alert, Image} from "react-native";
 import { Bar } from "react-native-progress";
-import { router, useFocusEffect } from "expo-router";
+import { router } from "expo-router";
 import { CustomButton } from "@/components";
 import BackButton from "../../components/BackButton";
-import * as currentWeekRoutine from "../controllers/currentWeekRoutine";
+import { CurrentWeekRoutine } from "../controllers/currentWeekRoutine";
 import * as generateRoutine from "../controllers/generateRoutine";
 import { useAtom } from "jotai";
 import { currentWeekRoutineAtom, profileAtom } from "../../store";
 import { useQuery } from "react-query";
-import { Profile } from "../controllers/profile";
 
 
 // Current Week's Routine Page Generation
@@ -19,51 +17,9 @@ const CurrentWeeklyRoutine = () => {
 
   const [profile, setProfile] = useAtom(profileAtom);
   const [weeklyRoutine, setWeeklyRoutine] = useAtom(currentWeekRoutineAtom);
-  const [trainingDays, setTrainingDays] = useState<string[]>([]);;
-  const [loading, setLoading] = useState<boolean>(true);
 
-  // Query the profile information
-  const { refetch } = useQuery(
-    "profile", 
-    () => Profile.setProfileByToken(setProfile),
-  );
 
-  // Refetch most recent profile info when the page is focused
-  useFocusEffect(
-    React.useCallback(() => {
-      refetch();
-    }, [refetch])
-  );
-
-  useEffect(() => {
-    const getCurrentWeeklyRoutine = async () => {
-      setLoading(true);
-      try {
-        const data = await currentWeekRoutine.fetchCurrentWeeklyRoutine();
-        if (data) {
-          setWeeklyRoutine(data);
-        
-          setTrainingDays(generateRoutine.getDayNames(data.startDate, data.daysPerWeek));
-        } else {
-          console.error("No associated weekly routine found!");
-           // Reset atom to default values if no routine is found
-           setWeeklyRoutine({
-            id: 0,
-            startDate: "",
-            endDate: "",
-            daysPerWeek: 0,
-            dailyRoutines: [],
-          });
-        }
-      } catch (error) {
-        console.error("An error occurred while fetching current weekly routine", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getCurrentWeeklyRoutine();
-  }, [setWeeklyRoutine]);
+  const { isLoading, isError } = useQuery('currentWeekRoutine', () => CurrentWeekRoutine.setCurrentWeekRoutine(setWeeklyRoutine));
 
   // Helper function for displaying the date range
   const formatDateRange = (startDate: string, endDate: string): string => {
@@ -76,37 +32,38 @@ const CurrentWeeklyRoutine = () => {
 
   // Helper function for calculating progress
   const calculateProgress = (trainingDays: string[], startDateStr: string, currentDate: Date): number => {
-  // Function to remove time component from a date
-  const removeTime = (date: Date): Date => {
-    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  };
+    // Function to remove time component from a date
+    const removeTime = (date: Date): Date => {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    };
 
-  const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-  const startDate = new Date(startDateStr);
+    const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const startDate = new Date(startDateStr);
 
-  let completedDays = 0;
+    let completedDays = 0;
 
-  // Map training days to their actual date
-  trainingDays.forEach(day => {
-    const dayIndex = dayNames.indexOf(day); 
-    
-    // Calculate the day of the week adjusted for Monday start
-    const startDayIndex = (startDate.getDay() + 6) % 7;
+    // Map training days to their actual date
+    trainingDays.forEach(day => {
+      const dayIndex = dayNames.indexOf(day); 
+      
+      // Calculate the day of the week adjusted for Monday start
+      const startDayIndex = (startDate.getDay() + 6) % 7;
 
-    // Calculate the date of the training day based on the start date
-    const trainingDayDate = new Date(startDate);
-    trainingDayDate.setDate(startDate.getDate() + ((dayIndex - startDayIndex + 7) % 7));
+      // Calculate the date of the training day based on the start date
+      const trainingDayDate = new Date(startDate);
+      trainingDayDate.setDate(startDate.getDate() + ((dayIndex - startDayIndex + 7) % 7));
 
-    // Check if the training day has passed
-    if (removeTime(trainingDayDate) < removeTime(currentDate)) {
-      completedDays += 1;
-    }
+      // Check if the training day has passed
+      if (removeTime(trainingDayDate) < removeTime(currentDate)) {
+        completedDays += 1;
+      }
   });
 
   const totalDays = trainingDays.length;
   return totalDays > 0 ? completedDays / totalDays : 0;
   };
 
+  /** Handle Button Press Functions */
   const handleGenerateRoutinePress = () => {
     if (profile.bodyMeasurementId === null) {
       Alert.alert("Provide your body measurements", 
@@ -122,13 +79,12 @@ const CurrentWeeklyRoutine = () => {
     }
   }
 
-
-  // Placeholder for handling the update button
   const handleUpdate = async () => {
     // TO-DO: Implement the logic!
     console.log("Update Pressed!");
   };
 
+  const trainingDays = weeklyRoutine ? generateRoutine.getDayNames(weeklyRoutine.startDate, weeklyRoutine.daysPerWeek) : [];
   const progress = weeklyRoutine ? calculateProgress(trainingDays, weeklyRoutine.startDate, new Date()) : 0;
 
 
@@ -138,7 +94,7 @@ const CurrentWeeklyRoutine = () => {
         <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-28">
           <BackButton />
         
-          {loading ? ( 
+          { isLoading ? ( 
             <Text className="text-lg text-center mt-4">Loading...</Text>
           ) : weeklyRoutine.id != 0 ? (
             <>
