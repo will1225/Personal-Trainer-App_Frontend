@@ -6,7 +6,7 @@ import { CustomButton } from "@/components";
 import BackButton from "../../components/BackButton";
 import { CurrentWeekRoutine } from "../controllers/currentWeekRoutine";
 import * as generateRoutine from "../controllers/generateRoutine";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { currentWeekRoutineAtom, profileAtom } from "../../store";
 import { useQuery } from "react-query";
 
@@ -15,11 +15,11 @@ import { useQuery } from "react-query";
 const CurrentWeeklyRoutine = () => {    
   const placeholderImage = require("../../assets/images/HomePagePic1.jpeg");
 
-  const [profile, setProfile] = useAtom(profileAtom);
+  const profile = useAtomValue(profileAtom);
   const [weeklyRoutine, setWeeklyRoutine] = useAtom(currentWeekRoutineAtom);
 
 
-  const { isLoading, isError } = useQuery('currentWeekRoutine', () => CurrentWeekRoutine.setCurrentWeekRoutine(setWeeklyRoutine));
+  const { isLoading, isFetching } = useQuery('currentWeekRoutine', () => CurrentWeekRoutine.setCurrentWeekRoutine(setWeeklyRoutine));
 
   // Helper function for displaying the date range
   const formatDateRange = (startDate: string, endDate: string): string => {
@@ -94,7 +94,7 @@ const CurrentWeeklyRoutine = () => {
         <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-28">
           <BackButton />
         
-          { isLoading ? ( 
+          { isLoading || isFetching ? ( 
             <Text className="text-lg text-center mt-4">Loading...</Text>
           ) : weeklyRoutine.id != 0 ? (
             <>
