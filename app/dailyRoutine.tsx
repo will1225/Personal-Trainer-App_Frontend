@@ -65,7 +65,6 @@ type saveRoutine = {
 
 // Daily Routine Detail Page
 const dailyRoutineDetail = () => {
-  const image1 = require("../assets/images/HomePagePic1.jpeg");
   const params = useLocalSearchParams();
   const dailyRoutineId = params.dailyRoutineId ? Number(params.dailyRoutineId): 0;
   const dayName = params.dayName
@@ -237,9 +236,6 @@ const dailyRoutineDetail = () => {
     const newVideoURL = videoData.data.url;
     const newThumbnailURL = videoData.data.thumbnail;
 
-    console.log("Exercise ID:", exerciseId);
-    console.log(exerciseDetails[0]);
-
     // Update only the youtubeURL and thumbnailURL in the state
     setExerciseDetails(prevDetails =>
         prevDetails.map(detail =>
@@ -252,9 +248,6 @@ const dailyRoutineDetail = () => {
                 : detail // If not the same exerciseDetailId, leave unchanged
         )
     );
-    console.log("after");
-    console.log(exerciseDetails[0]);
-
     console.log("Refresh Video Pressed");
   }
 
