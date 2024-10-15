@@ -6,8 +6,8 @@ import { CustomButton } from "@/components";
 import BackButton from "../../components/BackButton";
 import { CurrentWeekRoutine } from "../controllers/currentWeekRoutine";
 import * as generateRoutine from "../controllers/generateRoutine";
-import { useAtom, useAtomValue } from "jotai";
-import { currentWeekRoutineAtom, profileAtom } from "../../store";
+import { useAtom } from "jotai";
+import { currentWeekRoutineAtom } from "../../store";
 import { useQuery } from "react-query";
 
 
@@ -15,9 +15,7 @@ import { useQuery } from "react-query";
 const CurrentWeeklyRoutine = () => {    
   const placeholderImage = require("../../assets/images/HomePagePic1.jpeg");
 
-  const profile = useAtomValue(profileAtom);
   const [weeklyRoutine, setWeeklyRoutine] = useAtom(currentWeekRoutineAtom);
-
 
   const { isLoading, isFetching } = useQuery('currentWeekRoutine', () => CurrentWeekRoutine.setCurrentWeekRoutine(setWeeklyRoutine));
 
@@ -65,12 +63,12 @@ const CurrentWeeklyRoutine = () => {
 
   /** Handle Button Press Functions */
   const handleGenerateRoutinePress = () => {
-    if (profile.bodyMeasurementId === null) {
-      Alert.alert("Provide your body measurements", 
-        "Sorry, we can't generate a tailored routine without knowing your body measurements.",
+    if (weeklyRoutine.id != 0) {
+      Alert.alert("Create a new routine?", 
+        "Generating a new routine will replace the current one.",
         [{ text: "OK",
             onPress: () => {
-              router.push("../bodyMeasurement"); 
+              router.push("../generateRoutine"); 
             }},
           { text: "Cancel", style: "cancel"},]
       );
