@@ -48,14 +48,14 @@ export default function TabLayout() {
           headerShown: false
         }}
       />
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="two"
         options={{
           title: 'Profile Entry',
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
-      />
+      /> */}
       <Tabs.Screen
         name="three"
         options={{

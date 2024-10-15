@@ -57,7 +57,11 @@ const SignIn = () => {
       // API call
       const result = await user.loginUser(email, password);
       if (result.status) {
-        router.replace({ pathname: "/(tabs)/home" });
+        if (!result.data.gender) {
+          router.replace("/getStarted");
+        } else {
+          router.replace({ pathname: "/(tabs)/home" });
+        }
       }
     } catch (error: any) {
       Alert.alert("Error", error.message);

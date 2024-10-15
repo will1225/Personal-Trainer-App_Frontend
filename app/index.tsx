@@ -36,8 +36,14 @@ const LandingPage = () => {
             );
         
             if (response.ok) {
-              console.log("Token verified");
-              router.replace({ pathname: "/(tabs)/home" });
+              const data = await response.json();
+
+              if (!data.data.gender) {
+                router.replace("/getStarted");
+              } else {
+                console.log("Token verified");
+                router.replace({ pathname: "/(tabs)/home" });
+              }
             }
           } catch (error: any) {
             throw new Error(error.message || "Something went wrong");    

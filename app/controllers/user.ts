@@ -223,8 +223,12 @@ export const facebookLogin = async (error: any, result: LoginResult) => {
         // Direct to Home page if succeeded
         if (result.status) {
           saveBackendToken(response);          
-          Alert.alert("Success", "Logged in with Facebook");
-          router.replace({ pathname: "/(tabs)/home" });
+          if (!result.data.gender) {
+            router.replace("/getStarted");
+          } else {
+            Alert.alert("Success", "Logged in with Facebook");
+            router.replace({ pathname: "/(tabs)/home" });
+          }
         } else {
           throw new Error(result.error || "Error logging in with provider");
         }

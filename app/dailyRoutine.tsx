@@ -13,6 +13,8 @@ import Modal from "react-native-modal";
 import YoutubeVideoPlayer from "../components/YoutubeVideoPlayer";
 import YouTubeVideoPlayer from "../components/YoutubeVideoPlayer";
 
+import { openAuthSessionAsync, openBrowserAsync } from "expo-web-browser";
+
 type ExerciseDetail = {
   exerciseDetailId: number;
   exerciseId: number;
@@ -390,7 +392,10 @@ const dailyRoutineDetail = () => {
                                 borderRadious: 10
                             }} 
                         />
-                        <TouchableOpacity onPress={() => handleYoutubeVideo(item.exerciseDetailId)}>
+                        <TouchableOpacity onPress={() => {
+                            //handleYoutubeVideo(item.exerciseDetailId)
+                            openBrowserAsync(item.youtubeURL);
+                        }}>
                             <Image 
                                 source={{ uri: item.thumbnailURL }} 
                                 className="w-[75] min-h-[95px] z-1 relative" 
@@ -482,10 +487,10 @@ const dailyRoutineDetail = () => {
                             {modalContent?.exerciseName}
                         </Text>
                        
-                       <YouTubeVideoPlayer 
+                       {/* <YouTubeVideoPlayer 
                         youtubeURL={exerciseDetails.find(
                             detail => detail.exerciseDetailId === detailIdforVideo)?.youtubeURL
-                            }/>
+                            }/> */}
 
                         <CustomButton
                             title="Close"

@@ -18,7 +18,7 @@ import {
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useAtom } from "jotai";
 import { profileAtom } from "@/store";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import { Profile } from "./controllers/profile";
 
 
@@ -34,6 +34,8 @@ const BodyMeasurement = () => {
   const femaleTricep = require("../assets/images/tricepFemale.jpg");
   const femaleSuprailiac = require("../assets/images/suprailiacFemale.jpg");
   const femaleThigh = require("../assets/images/thighFemale.jpg");
+
+  const queryClient = useQueryClient();
 
   // State variables
   const [isSubmitting, setSubmitting] = useState(false);
@@ -55,6 +57,7 @@ const BodyMeasurement = () => {
   });
 
   // Get gender from the profile atom
+  //????????????????????????????????? Already cached, just invalidate
   useQuery({
     queryKey: ["profile"],
     queryFn: async () => Profile.setProfileByToken(setProfile)
@@ -137,6 +140,12 @@ const BodyMeasurement = () => {
       );
 
       if (result.status) {
+        //Invalidate the profile to refetch
+        console.log("Invalidating profile");
+        queryClient.invalidateQueries({
+          queryKey: ['profile']
+        });
+        //////////////////////////////////
         router.replace({
           pathname: "/fitnessResult",
           params: { measurementId: result.data.id },
