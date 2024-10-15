@@ -75,10 +75,14 @@ const dailyRoutineDetail = () => {
   const [modalContent, setModalContent] = useState<ExerciseDetail>();
   const [showVideoModal, setShowVideoModel] = useState(false);
   const [detailIdforVideo, setDetailIdforVideo] = useState<number>();
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
   
   useEffect(() => {
     const fetchData = async () => {
         try {
+            setIsLoading(true);
             const response = await getDailyRoutine(dailyRoutineId);
         
             if (!response) {
@@ -135,6 +139,8 @@ const dailyRoutineDetail = () => {
 
         } catch (error) {
             console.error("Error fetching Daily Routine", error);
+        } finally {
+            setIsLoading(false);
         }
     };  
     fetchData();
@@ -218,7 +224,7 @@ const dailyRoutineDetail = () => {
             )
         );
             console.log("Refresh Exercise Pressed");
-
+        setIsChanged(true);
     } catch (err) {
         console.log("Error: ", err);
     }
@@ -248,6 +254,7 @@ const dailyRoutineDetail = () => {
                 : detail // If not the same exerciseDetailId, leave unchanged
         )
     );
+    setIsChanged(true);
     console.log("Refresh Video Pressed");
   }
 
@@ -303,9 +310,16 @@ const dailyRoutineDetail = () => {
   }
 
   return (
+   
     <SafeAreaView className="flex-1">
       <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>
         <BackButton />
+    { isLoading ? (
+         <View className="w-full flex justify-center items-center h-full my-4 px-4 mt-16">
+         <Text className="text-xl text-center">Loading...</Text>
+       </View>
+    ) : (
+        <>
         <View className="w-full flex justify-center items-center h-full my-4 px-4 mt-16">
           <Text className="text-3xl font-bold text-center">
             Daily Routine Detail
@@ -314,48 +328,48 @@ const dailyRoutineDetail = () => {
           <Text className="text-lg font-pregular text-left px-4 mt-4 mb-8">
             {dayName}
           </Text>
-
-          <View className="w-full flex-row text-left" >    
-                <RefreshButton onRefresh={() => refreshExercise(0)} />
-                <Text className="pb-0 pt-1">
-                    Swap an Exercise
-                </Text>
-          </View>
-
-          <View className="flex-row items-center rounded h-6" >
-            <View className="flex-[6] flex-row mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
-                    <Text className="flex-[3] text-center font-semibold text-white">
-                        Exercise
-                    </Text>
-                    <Text className="flex-[1] text-center font-semibold text-white">
-                        Sets
-                    </Text>
-                    <Text className="flex-[1] text-center font-semibold text-white">
-                        Reps
+         
+            <View className="w-full flex-row text-left" >    
+                    <RefreshButton onRefresh={() => refreshExercise(0)} />
+                    <Text className="pb-0 pt-1">
+                        Swap an Exercise
                     </Text>
             </View>
-            <View className="flex-[1]"></View>
-          </View>
 
-          {exerciseDetails.map((item) => (
-            <View key={item.exerciseDetailId} className="w-full py-1">
-                {/* Data row */}
-                <View className="flex-row items-center h-10">
-                    <Text className="flex-[3] text-center">
-                        {item.exerciseName}
-                    </Text>
-                    <Text className="flex-[1] text-center">
-                        {item.sets}
-                    </Text>
-                    <Text className="flex-[1] text-center">
-                        {item.reps}
-                    </Text>
-                    <View className="flex-[1]">    
-                        <RefreshButton  onRefresh={() => refreshExercise(item.exerciseDetailId)} />
+            <View className="flex-row items-center rounded h-6" >
+                <View className="flex-[6] flex-row mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
+                        <Text className="flex-[3] text-center font-semibold text-white">
+                            Exercise
+                        </Text>
+                        <Text className="flex-[1] text-center font-semibold text-white">
+                            Sets
+                        </Text>
+                        <Text className="flex-[1] text-center font-semibold text-white">
+                            Reps
+                        </Text>
+                </View>
+                <View className="flex-[1]"></View>
+            </View>
+
+            {exerciseDetails.map((item) => (
+                <View key={item.exerciseDetailId} className="w-full py-1">
+                    {/* Data row */}
+                    <View className="flex-row items-center h-10">
+                        <Text className="flex-[3] text-center">
+                            {item.exerciseName}
+                        </Text>
+                        <Text className="flex-[1] text-center">
+                            {item.sets}
+                        </Text>
+                        <Text className="flex-[1] text-center">
+                            {item.reps}
+                        </Text>
+                        <View className="flex-[1]">    
+                            <RefreshButton  onRefresh={() => refreshExercise(item.exerciseDetailId)} />
+                        </View>
                     </View>
                 </View>
-            </View>
-        ))}
+                ))}
 
             <View className="w-full flex-row text-left mt-2" >    
                 <VideoRefreshButton 
@@ -425,18 +439,20 @@ const dailyRoutineDetail = () => {
                                 <Text style={{ color: '#0369a1' }} >See Exercise Detail</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
-                
+                </View>      
             ))}
-            
-                <View className="mt-2 items-center">
-                    <CustomButton
-                        title="Save"
-                        handlePress={handleSaveRoutine}
-                        containerStyles="w-52 bg-green-800"
-                        isLoading={isSubmitting}
-                    />
-                </View>
+         
+                        {isChanged && (
+                            <View className="mt-2 items-center">
+                                <CustomButton
+                                title="Save"
+                                handlePress={handleSaveRoutine}
+                                containerStyles="w-52 bg-green-800"
+                                isLoading={isSubmitting}
+                                />
+                            </View>
+                        )}
+                    
 
                 <Modal
                     isVisible={showModal}
@@ -491,10 +507,11 @@ const dailyRoutineDetail = () => {
                         />
                     </View>
                 </Modal>
-
-        </View>
+            </View>
+        </>)}
       </ScrollView>
     </SafeAreaView>
+    
   );
 };
 
