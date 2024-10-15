@@ -134,10 +134,14 @@ const CurrentWeeklyRoutine = () => {
                   containerStyles="w-52"
                   handlePress={handleUpdate}
                 />
-                <Text className="text-lg mt-2">
+              </View>
+
+              {/* Link to the generate routine page */}
+              <TouchableOpacity onPress={handleGenerateRoutinePress} className="items-center">
+                <Text className="text-lg mt-4">
                   Reset and create a new routine
                 </Text>
-              </View>
+              </TouchableOpacity>
 
               {/* Current Week's Routine Display */}
               <View className="w-full py-2 mt-4">
