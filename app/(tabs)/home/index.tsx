@@ -18,13 +18,7 @@ export default function TabOneScreen() {
 
   // Get global user profile data
   const [profile, setProfile] = useAtom(profileAtom);
-  useQuery(
-    "profile", // queryKey
-    () => Profile.setProfileByToken(setProfile), // queryFn
-    {
-      refetchOnWindowFocus: true, // Refetch the latest data when this page is loaded
-    }
-  );
+  useQuery("profile", () => Profile.setProfileByToken(setProfile));
 
   useFocusEffect(
     React.useCallback(() => {
@@ -107,7 +101,7 @@ export default function TabOneScreen() {
               className="w-full h-[200px]"
             />
             <Link
-              href={"../../../dailyRoutine" as Href<string>}
+              href={"../../dailyRoutine" as Href<string>}
               className="bg-primary text-2xl font-psemibold text-white absolute"
             >
               Something else
