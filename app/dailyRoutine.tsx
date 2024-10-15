@@ -13,7 +13,7 @@ import Modal from "react-native-modal";
 import YoutubeVideoPlayer from "../components/YoutubeVideoPlayer";
 import YouTubeVideoPlayer from "../components/YoutubeVideoPlayer";
 
-import { openAuthSessionAsync, openBrowserAsync } from "expo-web-browser";
+import { openBrowserAsync } from "expo-web-browser";
 
 type ExerciseDetail = {
   exerciseDetailId: number;
