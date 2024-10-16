@@ -83,17 +83,29 @@ export interface MuscleGroupProps {
     description: string;
 }
 
-export interface RequiredEquipmentProps {
+// * DailyRoutine Page * //
+export interface RequiredEquipment {
     id: number;
     description: string;
 }
 
-export interface WorkoutEnvProps {
+export interface WorkoutEnv {
     id: number;
     description: string;
 }
 
-export interface LevelProps {
+export interface Level {
     id: number;
     description: string;
 }
+
+export interface SaveRoutine {
+    exerciseDetailId: number,
+    sets: number,
+    reps: number,
+    youtubeURL: string,
+    dailyRoutineId: number,
+    exerciseId: number
+}
+
+// * ****** * //

@@ -1,17 +1,8 @@
 import { fetchWithTimeout, fetchVideoData } from "./generateRoutine";
-
+import { SaveRoutine } from "../../types"
 // Production/Testing flag
-let production = true; // Set to true in Production
+let production = false; // Set to true in Production
 let endpoint = production ? `https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev` : `http://localhost:8080`; // Replace with your own ip4 address for test
-
-type saveRoutine = {
-  exerciseDetailId: number,
-  sets: number,
-  reps: number,
-  youtubeURL: string,
-  dailyRoutineId: number,
-  exerciseId: number
-}
 
 export const getOneExercise = async (
     name?: string,
@@ -86,7 +77,7 @@ export const getDailyRoutine = async (id: number) => {
 
   }
 
-  export const saveDailyRoutine = async (data: saveRoutine[]) => {
+  export const saveDailyRoutine = async (data: SaveRoutine[]) => {
     try{
       const response = await fetchWithTimeout(
         `${endpoint}/routine/updateDailyRoutine`,

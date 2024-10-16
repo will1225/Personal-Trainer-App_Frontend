@@ -9,6 +9,7 @@ import { getOneExercise } from "./controllers/dailyRoutine";
 import RefreshButton from '../components/RefreshButton'; 
 import VideoRefreshButton from '../components/VideoRefreshButton'; 
 import { fetchVideoData } from "./controllers/generateRoutine";
+import { Level, RequiredEquipment, WorkoutEnv, MuscleGroupProps, SaveRoutine} from "../types"
 import Modal from "react-native-modal";
 import YoutubePlayer from 'react-native-youtube-iframe';
 
@@ -23,44 +24,11 @@ type ExerciseDetail = {
   youtubeURL: string;
   thumbnailURL: string;
   level: Level;
-  requiredEquip: Equipment;
+  requiredEquip: RequiredEquipment;
   workoutEnvs: WorkoutEnv[];
-  muscleGroups: MuscleGroup[];
+  muscleGroups: MuscleGroupProps[];
 };
 
-type Level = {
-    id: number;
-    description: string;
-}
-
-type Equipment = {
-    id: number;
-    description: string;
-}
-
-type DailyRoutine = {
-  dayNumber: number;
-  exerciseDetails: ExerciseDetail[];
-};
-
-type MuscleGroup = {
-  id: number;
-  description: string;
-};
-
-type WorkoutEnv = {
-  id: number;
-  description: string;
-}
-
-type saveRoutine = {
-    exerciseDetailId: number,
-    sets: number,
-    reps: number,
-    youtubeURL: string,
-    dailyRoutineId: number,
-    exerciseId: number
-}
 
 // Daily Routine Detail Page
 const dailyRoutineDetail = () => {
@@ -96,7 +64,7 @@ const dailyRoutineDetail = () => {
                     description: detail.exercise.level.description
                 }
 
-                const equip: Equipment = {
+                const equip: RequiredEquipment = {
                     id: Number(detail.exercise.requiredEquipment.id),
                     description: detail.exercise.requiredEquipment.description
                 }
@@ -111,7 +79,7 @@ const dailyRoutineDetail = () => {
                     newWorkoutEnv.push(newEnv);
                 })
 
-                const newMuscleGroup: MuscleGroup[] = [];
+                const newMuscleGroup: MuscleGroupProps[] = [];
 
                 detail.exercise.muscleGroups.forEach((w: any) => {
                     const newEnv = {
@@ -179,7 +147,7 @@ const dailyRoutineDetail = () => {
             description: newExercise.level.description
         }
 
-        const equip: Equipment = {
+        const equip: RequiredEquipment = {
             id: Number(newExercise.requiredEquipment.id),
             description: newExercise.requiredEquipment.description
         }
@@ -194,7 +162,7 @@ const dailyRoutineDetail = () => {
             newWorkoutEnv.push(newEnv);
         })
 
-        const newMuscleGroup: MuscleGroup[] = [];
+        const newMuscleGroup: MuscleGroupProps[] = [];
 
         newExercise.muscleGroups.forEach((w: any) => {
             const newEnv = {
@@ -263,7 +231,7 @@ const dailyRoutineDetail = () => {
     try {
         setSubmitting(true);
 
-        const data: saveRoutine[] = [];
+        const data: SaveRoutine[] = [];
 
         exerciseDetails.forEach(detail => {
             const dailyRoutineData = {
