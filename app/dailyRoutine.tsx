@@ -10,8 +10,7 @@ import RefreshButton from '../components/RefreshButton';
 import VideoRefreshButton from '../components/VideoRefreshButton'; 
 import { fetchVideoData } from "./controllers/generateRoutine";
 import Modal from "react-native-modal";
-import YoutubeVideoPlayer from "../components/YoutubeVideoPlayer";
-import YouTubeVideoPlayer from "../components/YoutubeVideoPlayer";
+import YoutubePlayer from 'react-native-youtube-iframe';
 
 import { openBrowserAsync } from "expo-web-browser";
 
@@ -78,6 +77,8 @@ const dailyRoutineDetail = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
+
+  const [currentVideoId, setCurrentVideoId] = useState("");
   
   useEffect(() => {
     const fetchData = async () => {
@@ -401,7 +402,9 @@ const dailyRoutineDetail = () => {
                         />
                         <TouchableOpacity onPress={() => {
                             //handleYoutubeVideo(item.exerciseDetailId)
-                            openBrowserAsync(item.youtubeURL);
+                            //openBrowserAsync(item.youtubeURL);
+                            setCurrentVideoId(item.youtubeURL.substring(item.youtubeURL.lastIndexOf('=') + 1));
+                            setShowVideoModel(true);
                         }}>
                             <Image 
                                 source={{ uri: item.thumbnailURL }} 
@@ -501,6 +504,12 @@ const dailyRoutineDetail = () => {
                             detail => detail.exerciseDetailId === detailIdforVideo)?.youtubeURL
                             }/> */}
 
+                        
+                        <YoutubePlayer
+                            height={300}
+                            play={true}
+                            videoId={currentVideoId} 
+                        />
                         <CustomButton
                             title="Close"
                             handlePress={() => setShowVideoModel(false)}
