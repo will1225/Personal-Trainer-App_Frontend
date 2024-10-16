@@ -54,9 +54,12 @@ export class Profile {
             // Check if the response has JSON content
             const contentType = response.headers.get("Content-Type") || "";
             if (contentType.includes("application/json")) {
+              
               const res = await response.json();
+              console.log(res);
+
               if (res.status) {
-                router.replace({ pathname: "../../bodyMeasurement" });
+                return res;
               } else {
                 throw new Error(res.error || "Submission failed");
               }
@@ -64,7 +67,6 @@ export class Profile {
               throw new Error("Expected JSON response, but got something else.");
             }
           } catch (err: any) {
-
             console.error(err.message + ": Submit Failed");
           }
     }

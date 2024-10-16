@@ -5,13 +5,18 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "../../components";
 import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
 import BackButton from "../../components/BackButton";
+import { useQuery} from 'react-query';
 import { Profile } from '../controllers/profile';
+import { profileAtom } from "../../store";
+import { useAtom } from "jotai";
+import { router } from "expo-router";
 
 
 export default function TabTwoScreen() {
   const image = require("../../assets/images/neonDumbell.png");
   const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({dob: "", gender: "",});
+  const [profile, setProfile] = useAtom(profileAtom);
 
   // Handle Date change
   const handleDateChange = (date: Date) => {
@@ -26,11 +31,20 @@ export default function TabTwoScreen() {
       Alert.alert("Error", "Choose The Date and Gender");
       return;
     }
-
     // API call
     try {
       setSubmitting(true);
-      const result = await Profile.createProfile(form.dob, form.gender);
+      const data = await Profile.createProfile(form.dob, form.gender);
+      
+      // Update the atom with the new profile data
+      setProfile((prevProfile) => ({
+        ...prevProfile,
+        dob: data.dob,
+        gender: data.gender,
+        updatedAt: data.updatedAt,
+      }));
+      
+      router.push({ pathname: "../bodyMeasurement" });
     } catch (error: any) {
       Alert.alert("Error", error.message);
     } finally {

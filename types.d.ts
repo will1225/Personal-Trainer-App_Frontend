@@ -66,6 +66,7 @@ export interface ExerciseDetailProps {
     reps: number;
     youtubeURL: string;
     thumbnailURL?: string; 
+    dailyRoutineId,
     exercise: ExerciseProps;
 }
 
@@ -78,6 +79,21 @@ export interface ExerciseProps {
 }
 
 export interface MuscleGroupProps {
+    id: number;
+    description: string;
+}
+
+export interface RequiredEquipmentProps {
+    id: number;
+    description: string;
+}
+
+export interface WorkoutEnvProps {
+    id: number;
+    description: string;
+}
+
+export interface LevelProps {
     id: number;
     description: string;
 }
