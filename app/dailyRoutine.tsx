@@ -42,74 +42,80 @@ const dailyRoutineDetail = () => {
   const [modalContent, setModalContent] = useState<ExerciseDetail>();
   const [showVideoModal, setShowVideoModel] = useState(false);
 
-  const { isLoading, isFetching } = useQuery(['dailyRoutineDetail', dailyRoutineId], () => fetchData(dailyRoutineId));
-
   //const [isLoading, setIsLoading] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [currentVideoId, setCurrentVideoId] = useState("");
-  
+
   const fetchData = async (dailyRoutineId: number) => {
-        try {
-            const response = await getDailyRoutine(dailyRoutineId);
-        
-            if (!response) {
-                console.log("Empty Data Received")
-            }
+    if (!dailyRoutineId) {
+        console.log("No dailyRoutineId provided");
+        return [];
+    }
 
-            response.forEach((detail: any) => {
-                const level: Level = {
-                    id: Number(detail.exercise.level.id),
-                    description: detail.exercise.level.description
-                }
+    try {
+        const response = await getDailyRoutine(dailyRoutineId);
+        if (!response || response.length === 0) {
+            console.log("Empty Data Received");
+            return [];
+        }
 
-                const equip: RequiredEquipment = {
-                    id: Number(detail.exercise.requiredEquipment.id),
-                    description: detail.exercise.requiredEquipment.description
-                }
+        // Process the response and create the ExerciseDetail objects
+        const details = response.map((detail: any) => {
+            const level: Level = {
+                id: Number(detail.exercise.level.id),
+                description: detail.exercise.level.description
+            };
 
-                const newWorkoutEnv: WorkoutEnv[] = [];
+            const equip: RequiredEquipment = {
+                id: Number(detail.exercise.requiredEquipment.id),
+                description: detail.exercise.requiredEquipment.description
+            };
 
-                detail.exercise.workoutEnvironments.forEach((e: any) => {
-                    const newEnv = {
-                        id: Number(e.workoutEnvironment.id),
-                        description: e.workoutEnvironment.description,
-                    }
-                    newWorkoutEnv.push(newEnv);
-                })
+            const workoutEnvs: WorkoutEnv[] = detail.exercise.workoutEnvironments.map((e: any) => ({
+                id: Number(e.workoutEnvironment.id),
+                description: e.workoutEnvironment.description,
+            }));
 
-                const newMuscleGroup: MuscleGroupProps[] = [];
+            const muscleGroups: MuscleGroupProps[] = detail.exercise.muscleGroups.map((w: any) => ({
+                id: Number(w.muscleGroup.id),
+                description: w.muscleGroup.description
+            }));
 
-                detail.exercise.muscleGroups.forEach((w: any) => {
-                    const newEnv = {
-                        id: Number(w.muscleGroup.id),
-                        description: w.muscleGroup.description
-                    }
-                    newMuscleGroup.push(newEnv);
-                })
-                
-                const newExerciseDetail: ExerciseDetail = {
-                    exerciseDetailId: Number(detail.id),
-                    exerciseId: Number(detail.exercise.id),
-                    exerciseName: detail.exercise.name,
-                    sets: Number(detail.sets),
-                    reps: Number(detail.reps),
-                    youtubeURL: detail.youtubeURL,
-                    thumbnailURL: detail.thumbnailURL,
-                    level: level,
-                    requiredEquip: equip,
-                    workoutEnvs: newWorkoutEnv,
-                    muscleGroups: newMuscleGroup
-                };
-                
-                setExerciseDetails(prevDetails => [...prevDetails, newExerciseDetail]);
-            })
+            return {
+                exerciseDetailId: Number(detail.id),
+                exerciseId: Number(detail.exercise.id),
+                exerciseName: detail.exercise.name,
+                sets: Number(detail.sets),
+                reps: Number(detail.reps),
+                youtubeURL: detail.youtubeURL,
+                thumbnailURL: detail.thumbnailURL,
+                level,
+                requiredEquip: equip,
+                workoutEnvs,
+                muscleGroups,
+            };
+        });
 
-        } catch (error) {
-            console.error("Error fetching Daily Routine", error);
-        } 
-    };  
+        return details; // Return the array of ExerciseDetail objects
 
-  
+    } catch (error) {
+        console.error("Error fetching Daily Routine", error);
+        return []; // Return an empty array on error
+    }
+};
+
+// Fetch data using useQuery
+const { isLoading, isFetching, data } = useQuery(
+    ['dailyRoutineDetail', dailyRoutineId],
+    () => fetchData(dailyRoutineId),
+    {
+        enabled: !!dailyRoutineId, // Only fetch if dailyRoutineId is valid
+        refetchOnWindowFocus: false,
+        onSuccess: (fetchedData) => {
+            setExerciseDetails(fetchedData); // Set new exercise details on successful fetch
+        }
+    }
+);
   
 
   const refreshExercise = async (exerciseDetailId: number) => {
@@ -248,7 +254,9 @@ const dailyRoutineDetail = () => {
 
         if (result) {
             Alert.alert("Success", "Daily Routine saved successfully!");
-            queryClient.invalidateQueries('dailyRoutine');
+            //with this, it causes duplicate key error **/
+            await queryClient.invalidateQueries(['dailyRoutineDetail', dailyRoutineId]); 
+            //** *********************** **/
             router.push("/(tabs)/three" as Href<string>);
         } else {
             Alert.alert("Update Daily Routine Failed");
