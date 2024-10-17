@@ -11,9 +11,8 @@ import VideoRefreshButton from '../components/VideoRefreshButton';
 import { fetchVideoData } from "./controllers/generateRoutine";
 import { Level, RequiredEquipment, WorkoutEnv, MuscleGroupProps, SaveRoutine} from "../types"
 import Modal from "react-native-modal";
+import { useQuery, useQueryClient } from "react-query";
 import YoutubePlayer from 'react-native-youtube-iframe';
-
-import { openBrowserAsync } from "expo-web-browser";
 
 type ExerciseDetail = {
   exerciseDetailId: number;
@@ -35,23 +34,22 @@ const dailyRoutineDetail = () => {
   const params = useLocalSearchParams();
   const dailyRoutineId = params.dailyRoutineId ? Number(params.dailyRoutineId): 0;
   const dayName = params.dayName
+  const queryClient = useQueryClient();
 
   const [isSubmitting, setSubmitting] = useState(false);
   const [exerciseDetails, setExerciseDetails] = useState<ExerciseDetail[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState<ExerciseDetail>();
   const [showVideoModal, setShowVideoModel] = useState(false);
-  const [detailIdforVideo, setDetailIdforVideo] = useState<number>();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, isFetching } = useQuery(['dailyRoutineDetail', dailyRoutineId], () => fetchData(dailyRoutineId));
+
+  //const [isLoading, setIsLoading] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-
   const [currentVideoId, setCurrentVideoId] = useState("");
   
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = async (dailyRoutineId: number) => {
         try {
-            setIsLoading(true);
             const response = await getDailyRoutine(dailyRoutineId);
         
             if (!response) {
@@ -108,12 +106,10 @@ const dailyRoutineDetail = () => {
 
         } catch (error) {
             console.error("Error fetching Daily Routine", error);
-        } finally {
-            setIsLoading(false);
-        }
+        } 
     };  
-    fetchData();
-  }, []);
+
+  
   
 
   const refreshExercise = async (exerciseDetailId: number) => {
@@ -252,6 +248,7 @@ const dailyRoutineDetail = () => {
 
         if (result) {
             Alert.alert("Success", "Daily Routine saved successfully!");
+            queryClient.invalidateQueries('dailyRoutine');
             router.push("/(tabs)/three" as Href<string>);
         } else {
             Alert.alert("Update Daily Routine Failed");
@@ -273,17 +270,17 @@ const dailyRoutineDetail = () => {
     setShowModal(true);
   };
 
-  const handleYoutubeVideo = (exerciseDetailId: any) => {
-    setDetailIdforVideo(exerciseDetailId);
-    setShowVideoModel(true)
-  }
+//   const handleYoutubeVideo = (exerciseDetailId: any) => {
+//     setDetailIdforVideo(exerciseDetailId);
+//     setShowVideoModel(true)
+//   }
 
   return (
    
     <SafeAreaView className="flex-1">
       <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>
         <BackButton />
-    { isLoading ? (
+    { isLoading || isFetching ? (
          <View className="w-full flex justify-center items-center h-full my-4 px-4 mt-16">
          <Text className="text-xl text-center">Loading...</Text>
        </View>
@@ -321,7 +318,7 @@ const dailyRoutineDetail = () => {
             </View>
 
             {exerciseDetails.map((item) => (
-                <View key={item.exerciseDetailId} className="w-full py-1">
+                <View key={item.exerciseDetailId + 1} className="w-full py-1">
                     {/* Data row */}
                     <View className="flex-row items-center h-10">
                         <Text className="flex-[3] text-center">
@@ -338,7 +335,8 @@ const dailyRoutineDetail = () => {
                         </View>
                     </View>
                 </View>
-                ))}
+                ))
+            }
 
             <View className="w-full flex-row text-left mt-2" >    
                 <VideoRefreshButton 
@@ -369,8 +367,6 @@ const dailyRoutineDetail = () => {
                             }} 
                         />
                         <TouchableOpacity onPress={() => {
-                            //handleYoutubeVideo(item.exerciseDetailId)
-                            //openBrowserAsync(item.youtubeURL);
                             setCurrentVideoId(item.youtubeURL.substring(item.youtubeURL.lastIndexOf('=') + 1));
                             setShowVideoModel(true);
                         }}>
@@ -466,12 +462,6 @@ const dailyRoutineDetail = () => {
                         <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>
                             {modalContent?.exerciseName}
                         </Text>
-                       
-                       {/* <YouTubeVideoPlayer 
-                        youtubeURL={exerciseDetails.find(
-                            detail => detail.exerciseDetailId === detailIdforVideo)?.youtubeURL
-                            }/> */}
-
                         
                         <YoutubePlayer
                             height={300}
