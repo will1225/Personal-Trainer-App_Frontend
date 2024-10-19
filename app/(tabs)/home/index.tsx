@@ -58,7 +58,7 @@ export default function TabOneScreen() {
                 className="w-full h-[200px]"
               />
               <Link
-                href={"../two" as Href<string>}
+                href={"../../getStarted/profileEntry" as Href<string>}
                 className="bg-primary text-2xl font-psemibold text-white absolute"
               >
                 Get Started!

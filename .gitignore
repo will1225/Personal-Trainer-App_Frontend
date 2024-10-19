@@ -48,3 +48,4 @@ expo-env.d.ts
 launch.json
 settings.json
 %ProgramData%/Microsoft/Windows/UUS/State/_active.uusver
+.idea/

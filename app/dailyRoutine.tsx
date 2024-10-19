@@ -376,6 +376,7 @@ const { isLoading, isFetching, data } = useQuery(
                         />
                         <TouchableOpacity onPress={() => {
                             setCurrentVideoId(item.youtubeURL.substring(item.youtubeURL.lastIndexOf('=') + 1));
+                            setModalContent(item);
                             setShowVideoModel(true);
                         }}>
                             <Image 
@@ -465,20 +466,29 @@ const { isLoading, isFetching, data } = useQuery(
                     <Modal
                         isVisible={showVideoModal}
                         onBackdropPress={() => setShowVideoModel(false)}
+                        style={{
+                            margin: 1,                  
+                            justifyContent: 'center',    
+                        }}
                     >
-                    <View style={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}>
-                        <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>
+                    <View style={{ backgroundColor: "black", padding: 0, borderRadius: 10, width: '100%' }}>
+                        {/* Close Button */}
+                        <TouchableOpacity
+                            onPress={() => setShowVideoModel(false)} 
+                            style={{ position: 'absolute', top: 10, right: 10, zIndex: 1 }}
+                        >
+                            <Text style={{ fontSize: 24, fontWeight: 'bold', color: 'white', marginBottom: 2 }}>X</Text> 
+                        </TouchableOpacity>
+
+                        <Text style={{ fontSize: 20, fontWeight: "bold", margin: 10, color: 'white' }}>
                             {modalContent?.exerciseName}
                         </Text>
                         
                         <YoutubePlayer
-                            height={300}
+                            key={currentVideoId}
+                            height={250}
                             play={true}
-                            videoId={currentVideoId} 
-                        />
-                        <CustomButton
-                            title="Close"
-                            handlePress={() => setShowVideoModel(false)}
+                            videoId={currentVideoId}
                         />
                     </View>
                 </Modal>

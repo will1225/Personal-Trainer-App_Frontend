@@ -57,11 +57,7 @@ const BodyMeasurement = () => {
   });
 
   // Get gender from the profile atom
-  //????????????????????????????????? Already cached, just invalidate
-  useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => Profile.setProfileByToken(setProfile)
-  });
+  useQuery("profile", () => Profile.setProfileByToken(setProfile));
   const gender = profile?.gender;  
 
   // Form submission handling
