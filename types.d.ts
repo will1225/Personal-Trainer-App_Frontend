@@ -17,8 +17,11 @@ export interface ProfileProps {
     lastName: string,
     dob?: Date,
     gender?: string,
+    height?: number,
     initBodyMeasurement?: BodyMeasurementProps,
     bodyMeasurementId?: number,
+    levelId?: number,
+    intensityId?: number,
     createdAt: Date,
     updatedAt?: Date
 }
@@ -64,6 +67,7 @@ export interface ExerciseDetailProps {
     id: number,
     sets: number;
     reps: number;
+    minutes: number;
     youtubeURL: string;
     thumbnailURL?: string; 
     dailyRoutineId,

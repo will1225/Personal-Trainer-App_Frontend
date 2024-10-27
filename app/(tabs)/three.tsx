@@ -199,7 +199,7 @@ const CurrentWeeklyRoutine = () => {
                                 Sets
                               </Text>
                               <Text className="flex-[1] text-center font-semibold text-white">
-                                Reps
+                                {exercise.reps ? "Reps" : "Mins"}
                               </Text>
                             </View>
 
@@ -212,7 +212,7 @@ const CurrentWeeklyRoutine = () => {
                                 {exercise.sets}
                               </Text>
                               <Text className="flex-[1] text-center">
-                                {exercise.reps}
+                                {exercise.reps ? exercise.reps : exercise.minutes}
                               </Text>
                             </View>
                           </View>

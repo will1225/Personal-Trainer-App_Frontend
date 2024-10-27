@@ -11,8 +11,11 @@ export const profileAtom = atom<ProfileProps>(
         lastName: "",
         dob: undefined,
         gender: undefined,
+        height: undefined,
         initBodyMeasurement: undefined,
         bodyMeasurementId: undefined,
+        levelId: undefined,
+        intensityId: undefined,
         createdAt: new Date(),
         updatedAt: undefined,
     }

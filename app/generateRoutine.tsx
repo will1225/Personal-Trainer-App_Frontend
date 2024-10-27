@@ -6,6 +6,8 @@ import { Image } from "react-native";
 import { CustomButton, FormField } from "@/components";
 import { Href, router } from "expo-router";
 import * as generateRoutine from "./controllers/generateRoutine";
+import { profileAtom } from "@/store";
+import { getDefaultStore } from "jotai";
 
 type weeklyRoutine = {
   startDate: string;
@@ -18,6 +20,7 @@ type ExerciseDetail = {
   exerciseId: number;
   sets: number;
   reps: number;
+  minutes: number;
   youtubeURL: string;
   thumbnailURL: string;
 };
@@ -127,10 +130,14 @@ const GenerateRoutine = () => {
         workoutEnvironmentId,
       };
 
+      //const { dailyRoutines } = await generateRoutine.getRecommendation(daysPerWeek, workoutEnvironmentId);
+      //console.log(dailyRoutines);
+
       // API Call: Fetch exercises based on optional params
       const currentMuscleGroup = [muscleGroups[0].id, muscleGroups[1].id]; // optional
       const fetchedExercises = await generateRoutine.fetchExercise(
         undefined,            // exercise name
+        undefined,            // exercise type
         undefined,            // min intensity
         undefined,            // max intensity
         undefined,            // level id
@@ -162,6 +169,7 @@ const GenerateRoutine = () => {
             exerciseId: exercise.id,
             sets: exercise.defaultSets,
             reps: exercise.defaultReps,
+            minutes: exercise.minutes,
             youtubeURL: videoData.data.url,        
             thumbnailURL: videoData.data.thumbnail 
           };
@@ -273,6 +281,10 @@ const GenerateRoutine = () => {
                 placeholder={"Select Days"}
                 value={selectedDay}
                 onChange={(item) => {
+                  const days = Number(item.value);
+                  if (days < 3 || days > 4) {
+                    Alert.alert("Suggestion", "We suggest 3 to 4 days for an effective and manageable routine.");
+                  }
                   setSelectedDay(item.value);
                 }}
               />
@@ -342,7 +354,7 @@ const GenerateRoutine = () => {
                               Sets
                             </Text>
                             <Text className="flex-[1] text-center font-semibold text-white">
-                              Reps
+                              {exercise.reps ? "Reps" : "Mins"}
                             </Text>
                           </View>
 
@@ -355,7 +367,7 @@ const GenerateRoutine = () => {
                               {exercise.sets}
                             </Text>
                             <Text className="flex-[1] text-center">
-                              {exercise.reps}
+                              {exercise.reps ? exercise.reps : exercise.minutes}
                             </Text>
                           </View>
                         </View>

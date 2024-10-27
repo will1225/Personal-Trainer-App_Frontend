@@ -20,6 +20,7 @@ type ExerciseDetail = {
   exerciseName: string;
   sets: number;
   reps: number;
+  minutes: number;
   youtubeURL: string;
   thumbnailURL: string;
   level: Level;
@@ -87,6 +88,7 @@ const dailyRoutineDetail = () => {
                 exerciseName: detail.exercise.name,
                 sets: Number(detail.sets),
                 reps: Number(detail.reps),
+                minutes: Number(detail.minutes),
                 youtubeURL: detail.youtubeURL,
                 thumbnailURL: detail.thumbnailURL,
                 level,
@@ -138,6 +140,7 @@ const { isLoading, isFetching, data } = useQuery(
             undefined,
             undefined,
             undefined,
+            undefined,
             detail.level.id,
             undefined,
             detail.workoutEnvs[0].id,
@@ -181,6 +184,7 @@ const { isLoading, isFetching, data } = useQuery(
             exerciseName: newExercise.name,
             sets: Number(newExercise.defaultSets),
             reps: Number(newExercise.defaultReps),
+            minutes: Number(newExercise.minutes),
             youtubeURL: newExercise.videos[0].url,
             thumbnailURL: newExercise.videos[0].thumbnail,
             level: level,
@@ -240,6 +244,7 @@ const { isLoading, isFetching, data } = useQuery(
                 exerciseDetailId: detail.exerciseDetailId,
                 sets: detail.sets,
                 reps: detail.reps,
+                minutes: detail.minutes,
                 youtubeURL: detail.youtubeURL,
                 thumbnailURL: detail.thumbnailURL,
                 dailyRoutineId: dailyRoutineId,
@@ -310,23 +315,24 @@ const { isLoading, isFetching, data } = useQuery(
                     </Text>
             </View>
 
-            <View className="flex-row items-center rounded h-6" >
-                <View className="flex-[6] flex-row mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
-                        <Text className="flex-[3] text-center font-semibold text-white">
-                            Exercise
-                        </Text>
-                        <Text className="flex-[1] text-center font-semibold text-white">
-                            Sets
-                        </Text>
-                        <Text className="flex-[1] text-center font-semibold text-white">
-                            Reps
-                        </Text>
-                </View>
-                <View className="flex-[1]"></View>
-            </View>
-
             {exerciseDetails.map((item) => (
                 <View key={item.exerciseDetailId + 1} className="w-full py-1">
+                    {/* Header */}
+                    <View className="flex-row items-center rounded h-6" >
+                        <View className="flex-[6] flex-row mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
+                                <Text className="flex-[3] text-center font-semibold text-white">
+                                    Exercise
+                                </Text>
+                                <Text className="flex-[1] text-center font-semibold text-white">
+                                    Sets
+                                </Text>
+                                <Text className="flex-[1] text-center font-semibold text-white">
+                                    {item.reps ? "Reps" : "Mins"}
+                                </Text>
+                        </View>
+                        <View className="flex-[1]"></View>
+                    </View>
+
                     {/* Data row */}
                     <View className="flex-row items-center h-10">
                         <Text className="flex-[3] text-center">
@@ -336,7 +342,7 @@ const { isLoading, isFetching, data } = useQuery(
                             {item.sets}
                         </Text>
                         <Text className="flex-[1] text-center">
-                            {item.reps}
+                            {item.reps ? item.reps : item.minutes}
                         </Text>
                         <View className="flex-[1]">    
                             <RefreshButton  onRefresh={() => refreshExercise(item.exerciseDetailId)} />
@@ -386,7 +392,7 @@ const { isLoading, isFetching, data } = useQuery(
                         </TouchableOpacity>
                     </View>
 
-                    <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[95px]" style={{ backgroundColor: "#e5e5e5" }}>
+                    <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[95px] mb-2" style={{ backgroundColor: "#e5e5e5" }}>
                     
                         {/* Exercise Details header*/}
                         <View className="flex-row flex-[1] mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
@@ -397,7 +403,7 @@ const { isLoading, isFetching, data } = useQuery(
                             Sets
                             </Text>
                             <Text className="flex-[1] text-center font-semibold text-white">
-                            Reps
+                                {item.reps ? "Reps" : "Mins"}
                             </Text>
                         </View>
                         <View className="flex-row flex-[3] items-center">
@@ -408,7 +414,7 @@ const { isLoading, isFetching, data } = useQuery(
                                 {item.sets}
                             </Text>
                             <Text className="flex-[1] text-center">
-                                {item.reps}
+                                {item.reps ? item.reps : item.minutes}
                             </Text>
                         </View>
                         <TouchableOpacity className="flex-[1]" onPress={() => displayModal(item.exerciseDetailId)}>
@@ -445,7 +451,7 @@ const { isLoading, isFetching, data } = useQuery(
                         Sets: {modalContent?.sets}
                     </Text>
                     <Text className="text-lg font-pregular">
-                        Reps: {modalContent?.reps}
+                        {modalContent?.reps !== undefined && modalContent.reps > 0 ? `Reps: ${modalContent.reps}` : `Mins: ${modalContent?.minutes ?? 0}`}
                     </Text>
                     <Text className="text-lg font-pregular">
                         Level: {modalContent?.level.description}

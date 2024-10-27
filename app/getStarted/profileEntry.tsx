@@ -15,7 +15,7 @@ import { router } from "expo-router";
 export default function TabTwoScreen() {
   const image = require("../../assets/images/neonDumbell.png");
   const [isSubmitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({dob: "", gender: "",});
+  const [form, setForm] = useState({dob: "", gender: "", height: ""});
   const [profile, setProfile] = useAtom(profileAtom);
 
   // Handle Date change
@@ -24,23 +24,31 @@ export default function TabTwoScreen() {
   };
 
   const submit = async () => {
-    const {dob, gender } = form;
+    const {dob, gender, height } = form;
+    const heightValue = parseInt(height);
 
     // Check empty fields
-    if (!dob || !gender) {
-      Alert.alert("Error", "Choose The Date and Gender");
+    if (!dob || !gender || !height) {
+      Alert.alert("Error", "Choose The Date, Gender, and height");
       return;
     }
+
+    if (heightValue < 120 || heightValue > 220) {
+      Alert.alert("Error", "Please enter height between 120 - 220cm");
+      return;
+    }
+
     // API call
     try {
       setSubmitting(true);
-      const data = await Profile.createProfile(form.dob, form.gender);
+      const data = await Profile.createProfile(form.dob, form.gender, heightValue);
       
       // Update the atom with the new profile data
       setProfile((prevProfile) => ({
         ...prevProfile,
         dob: data.dob,
         gender: data.gender,
+        height: heightValue,
         updatedAt: data.updatedAt,
       }));
       
@@ -76,6 +84,15 @@ export default function TabTwoScreen() {
           placeholder={"Select Date of Birth"}
           isDatePicker
           onDateChange={handleDateChange}
+        />
+
+        {/* Height Field */}
+        <FormField
+            title="Height"
+            value={form.height}
+            handleChangeText={(e) => setForm({ ...form, height: e })}
+            keyboardType="numeric"
+            placeholder={"in cm"}
         />
 
         {/* Gender Selection */}

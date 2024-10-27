@@ -5,9 +5,11 @@ import { Href, Link, router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import { StatusBar } from "expo-status-bar";
 import * as fitnessUtil from "./controllers/fitnessResult";
+import { useQueryClient } from "react-query";
 
 // Fitness Result screen
 const fitnessResult = () => {
+  const queryClient = useQueryClient();
   const image = require("../assets/images/neonDumbell.png");  
   const { measurementId } = useLocalSearchParams(); // measurementId passing from the previous screen
   if (!measurementId) throw "Measurement ID is missing";
@@ -19,6 +21,7 @@ const fitnessResult = () => {
   const [bodyFat, setBodyFat] = useState<number | null>(null);
   const [muscleMass, setMuscleMass] = useState<number | null>(null);
   const [classification, setClassification] = useState<string | null>(null);
+  const [ffmiClassification, setFFMIClassification] = useState<string | null>(null);
   const [ranges, setRanges] = useState<any[]>([]);
 
   // Get and set fitness data
@@ -28,7 +31,16 @@ const fitnessResult = () => {
       setBodyFat(result.bodyFatPercent);
       setMuscleMass(result.muscleMass);
       setClassification(result.classification); 
+      setFFMIClassification(result.ffmiClassification); 
       setRanges(result.ranges.classifications || []);
+
+      // Save intensity and level after fetching fitness result
+      const updateResult = await fitnessUtil.saveIntensityAndLevel(result.classification, result.ffmiClassification);
+      if (updateResult.status) {
+        queryClient.invalidateQueries({
+          queryKey: ['profile']
+        });
+      }
     };
     getBodyFatPercentage();
   }, [measurementId]);
@@ -68,7 +80,7 @@ const fitnessResult = () => {
             </View>
             <View className="flex flex-row justify-center mt-2">
               <Text className="text-xl w-48 text-right">
-                Lean Muscle Mass:
+                Lean Body Mass:
               </Text>
               <Text className="text-xl ml-2">
                 {muscleMass !== null ? `${muscleMass} kg` : "Loading..."}
@@ -77,13 +89,27 @@ const fitnessResult = () => {
             {classification && (
               <View className="flex flex-row justify-center mt-2">
                 <Text className="text-xl w-48 text-right">
-                  Classification:
+                  Body Fat Class:
                 </Text>
                 <Text className="text-xl ml-2">
                   {classification}
                 </Text>
               </View>
             )}
+            {ffmiClassification && (
+              <View className="flex flex-row justify-center mt-2">
+                <Text className="text-xl w-48 text-right">
+                  FFMI Class:
+                </Text>
+                <Text className="text-xl ml-2">
+                  {ffmiClassification}
+                </Text>
+              </View>
+            )}
+            <Text className="text-sm text-left px-1 mt-6">
+              ** Body Fat Class reflects your body fat for your age, 
+              while FFMI Class indicates your muscle mass relative to your height.
+            </Text>
           </View>
 
           {/* Body Fat Percentage Table */}
