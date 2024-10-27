@@ -1,4 +1,5 @@
 import * as user from "./user";
+import { endpoint } from '../config';
 
 
 /**
@@ -16,11 +17,7 @@ export const saveMeasurement = async (
   ) => {
     try {
       const response = await fetch(
-        // local testing
-        // `http://10.10.6.150:8080/measurement/save`,
-  
-        // production
-        "https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/measurement/save",
+        `${endpoint}/measurement/save`,
         {
           method: "POST",
           headers: {

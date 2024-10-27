@@ -1,16 +1,15 @@
 import * as user from "./user";
+import { endpoint } from '../config';
 
-// API function
+/**
+ * Method to get consolidated fitness results from the backend
+ */
 export const fetchFitnessResult = async (measurementId: string) => {
     if (!measurementId) throw "Measurement ID is required";
   
     try {
       const response = await fetch(
-        // local testing
-        // `http://10.10.6.150:8080/measurement/result/${measurementId}`,
-  
-        // Production
-        `https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/measurement/result/${measurementId}`,
+        `${endpoint}/measurement/result/${measurementId}`,
         {
           method: "GET",
           headers: {
@@ -30,4 +29,73 @@ export const fetchFitnessResult = async (measurementId: string) => {
     } catch (error: any) {
       throw new Error(error.message || "Something went wrong");
     }
-  };
+};
+
+/**
+ * Method to classify profile intensity and level and save to the backend. 
+ */
+export const saveIntensityAndLevel = async (bodyFatClassification: string, ffmiClassification: string) => {
+  try {
+    if (!bodyFatClassification) throw "Body Fat Classification is required";
+    if (!ffmiClassification) throw "FFMI Classification is required";
+
+    let intensityId;
+    if (bodyFatClassification === "Essential Fat" || bodyFatClassification === "Athletes") {
+      if (ffmiClassification === "Advanced Built") {
+        intensityId = 4;
+      } else if (ffmiClassification === "Intermediate Built") {
+        intensityId = 3;
+      } else if (ffmiClassification === "Skinny") {
+        intensityId = 2;
+      } else {
+        intensityId = null;
+      }
+    } else if (bodyFatClassification === "Fit") {
+      if (ffmiClassification === "Intermediate Built" || ffmiClassification === "Advanced Built") {
+        intensityId = 3;
+      } else if (ffmiClassification === "Skinny") {
+        intensityId = 2;
+      } else {
+        intensityId = null;
+      }
+    } else if (bodyFatClassification === "Average") {
+      if (ffmiClassification === "Intermediate Built" || ffmiClassification === "Advanced Built") {
+        intensityId = 2;
+      } else if (ffmiClassification === "Skinny") {
+        intensityId = 1;
+      } else {
+        intensityId = null;
+      }
+    } else {
+      intensityId = 1;
+    }
+
+    let levelId;
+    if (ffmiClassification === "Skinny" || ffmiClassification === "Average") levelId = 1;
+    if (ffmiClassification === "Intermediate Built") levelId = 2;
+    if (ffmiClassification === "Advanced Built" || ffmiClassification === "Extremely Muscular") levelId = 3;
+    if (ffmiClassification === "Unusual/Extreme Result") levelId = null;
+
+    const response = await fetch(
+      `${endpoint}/user/profile/updateIntensityAndLevel`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${await user.getToken()}`
+        },
+        body: JSON.stringify({ intensityId, levelId }),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Error updating intensity and level");
+    }    
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    throw new Error(error.message || "Something went wrong");
+  }
+}

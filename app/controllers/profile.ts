@@ -1,5 +1,6 @@
 import { router } from "expo-router";
 import {getToken} from "./user";
+import { endpoint } from '../config';
 
 export class Profile {
     private _dob: string;
@@ -32,17 +33,17 @@ export class Profile {
       this._gender = value;
     }
 
-    static async createProfile(dob: string, gender: string) {
+    static async createProfile(dob: string, gender: string, height: number) {
         try {
             const response = await fetch(
-              "https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/profile/enter",
+              `${endpoint}/user/profile/enter`,
               {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
                   "Authorization": `Bearer ${await getToken()}`
                 },
-                body: JSON.stringify({ dob, gender }),
+                body: JSON.stringify({ dob, gender, height }),
               }
             );
         
@@ -73,7 +74,7 @@ export class Profile {
 
     static async setProfileByToken(setProfile: any) {
       console.log("Setting profile");
-      const res = await fetch("https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/profile?initBodyMeasurement=true", {
+      const res = await fetch(`${endpoint}/user/profile?initBodyMeasurement=true`, {
         method: 'GET',
         headers: {
           "Content-Type": "application/json",
@@ -86,8 +87,8 @@ export class Profile {
       setProfile(data.data);
     }
 
-    static async update({gender, dob}: {gender?: string, dob?: Date}) {
-      const res = await fetch("https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/profile/update", {
+    static async update({gender, dob, height}: {gender?: string, dob?: Date, height?: number}) {
+      const res = await fetch(`${endpoint}/user/profile/update`, {
         method: 'PATCH',
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +96,8 @@ export class Profile {
         },
         body: JSON.stringify({
           gender,
-          dob
+          dob,
+          height
         })
       });
 

@@ -1,8 +1,5 @@
 import * as user from "./user";
-
-// Production/Testing flag
-let production = true; // Set to true in Production
-let endpoint = production ? `https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev` : `http://localhost:8080`; // Replace with your own ip4 address for test
+import { endpoint } from '../config';
 
 /**
  * Timeout mechanism to prevent infinite loading if there are any connection issues to the backend.
@@ -135,6 +132,7 @@ export const fetchMuscleGroup = async () => {
  */
 export const fetchExercise = async (
   name?: string,
+  typeId?: number,
   minIntensity?: number,
   maxIntensity?: number,
   levelId?: number,
@@ -147,6 +145,7 @@ export const fetchExercise = async (
     let queryParams = [];
 
     if (name) queryParams.push(`name=${encodeURIComponent(name)}`);
+    if (typeId) queryParams.push(`typeId=${typeId}`);
     if (minIntensity) queryParams.push(`minIntensity=${minIntensity}`);
     if (maxIntensity) queryParams.push(`maxIntensity=${maxIntensity}`);
     if (levelId) queryParams.push(`levelId=${levelId}`);
@@ -242,5 +241,34 @@ export const fetchVideoData = async (exerciseId: number) => {
   } catch (error) {
     console.error("Error fetching video data:", error);
     return null;
+  }
+};
+
+export const getRecommendation = async (daysPerWeek: number, workoutEnvironmentId: number) => {
+  try {
+    if (!daysPerWeek) throw "daysPerWeek is required";
+    if (!workoutEnvironmentId) throw "workoutEnvironmentId is required";
+
+    const response = await fetchWithTimeout(
+      `${endpoint}/routine/recommendation?daysPerWeek=${daysPerWeek}&workoutEnvironmentId=${workoutEnvironmentId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${await user.getToken()}`
+        }
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Running recommendation failed");
+    }
+
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    console.log ("Error running recommendation", error);
   }
 };

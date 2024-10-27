@@ -1,11 +1,10 @@
 import { fetchWithTimeout, fetchVideoData } from "./generateRoutine";
 import { SaveRoutine } from "../../types"
-// Production/Testing flag
-let production = false; // Set to true in Production
-let endpoint = production ? `https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev` : `http://localhost:8080`; // Replace with your own ip4 address for test
+import { endpoint } from '../config';
 
 export const getOneExercise = async (
     name?: string,
+    typeId?: number,
     minIntensity?: number,
     maxIntensity?: number,
     levelId?: number,
@@ -18,6 +17,7 @@ export const getOneExercise = async (
       let queryParams = [];
   
       if (name) queryParams.push(`name=${encodeURIComponent(name)}`);
+      if (typeId) queryParams.push(`typeId=${typeId}`);
       if (minIntensity) queryParams.push(`minIntensity=${minIntensity}`);
       if (maxIntensity) queryParams.push(`maxIntensity=${maxIntensity}`);
       if (levelId) queryParams.push(`levelId=${levelId}`);
