@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView, Alert } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, Alert, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Dropdown } from "react-native-element-dropdown";
@@ -6,6 +6,7 @@ import { Image } from "react-native";
 import { CustomButton, FormField } from "@/components";
 import { Href, router } from "expo-router";
 import * as generateRoutine from "./controllers/generateRoutine";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { profileAtom } from "@/store";
 import { getDefaultStore } from "jotai";
 
@@ -23,6 +24,8 @@ type ExerciseDetail = {
   minutes: number;
   youtubeURL: string;
   thumbnailURL: string;
+  name: string;
+  muscleGroups: number[];
 };
 
 type DailyRoutine = {
@@ -37,7 +40,6 @@ type MuscleGroup = {
 
 // Weekly Routine Generation Screen
 const GenerateRoutine = () => {
-  const image1 = require("../assets/images/HomePagePic1.jpeg");
 
   // State Variables
   const [workoutEnv, setWorkoutEnv] = useState<{ description: string; id: string }[]>([]);
@@ -45,11 +47,12 @@ const GenerateRoutine = () => {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [selectedDate, setSelectedDate] = useState("");
   const [isSubmitting, setSubmitting] = useState(false);
-  const [buttonPressed, setButtonPressed] = useState(false);  
-  const [exercises, setExercises] = useState<any[]>([]);
+  const [buttonPressed, setButtonPressed] = useState(false);
   const [muscleGroups, setMuscleGroups] = useState<MuscleGroup[]>([]);
   const [weeklyRoutine, setWeeklyRoutine] = useState<weeklyRoutine | null>(null);
   const [dailyRoutines, setRoutines] = useState<DailyRoutine[]>([]);
+  const [logs, setLogs] = useState<string[]>([]);
+  const [showRoutineDisplay, setShowRoutineDisplay] = useState(false);
 
   // Fetch workout environments and muscle groups when page starts up
   useEffect(() => {
@@ -80,29 +83,47 @@ const GenerateRoutine = () => {
     setSelectedDate(date.toISOString());
   };
 
-  // Helper function to fetch exercise name by exerciseId for UI display
-  const getExerciseName = (id: number) => {
-    const exercise = exercises.find((ex) => ex.id === id);
-    return exercise ? exercise.name : "Unknown Exercise";
-  };
+  // Fetch analysis logs from the backend for display
+  const handlePollLogs = async () => {
+    try {
+      const result = await generateRoutine.pollLogs();
+      if (!Array.isArray(result)) return;
+
+      return new Promise<void>((resolve) => {
+          result.forEach((log, index) => {
+              setTimeout(() => {
+
+                // If the user is identified as overtrained, pop an alert
+                if (log.startsWith("Warning")) {
+                  Alert.alert("Warning Alert", log);
+                }
+
+                setLogs((prevLogs) => [...prevLogs, log]);
+
+                // Each log is displayed one second apart for readability
+                if (index === result.length - 1) {
+                    setTimeout(() => {
+                        setShowRoutineDisplay(true);
+                        resolve();
+                    }, 1000);
+                }
+              }, index * 1000);
+          });
+      });
+
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+    }
+  };  
 
   // Helper function to fetch muscle groups for each exercise for UI display
-  const getMuscleGroups = (id: number) => {
-    const exercise = exercises.find((ex) => ex.id === id);
-    if (exercise) {
-      const muscleGroupDescriptions = exercise.muscleGroups.map(
-        (group: { muscleGroupId: number }) => {
-          const muscleGroup = muscleGroups.find(
-            (mg) => mg.id == group.muscleGroupId
-          );
-          return muscleGroup ? muscleGroup.description : "Unknown Group";
-        }
-      );
-      // Use Set to remove duplicates muscle group for display
-      const uniqueMuscleGroups = [...new Set(muscleGroupDescriptions)];
-      return uniqueMuscleGroups.join(", ");
-    }
-    return "Unknown Group";
+  const getMuscleGroups = (ids: number[]) => {
+      const muscleGroupDescriptions = ids.map((muscleId) => {
+        const muscleGroup = muscleGroups.find((mg) => mg.id == muscleId);
+        return muscleGroup ? muscleGroup.description : "Unknown Group";
+      });
+
+    return muscleGroupDescriptions ? muscleGroupDescriptions : "Unknown Group";
   };
 
   // Generate/Refresh button
@@ -130,64 +151,23 @@ const GenerateRoutine = () => {
         workoutEnvironmentId,
       };
 
-      //const { dailyRoutines } = await generateRoutine.getRecommendation(daysPerWeek, workoutEnvironmentId);
-      //console.log(dailyRoutines);
-
-      // API Call: Fetch exercises based on optional params
-      const currentMuscleGroup = [muscleGroups[0].id, muscleGroups[1].id]; // optional
-      const fetchedExercises = await generateRoutine.fetchExercise(
-        undefined,            // exercise name
-        undefined,            // exercise type
-        undefined,            // min intensity
-        undefined,            // max intensity
-        undefined,            // level id
-        undefined,            // requiredEquipmentId
-        workoutEnvironmentId, // workoutEnvironmentId
-        undefined             // muscleGroups[], use currentMuscleGroup to search
-      );
-
-      if (!fetchedExercises || fetchedExercises.length === 0) {
-        Alert.alert("Error", "No exercises found for the selected parameters.");
-        setSubmitting(false);
-        return;
-      }
-
-      // Level 2: Create Daily Routines based on days per week
-      const dailyRoutines = [];
-      for (let i = 1; i <= daysPerWeek; i++) {
-
-        // TODO: Apply algorithm in later stage, now it temporary picks 4 random exercises
-        const selectedExercises = fetchedExercises.sort(() => 0.5 - Math.random()).slice(0, 4);
-
-        // Level 3: Create Exercise Details and assign selectedExercises to each
-        const exerciseDetails = await Promise.all(selectedExercises.map(async (exercise: any) => {
-
-          // API call: Get YouTube video data
-          const videoData = await generateRoutine.fetchVideoData(exercise.id);
-  
-          return {
-            exerciseId: exercise.id,
-            sets: exercise.defaultSets,
-            reps: exercise.defaultReps,
-            minutes: exercise.minutes,
-            youtubeURL: videoData.data.url,        
-            thumbnailURL: videoData.data.thumbnail 
-          };
-        }));
-
-        // Bundle each Daily Routine with the assigned Exercise Details
-        dailyRoutines.push({ dayNumber: i, exerciseDetails });
-      }
+      // Level 2: Create dailyRoutines and each of its exerciseDetails (It is now processed by the Algorithm from the backend)
+      const { dailyRoutines } = await generateRoutine.getRecommendation(daysPerWeek, workoutEnvironmentId);   
+      
+      // Fetch pollLogs only for the first generation (Refresh will not refetch logs)
+      if (!buttonPressed) await handlePollLogs();
 
       // Set objects state 
-      setWeeklyRoutine(weeklyRoutine); // Passing to the backend
-      setRoutines(dailyRoutines);      // Passing to the backend
-      setExercises(fetchedExercises);  // For UI display
+      setWeeklyRoutine(weeklyRoutine); // Save to the backend
+      setRoutines(dailyRoutines);      // Save to the backend
       
       setSubmitting(false);
       setButtonPressed(true);
+      
     } catch (error) {
       console.error("Error during routine generation:", error);
+      setSubmitting(false);
+      return;
     }
   };
 
@@ -220,10 +200,10 @@ const GenerateRoutine = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1">
-      <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>
-        <BackButton />
-        <View className="w-full flex justify-center items-center h-full my-4 px-4 mt-16">
+    <SafeAreaView>
+      <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>        
+        <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-28">
+          <BackButton />
           <Text className="text-3xl font-bold text-center">
             Your Personalized Weekly Routine
           </Text>
@@ -253,7 +233,10 @@ const GenerateRoutine = () => {
                 placeholder={"Select Workout Environment"}
                 value={selectedEnv}
                 onChange={(item) => {
-                  setSelectedEnv(item.id);
+                  if (item.id === '2' || item.id === '3') {
+                    Alert.alert("Note", "Some exercises may be limited to Gym. While we try to find the best alternatives for you, some exercises may be omitted");
+                  }
+                  setSelectedEnv(item.id);                  
                 }}
               />
             </View>
@@ -272,7 +255,7 @@ const GenerateRoutine = () => {
                 }}
                 placeholderStyle={{ fontSize: 16, color: "gray" }}
                 selectedTextStyle={{ fontSize: 16 }}
-                data={Array.from({ length: 6 }, (_, index) => ({
+                data={Array.from({ length: 5 }, (_, index) => ({
                   label: `${index + 1}`,
                   value: `${index + 1}`,
                 }))}
@@ -283,7 +266,7 @@ const GenerateRoutine = () => {
                 onChange={(item) => {
                   const days = Number(item.value);
                   if (days < 3 || days > 4) {
-                    Alert.alert("Suggestion", "We suggest 3 to 4 days for an effective and manageable routine.");
+                    Alert.alert("Suggestion", "We suggest 3 to 4 days for an effective and manageable routine. \n\nNote: Some recommended plans may not exceed 4 days");
                   }
                   setSelectedDay(item.value);
                 }}
@@ -309,78 +292,113 @@ const GenerateRoutine = () => {
                 then scroll down and tap Confirm
               </Text>
             )}
-            <CustomButton
-              title={ buttonPressed ? "Refresh" : isSubmitting ? "Generating..." : "Generate" }
-              handlePress={handleGenerateRoutine}
-              containerStyles="w-52"
-              isLoading={isSubmitting}
-            />
+
+            <View className="flex-row items-center">
+              <CustomButton
+                title={ buttonPressed && showRoutineDisplay ? "Refresh" : isSubmitting ? "Generating..." : "Generate" }
+                handlePress={handleGenerateRoutine}
+                containerStyles="w-52"
+                isLoading={isSubmitting}
+              />
+
+              {buttonPressed && (
+                <View className="top-[-30]">
+                  <TouchableOpacity
+                    onPress={() =>  Alert.alert("Analysis Logs", logs.join('\n'))}
+                    className="absolute right-[-80]"
+                  >
+                    <Text className="text-m font-pregular text-center">
+                      Logs:
+                    </Text>
+                    
+                    <Ionicons name="clipboard-outline" size={35} color="gray" />
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
           </View>
 
+          {/* Display Algorithm Logs */}
+          {logs.length > 0 && !showRoutineDisplay && !buttonPressed && (
+            <View className="w-full py-2 mt-4 items-center">
+              <Text className="text-xl font-semibold mb-2 text-center">Analysis Logs</Text>              
+              <Text className="text-base text-left mx-4">{logs[logs.length - 1]}</Text>              
+            </View>
+          )}
+
           {/* Routine Display */}
-          {buttonPressed && (
+          {buttonPressed && showRoutineDisplay && (
             <View className="w-full py-2 mt-4">
               {(() => {
-                // Evenly spread out the schedule (Mon, Wed, etc) based on days per week for display
+                // Evenly spread out the schedule (Mon, Wed, etc.) based on days per week for display
                 const dayNames = generateRoutine.getDayNames(selectedDate, dailyRoutines.length);
-                return dailyRoutines.map((routine, dayIndex) => (
-                  <View key={dayIndex} className="mb-5">
 
-                    {/* Day header */}
-                    <Text className="text-xl font-semibold mb-2 text-center mt-6">
-                      Day {routine.dayNumber} - {dayNames[dayIndex]}
-                    </Text>
+                return dailyRoutines.map((routine, dayIndex) => {
 
-                    {/* Muscle Groups Header */}
-                    <Text className="text-lg text-center mb-2">
-                      {[...new Set(routine.exerciseDetails.flatMap((exercise) => getMuscleGroups(exercise.exerciseId))),].join(" & ")}
-                    </Text>
+                  // Get all included muscle group names for rendering
+                  const uniqueMuscleGroups = [...new Set(routine.exerciseDetails.flatMap((exercise) => getMuscleGroups(exercise.muscleGroups)))].join(" & ");
 
-                    {/* Exercise Details blocks */}
-                    {routine.exerciseDetails.map((exercise, index) => (
-                      <View key={index} className="flex-row mb-1 items-center">
-                        
-                        {/* YouTube Thumbnails */}
-                        <Image source={{ uri: exercise.thumbnailURL }} className="w-[70] h-[70] mr-2" resizeMode="cover" />
+                  return (
+                    <View key={dayIndex} className="mb-5">
 
-                        <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[65px]" style={{ backgroundColor: "#e5e5e5" }}>
-                          
-                          {/* Exercise Details header*/}
-                          <View className="flex-row mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
-                            <Text className="flex-[2] text-center font-semibold text-white">
-                              Exercise
-                            </Text>
-                            <Text className="flex-[1] text-center font-semibold text-white">
-                              Sets
-                            </Text>
-                            <Text className="flex-[1] text-center font-semibold text-white">
-                              {exercise.reps ? "Reps" : "Mins"}
-                            </Text>
-                          </View>
+                      {/* Day Header */}
+                      <Text className="text-xl font-semibold mb-2 text-center mt-6">
+                        Day {routine.dayNumber} - {dayNames[dayIndex]}
+                      </Text>
 
-                          {/* Data row */}
-                          <View className="flex-row items-center">
-                            <Text className="flex-[2] text-center">
-                              {getExerciseName(exercise.exerciseId)}
-                            </Text>
-                            <Text className="flex-[1] text-center">
-                              {exercise.sets}
-                            </Text>
-                            <Text className="flex-[1] text-center">
-                              {exercise.reps ? exercise.reps : exercise.minutes}
-                            </Text>
+                      {/* Muscle Groups Header */}
+                      <Text className="text-lg text-center mb-2">
+                        {uniqueMuscleGroups}
+                      </Text>
+
+                      {/* Exercise Details blocks */}
+                      {routine.exerciseDetails.map((exercise, index) => (
+                        <View key={index} className="flex-row mb-1 items-center">
+
+                          {/* YouTube Thumbnails */}
+                          <Image source={{ uri: exercise.thumbnailURL }} className="w-[70] h-[70] mr-2" resizeMode="cover" />
+
+                          <View
+                            className="flex-1 border border-gray-300 items-center rounded-lg min-h-[65px]"
+                            style={{ backgroundColor: "#e5e5e5" }}
+                          >
+                            {/* Exercise Details Header */}
+                            <View className="flex-row mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
+                              <Text className="flex-[2] text-center font-semibold text-white">
+                                Exercise
+                              </Text>
+                              <Text className="flex-[1] text-center font-semibold text-white">
+                                Sets
+                              </Text>
+                              <Text className="flex-[1] text-center font-semibold text-white">
+                                {exercise.reps ? "Reps" : "Mins"}
+                              </Text>
+                            </View>
+
+                            {/* Data Row */}
+                            <View className="flex-row items-center">
+                              <Text className="flex-[2] text-center">
+                                {exercise.name}
+                              </Text>
+                              <Text className="flex-[1] text-center">
+                                {exercise.sets}
+                              </Text>
+                              <Text className="flex-[1] text-center">
+                                {exercise.reps ? exercise.reps : exercise.minutes}
+                              </Text>
+                            </View>
                           </View>
                         </View>
-                      </View>
-                    ))}
-                  </View>
-                ));
+                      ))}
+                    </View>
+                  );
+                });
               })()}
             </View>
           )}
 
           {/* Confirm Button */}
-          {buttonPressed && (
+          {buttonPressed && showRoutineDisplay && (
             <View className="mt-2 items-center">
               <Text className="font-bold text-lg text-center mb-4">
                 Confirm your routine for this week!

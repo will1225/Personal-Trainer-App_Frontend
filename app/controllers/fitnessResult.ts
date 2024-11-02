@@ -45,7 +45,7 @@ export const saveIntensityAndLevel = async (bodyFatClassification: string, ffmiC
         intensityId = 4;
       } else if (ffmiClassification === "Intermediate Built") {
         intensityId = 3;
-      } else if (ffmiClassification === "Skinny") {
+      } else if (ffmiClassification === "Average" || ffmiClassification === "Skinny") {
         intensityId = 2;
       } else {
         intensityId = null;
@@ -53,7 +53,7 @@ export const saveIntensityAndLevel = async (bodyFatClassification: string, ffmiC
     } else if (bodyFatClassification === "Fit") {
       if (ffmiClassification === "Intermediate Built" || ffmiClassification === "Advanced Built") {
         intensityId = 3;
-      } else if (ffmiClassification === "Skinny") {
+      } else if (ffmiClassification === "Average" || ffmiClassification === "Skinny") {
         intensityId = 2;
       } else {
         intensityId = null;
@@ -61,7 +61,7 @@ export const saveIntensityAndLevel = async (bodyFatClassification: string, ffmiC
     } else if (bodyFatClassification === "Average") {
       if (ffmiClassification === "Intermediate Built" || ffmiClassification === "Advanced Built") {
         intensityId = 2;
-      } else if (ffmiClassification === "Skinny") {
+      } else if (ffmiClassification === "Average" || ffmiClassification === "Skinny") {
         intensityId = 1;
       } else {
         intensityId = null;

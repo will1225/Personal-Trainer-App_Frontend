@@ -11,7 +11,7 @@ export const fetchWithTimeout = async (url: string, options: RequestInit) => {
       const id = setTimeout(() => {
         controller.abort();
         reject(new Error('Request timed out'));
-      }, 5000); // Timeout in 5 seconds
+      }, 10000); // Timeout in 10 seconds
   
       try {
         const response = await fetch(url, { ...options, signal: controller.signal });
@@ -244,6 +244,9 @@ export const fetchVideoData = async (exerciseId: number) => {
   }
 };
 
+/**
+ * Method to get dailyRoutines through Algorithm via API call.
+ */
 export const getRecommendation = async (daysPerWeek: number, workoutEnvironmentId: number) => {
   try {
     if (!daysPerWeek) throw "daysPerWeek is required";
@@ -270,5 +273,30 @@ export const getRecommendation = async (daysPerWeek: number, workoutEnvironmentI
 
   } catch (error) {
     console.log ("Error running recommendation", error);
+  }
+};
+
+/**
+ * Method to fetch recommendation logs from the backend.
+ */
+export const pollLogs = async () => {
+  try {
+      const response = await fetch(
+          `${endpoint}/polling/logs`,
+          {
+              method: "GET"
+          }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Error getting logs");
+      }
+
+      const data = await response.json();
+      return data;
+
+  } catch (error) {
+      console.error("Polling error:", error);
   }
 };
