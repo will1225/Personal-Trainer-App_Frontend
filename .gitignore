@@ -49,3 +49,6 @@ launch.json
 settings.json
 %ProgramData%/Microsoft/Windows/UUS/State/_active.uusver
 .idea/
+
+# Production / Testing switching
+app/config.ts
