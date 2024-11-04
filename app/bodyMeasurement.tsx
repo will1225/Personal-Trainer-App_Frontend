@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { router } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "../components";
 import Modal from "react-native-modal";
@@ -34,6 +34,8 @@ const BodyMeasurement = () => {
   const femaleTricep = require("../assets/images/tricepFemale.jpg");
   const femaleSuprailiac = require("../assets/images/suprailiacFemale.jpg");
   const femaleThigh = require("../assets/images/thighFemale.jpg");
+  const params = useLocalSearchParams();
+  const weeklyRoutineId = params.weeklyRoutineId ? Number(params.weeklyRoutineId): null;
 
   const queryClient = useQueryClient();
 
@@ -71,7 +73,7 @@ const BodyMeasurement = () => {
       bodyFatPercent,
       muscleMass,
     } = form;
-
+    
     // Convert input values to float for validation
     const weightValue = parseFloat(weight);
     const chestValue = parseFloat(chest);
@@ -132,7 +134,8 @@ const BodyMeasurement = () => {
         adjustedThigh,
         form.bypassMeasurementFlag,
         parseFloat(form.bodyFatPercent),
-        parseFloat(form.muscleMass)
+        parseFloat(form.muscleMass),
+        weeklyRoutineId
       );
 
       if (result.status) {

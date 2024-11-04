@@ -77,11 +77,6 @@ const CurrentWeeklyRoutine = () => {
     }
   }
 
-  const handleUpdate = async () => {
-    // TO-DO: Implement the logic!
-    console.log("Update Pressed!");
-  };
-
   const trainingDays = weeklyRoutine ? generateRoutine.getDayNames(weeklyRoutine.startDate, weeklyRoutine.daysPerWeek) : [];
   const progress = weeklyRoutine ? calculateProgress(trainingDays, weeklyRoutine.startDate, new Date()) : 0;
 
@@ -130,7 +125,14 @@ const CurrentWeeklyRoutine = () => {
                 <CustomButton
                   title="Update Results"
                   containerStyles="w-52"
-                  handlePress={handleUpdate}
+                  handlePress= {() => {
+                    router.push({
+                      pathname: '../bodyMeasurement',
+                      params: {
+                        weeklyRoutineId: weeklyRoutine.id
+                      }
+                    });
+                  }}
                 />
               </View>
 
