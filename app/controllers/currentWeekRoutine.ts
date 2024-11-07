@@ -23,6 +23,7 @@ export class CurrentWeekRoutine {
       if (!response.ok) {
         // Check for 404 status and reset atom to default values if no routine found
         if (response.status === 404) {
+          console.log("No current weekly routine found")
           setWeeklyRoutine({
             id: 0,
             startDate: "",
@@ -30,11 +31,12 @@ export class CurrentWeekRoutine {
             daysPerWeek: 0,
             dailyRoutines: [],
           });
+        } else {
+          throw new Error(res.error || "Fetching weekly routine failed");
         }
-        throw new Error(res.error || "Fetching weekly routine failed");
+      } else {
+        setWeeklyRoutine(res.data)
       }
-
-      setWeeklyRoutine(res.data)
     } catch (error) {
       console.error("Error fetching current week's routine:", error);
     }

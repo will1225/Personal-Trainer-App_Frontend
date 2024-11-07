@@ -141,9 +141,16 @@ const BodyMeasurement = () => {
       if (result.status) {
         //Invalidate the profile to refetch
         console.log("Invalidating profile");
-        queryClient.invalidateQueries({
+        await queryClient.invalidateQueries({
           queryKey: ['profile']
         });
+        // Invalidate the query in case body measurements
+        //  were updated to track progress
+        if (weeklyRoutineId) {
+          await queryClient.invalidateQueries({
+            queryKey: ['currentWeekRoutine']
+          });
+        }
         //////////////////////////////////
         router.replace({
           pathname: "/fitnessResult",

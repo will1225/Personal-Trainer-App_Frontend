@@ -9,6 +9,7 @@ import * as generateRoutine from "../controllers/generateRoutine";
 import { useAtom } from "jotai";
 import { currentWeekRoutineAtom } from "../../store";
 import { useQuery } from "react-query";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 
 // Current Week's Routine Page Generation
@@ -120,8 +121,8 @@ const CurrentWeeklyRoutine = () => {
                 </View>
               </View>
 
-              {/* Update button placeholder */}
-              <View className="mt-2 items-center">
+              {/* Update button */}
+              <View className="mt-2 flex-row items-center">
                 <CustomButton
                   title="Update Results"
                   containerStyles="w-52"
@@ -134,6 +135,21 @@ const CurrentWeeklyRoutine = () => {
                     });
                   }}
                 />
+
+                  <View className="top-[-20]">
+                    <TouchableOpacity
+                      onPress={() =>
+                        Alert.alert(
+                          "Update Results",
+                          "Update your body measurements at the end of this week's routine to keep track of your progress.",
+                          [{ text: "OK" }]
+                        )
+                      }
+                      className="absolute right-[-55]"
+                    >
+                    <Ionicons name="help-circle-outline" size={40} color="gray" />
+                  </TouchableOpacity>
+                </View>
               </View>
 
               {/* Link to the generate routine page */}
