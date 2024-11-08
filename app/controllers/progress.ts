@@ -17,16 +17,15 @@ export const getProgress = async () => {
         }
       );
 
-    const data = await response.json();
+    const res = await response.json();
     
     if (!response.ok) {
-      const data = await response.json();
       throw new Error(
-        data.error || "Error fetching progress by profile ID"
+        res.error || "Error fetching progress by profile ID"
       );
     }
 
-    return data;
+    return res.data;
   } catch (error: any) {
     throw new Error(
       error.message || "Something went wrong while fetching progress"
@@ -48,16 +47,45 @@ export const getProgressById = async (progressId: number) => {
       },
     });
 
+    const res = await response.json();
+
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || "Error fetching progress by ID");
+      throw new Error(res.error || "Error fetching progress by ID");
     }
 
-    const data = await response.json();
-    return data;
+    return res.data;
   } catch (error: any) {
     throw new Error(
       error.message || "Something went wrong while fetching progress by ID"
+    );
+  }
+};
+
+
+/**
+ * Method to get progress summarized progress results for completed routine
+ */
+export const getProgressResults = async () => {
+  try {
+    const response = await fetch(`${endpoint}/progress/results`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await user.getToken()}`,
+      },
+    });
+
+    const res = await response.json();
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Error fetching progress results");
+    }
+
+    return res.data;
+  } catch (error: any) {
+    throw new Error(
+      error.message || "Something went wrong while fetching progress results"
     );
   }
 };

@@ -60,8 +60,8 @@ const BodyMeasurement = () => {
 
   // Get gender from the profile atom
   useQuery("profile", () => Profile.setProfileByToken(setProfile));
-  const gender = profile?.gender;  
-
+  const gender = profile?.gender; 
+  
   // Form submission handling
   const submit = async () => {
     const {
@@ -86,6 +86,9 @@ const BodyMeasurement = () => {
     const adjustedChest = bypassMeasurementFlag ? null : parseFloat(chest);
     const adjustedAbdomen = bypassMeasurementFlag ? null : parseFloat(abdomen);
     const adjustedThigh = bypassMeasurementFlag ? null : parseFloat(thigh);
+
+    // Determine if body measurement was recorded to update results
+    const progress = weeklyRoutineId ? "progress" : null; 
 
     // Validation logic
     if (bypassMeasurementFlag) {
@@ -154,7 +157,11 @@ const BodyMeasurement = () => {
         //////////////////////////////////
         router.replace({
           pathname: "/fitnessResult",
-          params: { measurementId: result.data.id },
+          params: { 
+            measurementId: result.data.id,
+            isProgress: progress,
+          
+          },
         });
       }
     } catch (error: any) {
