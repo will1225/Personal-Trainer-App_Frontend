@@ -6,12 +6,13 @@ type ProgressSummaryProps = {
     assess?: string;
     gainedMuscle?: number;
     gainedFat?: number;
-  };
+  },
+  fontSize?: number;
 };
 
-const ProgressSummary: React.FC<ProgressSummaryProps> = ({ data }) => {
+const ProgressSummary: React.FC<ProgressSummaryProps> = ({ data , fontSize = 16}) => {
   return (
-    <Text className="text-sm text-center mb-4">
+    <Text style={{ fontSize, textAlign: 'center', marginBottom: 16 }}>
       {data.assess} You've{' '}
       {data && typeof data.gainedMuscle === 'number' ? (
         <>

@@ -10,9 +10,9 @@ import ProgressSummary from "@/components/ProgressSummary"
 const report = () => {
   const params: any = useLocalSearchParams();
   console.log(`id ${params.id}`)
-  //  const progressId = params.progressId ? Number(params.dailyRoutineId): 6;
   const [data, setData] = useState<any>({});
   const [ranges, setRanges] = useState<any[]>([]);
+  const [isLoading, setLoading] = useState(false);
   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
   console.log(data);
   const summaryData = {
@@ -22,9 +22,11 @@ const report = () => {
   }
   useEffect(() => {
     const getReportData = async () => {
+      setLoading(true)
       const fetchedData = await getSelectedReport(params.id);
       setData(fetchedData);
       setRanges(fetchedData.ranges.classifications || []);
+      setLoading(false);
     };
 
     getReportData();
@@ -43,15 +45,21 @@ const report = () => {
         contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
       >
         <BackButton />
+        { isLoading ? (
+         <View className="w-full flex justify-center items-center h-full my-4 px-4 mt-16">
+         <Text className="text-xl text-center">Loading...</Text>
+       </View>
+    ) : (
+      <>
         <View className="w-full flex justify-center items-center px-4 mb-8 mt-12">
           <Text className="text-3xl font-bold text-center mb-1 pb-1">
             Progress Report
           </Text>
           <Text className="text-m font-bold text-center mb-1 pb-1">
-            {'(' + new Date(data.startDate).getFullYear() + ') ' + new Date(data.startDate).toLocaleDateString(undefined, options)} ~ {new Date(data.endDate).toLocaleDateString(undefined, options)}
+            {new Date(data.reportDate).toLocaleDateString(undefined, options) + ", " + new Date(data.startDate).getFullYear()}
           </Text>
-          <ProgressSummary data={summaryData}></ProgressSummary>
-          <View className="flex flex-col items-center mb-6 mt-2 w-full">
+          <ProgressSummary data={summaryData} fontSize={18}></ProgressSummary>
+          <View className="flex flex-col items-center mb-4 mt-2 w-full">
             <View className="flex flex-row justify-center">
               <Text className="text-xl w-36 text-right">
                 Body Fat %:
@@ -124,9 +132,10 @@ const report = () => {
                 {data.ffmiClassification}
               </Text>
             </View>
-
-
           </View>
+          <Text className="text-m font-bold text-center mb-3 pb-1">
+            {'Workout Period: ' + new Date(data.startDate).toLocaleDateString(undefined, options)} ~ {new Date(data.endDate).toLocaleDateString(undefined, options) + ' (' + new Date(data.startDate).getFullYear() + ') ' }
+            </Text>
           {/* Body Fat Percentage Table */}
           <View className="w-full mb-8">
             <Text
@@ -178,7 +187,6 @@ const report = () => {
                 Women
               </Text>
             </View>
-
             {ranges.map((item, index) => (
               <View
                 key={index}
@@ -199,6 +207,7 @@ const report = () => {
             ))}
           </View>
         </View>
+        </>)}
       </ScrollView>
     </SafeAreaView>
   );
