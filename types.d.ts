@@ -112,4 +112,15 @@ export interface SaveRoutine {
     exerciseId: number
 }
 
+
+export interface WeeklyProgressProps {
+    id: number,
+    weeklyRoutine: WeeklyRoutineProps,
+    weeklyRoutineId: number,
+    profile: ProfileProps,
+    profileId: number,
+    bodyMeasurement: BodyMeasurementProps,
+    bodyMeasurementId: number,
+    date: Date
+}
 // * ****** * //

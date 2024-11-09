@@ -65,7 +65,7 @@ export default function TabLayout() {
         }}  
       />
       <Tabs.Screen
-        name="four"
+        name="analysis"
         options={{
           title: 'Analysis',
           headerShown: false,

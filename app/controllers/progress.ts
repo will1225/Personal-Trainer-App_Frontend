@@ -1,10 +1,11 @@
 import * as user from "./user";
 import { endpoint } from "../config";
+import { WeeklyProgressProps } from "@/types";
 
 /**
  * Method to get all progress entries associated with the user
  */
-export const getProgress = async () => {
+export const getProgress = async (): Promise<WeeklyProgressProps[]> => {
   try {
     const response = await fetch (
         `${endpoint}/progress`,
