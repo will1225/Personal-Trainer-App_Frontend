@@ -3,38 +3,39 @@ import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Href, Link, router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/CustomButton";
-import { getSelectedReport } from "./controllers/report";
+import { getSelectedReport } from "../controllers/report";
 import ProgressSummary from "@/components/ProgressSummary"
 
 // Report Screen
 const report = () => {
-   const params = useLocalSearchParams();
-   const progressId = params.progressId ? Number(params.dailyRoutineId): 6;
-   const [data, setData] = useState<any>({});
-   const [ranges, setRanges] = useState<any[]>([]);
-   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-    console.log(data);
-   const summaryData = {
-     assess : data.assess,
-     gainedFat : data.gainedFat,
-     gainedMuscle: data.gainedMuscle
-   }
-   useEffect(() => {
+  const params: any = useLocalSearchParams();
+  console.log(`id ${params.id}`)
+  //  const progressId = params.progressId ? Number(params.dailyRoutineId): 6;
+  const [data, setData] = useState<any>({});
+  const [ranges, setRanges] = useState<any[]>([]);
+  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+  console.log(data);
+  const summaryData = {
+    assess: data.assess,
+    gainedFat: data.gainedFat,
+    gainedMuscle: data.gainedMuscle
+  }
+  useEffect(() => {
     const getReportData = async () => {
-        const fetchedData = await getSelectedReport(progressId);
-        setData(fetchedData);
-        setRanges(fetchedData.ranges.classifications || []);
+      const fetchedData = await getSelectedReport(params.id);
+      setData(fetchedData);
+      setRanges(fetchedData.ranges.classifications || []);
     };
 
     getReportData();
-    }, [progressId]);
+  }, [params.id]);
 
   // Highlight the corresponding row based on body fat %
   const isHighlighted = (range: { classification: string; min: number; max: number }) => {
     if (data.fat === null) return false;
     // range.max === null represents Infinity from the backend
     return data.fat >= range.min && (range.max === null || data.fat <= range.max);
-};
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -43,11 +44,11 @@ const report = () => {
       >
         <BackButton />
         <View className="w-full flex justify-center items-center px-4 mb-8 mt-12">
-        <Text className="text-3xl font-bold text-center mb-1 pb-1">
+          <Text className="text-3xl font-bold text-center mb-1 pb-1">
             Progress Report
-        </Text>
+          </Text>
           <Text className="text-m font-bold text-center mb-1 pb-1">
-          {'(' + new Date(data.startDate).getFullYear() + ') ' + new Date(data.startDate).toLocaleDateString(undefined, options)} ~ {new Date(data.endDate).toLocaleDateString(undefined, options)}
+            {'(' + new Date(data.startDate).getFullYear() + ') ' + new Date(data.startDate).toLocaleDateString(undefined, options)} ~ {new Date(data.endDate).toLocaleDateString(undefined, options)}
           </Text>
           <ProgressSummary data={summaryData}></ProgressSummary>
           <View className="flex flex-col items-center mb-6 mt-2 w-full">
@@ -109,7 +110,7 @@ const report = () => {
             </View>
             <View className="flex flex-row justify-center mt-2">
               <Text className="text-xl w-36 text-right">
-              Fat Levels:
+                Fat Levels:
               </Text>
               <Text className="text-xl ml-2">
                 {data.fatClassification}
@@ -123,8 +124,8 @@ const report = () => {
                 {data.ffmiClassification}
               </Text>
             </View>
-            
-          
+
+
           </View>
           {/* Body Fat Percentage Table */}
           <View className="w-full mb-8">

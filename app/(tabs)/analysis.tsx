@@ -7,6 +7,9 @@ import { useQuery } from "react-query";
 import { dateToString, monthToString } from "../controllers/utils";
 import React from "react";
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { Href, router } from "expo-router";
+import { useAtomValue } from "jotai";
+import { profileAtom } from "@/store";
 
 interface SelectedData {
   x: number,
@@ -15,6 +18,7 @@ interface SelectedData {
 };
 
 export default function AnalysisScreen() {
+  const profile = useAtomValue(profileAtom);
   const [selectedData, setSelectedData] = useState<SelectedData | null>(null);
   const [months, setMonths] = useState<string[]>([]);
   const [leanMuscles, setLeanMuscles] = useState<number[]>([]);
@@ -60,7 +64,7 @@ export default function AnalysisScreen() {
   }
 
   const { status, data } = useQuery({
-    queryKey: ['weekly-progress'],
+    queryKey: [`weekly-progress-${profile.id}`],
     queryFn: getWeeklAllWeeklyProgress
   });
 
@@ -80,7 +84,7 @@ export default function AnalysisScreen() {
   }
 
   const handleOpenReport = () => {
-
+    router.push(`/report/${selectedReport.id}` as Href<string>);
   }
 
   return (
