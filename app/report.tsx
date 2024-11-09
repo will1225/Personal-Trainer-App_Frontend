@@ -4,6 +4,7 @@ import BackButton from "@/components/BackButton";
 import { Href, Link, router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import { getSelectedReport } from "./controllers/report";
+import ProgressSummary from "@/components/ProgressSummary"
 
 // Report Screen
 const report = () => {
@@ -13,6 +14,11 @@ const report = () => {
    const [ranges, setRanges] = useState<any[]>([]);
    const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
     console.log(data);
+   const summaryData = {
+     assess : data.assess,
+     gainedFat : data.gainedFat,
+     gainedMuscle: data.gainedMuscle
+   }
    useEffect(() => {
     const getReportData = async () => {
         const fetchedData = await getSelectedReport(progressId);
@@ -30,83 +36,20 @@ const report = () => {
     return data.fat >= range.min && (range.max === null || data.fat <= range.max);
 };
 
-//    setRanges(data.)
-//   const { measurementId } = useLocalSearchParams(); // measurementId passing from the previous screen
-//   if (!measurementId) throw "Measurement ID is missing";
-  
-//   // Hardcoded test
-//   // const measurementId = '2';
-
-//   // State variables
-//   const [bodyFat, setBodyFat] = useState<number | null>(null);
-//   const [muscleMass, setMuscleMass] = useState<number | null>(null);
-//   const [classification, setClassification] = useState<string | null>(null);
-//   const [ffmiClassification, setFFMIClassification] = useState<string | null>(null);
-//   const [ranges, setRanges] = useState<any[]>([]);
-
-//   // Get and set fitness data
-//   useEffect(() => {
-//     const getBodyFatPercentage = async () => {
-//       const progressId = 297 // hardcoding for now
-
-
-//       const result = await fitnessUtil.fetchFitnessResult(measurementId as string);
-//       setBodyFat(result.bodyFatPercent);
-//       setMuscleMass(result.muscleMass);
-//       setClassification(result.classification); 
-//       setFFMIClassification(result.ffmiClassification); 
-//       setRanges(result.ranges.classifications || []);
-
-//       // Save intensity and level after fetching fitness result
-//       const updateResult = await fitnessUtil.saveIntensityAndLevel(result.classification, result.ffmiClassification);
-//       if (updateResult.status) {
-//         queryClient.invalidateQueries({
-//           queryKey: ['profile']
-//         });
-//       }
-//     };
-//     getBodyFatPercentage();
-//   }, [measurementId]);
-
-    
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
       >
         <BackButton />
         <View className="w-full flex justify-center items-center px-4 mb-8 mt-12">
-          <Text className="text-3xl font-bold text-center mb-1">
-          {new Date(data.startDate).toLocaleDateString(undefined, options)} ~ {new Date(data.endDate).toLocaleDateString(undefined, options)}
+        <Text className="text-3xl font-bold text-center mb-1 pb-1">
+            Progress Report
+        </Text>
+          <Text className="text-m font-bold text-center mb-1 pb-1">
+          {'(' + new Date(data.startDate).getFullYear() + ') ' + new Date(data.startDate).toLocaleDateString(undefined, options)} ~ {new Date(data.endDate).toLocaleDateString(undefined, options)}
           </Text>
-          <Text className="text-sm text-center mb-4">
-          {data.assess} You've 
-            {data && typeof data.gainedMuscle === 'number' 
-            ? (
-            <>
-                {data.gainedMuscle < 0 ? " lost " : " gained "}
-                <Text style={{ color: data.gainedMuscle < 0 ? 'red' : 'green' }}>
-                {Math.abs(data.gainedMuscle).toFixed(2)} kg
-                </Text>
-                {' '}of Lean Muscle and 
-            </>
-            ) 
-            : '0.00'} 
-            {data && typeof data.gainedFat === 'number' 
-            ? (
-            <>
-                {data.gainedFat < 0 ? " lost " : " gained "}
-                <Text style={{ color: data.gainedFat < 0 ? 'green' : 'red' }}>
-                {Math.abs(data.gainedFat).toFixed(2)} %
-                </Text>
-            </>
-            )
-            : '0.00'} 
-            {' '}of Body Fat Compared to Last Week 
-            
-          </Text>
+          <ProgressSummary data={summaryData}></ProgressSummary>
           <View className="flex flex-col items-center mb-6 mt-2 w-full">
             <View className="flex flex-row justify-center">
               <Text className="text-xl w-36 text-right">
@@ -166,6 +109,14 @@ const report = () => {
             </View>
             <View className="flex flex-row justify-center mt-2">
               <Text className="text-xl w-36 text-right">
+              Fat Levels:
+              </Text>
+              <Text className="text-xl ml-2">
+                {data.fatClassification}
+              </Text>
+            </View>
+            <View className="flex flex-row justify-center mt-2">
+              <Text className="text-xl w-36 text-right">
                 FFMI :
               </Text>
               <Text className="text-xl ml-2">
@@ -173,30 +124,8 @@ const report = () => {
               </Text>
             </View>
             
-            
-            {/* {classification && (
-              <View className="flex flex-row justify-center mt-2">
-                <Text className="text-xl w-48 text-right">
-                  Body Fat Class:
-                </Text>
-                <Text className="text-xl ml-2">
-                  {classification}
-                </Text>
-              </View>
-            )} */}
-            
+          
           </View>
-
-          {/* {ffmiClassification && (
-              <View className="flex flex-row justify-center mt-2">
-                <Text className="text-xl w-48 text-right">
-                  FFMI Class:
-                </Text>
-                <Text className="text-xl ml-2">
-                  {ffmiClassification}
-                </Text>
-              </View>
-            )} */}
           {/* Body Fat Percentage Table */}
           <View className="w-full mb-8">
             <Text
@@ -262,7 +191,6 @@ const report = () => {
                   borderBottomColor: "#ddd",
                 }}
               >
-                 {/*   */}
                 <Text style={{ flex: 1, textAlign: "center" }}>{item.classification}</Text>
                 <Text style={{ flex: 1, textAlign: "center" }}>{item.men}</Text>
                 <Text style={{ flex: 1, textAlign: "center" }}>{item.women}</Text>
