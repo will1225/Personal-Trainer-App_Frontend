@@ -145,7 +145,7 @@ export default function AnalysisScreen() {
                         borderRadius: 16,
                       },
                       propsForDots: {
-                        r: "6",
+                        r: "3",
                         strokeWidth: "0",
                         stroke: "#ffa726",
                       },
@@ -157,9 +157,9 @@ export default function AnalysisScreen() {
                       fillShadowGradientToOpacity: 0
                     }}
                     //bezier //Uncomment for soft curve
-                    //segments={10}
+                    segments={5}
                     //fromZero
-                    yAxisInterval={1}
+                    yAxisInterval={10}
                     withVerticalLines={false}
                     //withHorizontalLines={false}
                     style={{
