@@ -87,7 +87,7 @@ export default function TabOneScreen() {
               className="w-full h-[200px]"
             />
             <Link
-              href={"../four" as Href<string>}
+              href={"../../analysis" as Href<string>}
               className="bg-primary text-2xl font-psemibold text-white absolute"
             >
               Progress Analysis
