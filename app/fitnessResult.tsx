@@ -8,7 +8,6 @@ import { StatusBar } from "expo-status-bar";
 import * as fitnessUtil from "./controllers/fitnessResult";
 import { getProgressResults } from "./controllers/progress";
 import { useQueryClient } from "react-query";
-import Ionicons from "@expo/vector-icons/Ionicons";
 
 // Fitness Result screen
 const fitnessResult = () => {
@@ -85,7 +84,7 @@ const fitnessResult = () => {
             <>
               {/* Render progress summary if needed, else render the image */}
               {progressSummary ? (
-                <ProgressSummary data={progressSummary} />
+                <ProgressSummary data={progressSummary} fontSize={17}/>
               ) : !isProgress ? (
                 <Image
                   source={image}
@@ -94,21 +93,41 @@ const fitnessResult = () => {
                 />
               ) : null}
 
-              <View className="flex flex-col items-center mb-6 mt-2">
+              <View className="flex flex-col items-center mb-6 mt-2">                
                 <View className="flex flex-row justify-center">
-                  <Text className="text-xl w-48 text-right">
-                    Body Fat %:
-                  </Text>
-                  <Text className="text-xl ml-2">
-                    {bodyFat !== null ? `${bodyFat} %` : "Loading..."}
-                  </Text>
-                </View>
-                <View className="flex flex-row justify-center mt-2">
                   <Text className="text-xl w-48 text-right">
                     Lean Body Mass:
                   </Text>
                   <Text className="text-xl ml-2">
-                    {muscleMass !== null ? `${muscleMass} kg` : "Loading..."}
+                  {muscleMass !== null ? (
+                    <>
+                      {muscleMass - progressSummary.gainedMuscle} {`\u2794`}{' '}
+                      <Text style={{color: progressSummary.gainedMuscle > 0 ? 'green' : progressSummary.gainedMuscle < 0 ? 'red' : 'black'}}>
+                        {muscleMass}{' '}
+                      </Text>
+                      kg
+                    </>
+                  ) : (
+                    "Loading..."
+                  )} 
+                  </Text>
+                </View>
+                <View className="flex flex-row justify-center mt-2">
+                  <Text className="text-xl w-48 text-right">
+                    Body Fat %:
+                  </Text>
+                  <Text className="text-xl ml-2">
+                  {bodyFat !== null ? (
+                    <>
+                      {bodyFat - progressSummary.gainedFat} {`\u2794`}{' '}
+                      <Text style={{color: progressSummary.gainedFat < 0 ? 'green' : progressSummary.gainedFat > 0 ? 'red' : 'black'}}>
+                        {bodyFat}{' '}
+                      </Text>
+                      kg
+                    </>
+                  ) : (
+                    "Loading..."
+                  )} 
                   </Text>
                 </View>
                 {classification && (
