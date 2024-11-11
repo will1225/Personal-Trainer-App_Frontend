@@ -8,11 +8,13 @@ import { StatusBar } from "expo-status-bar";
 import * as fitnessUtil from "./controllers/fitnessResult";
 import { getProgressResults } from "./controllers/progress";
 import { useQueryClient } from "react-query";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 // Fitness Result screen
 const fitnessResult = () => {
   const queryClient = useQueryClient();
   const image = require("../assets/images/neonDumbell.png");  
+  const image2 = require("../assets/images/YouArrow.png"); 
   const { measurementId, isProgress } = useLocalSearchParams(); // measurementId, progress passing from the previous screen
   if (!measurementId) throw "Measurement ID is missing";
 
@@ -200,6 +202,18 @@ const fitnessResult = () => {
                       borderBottomColor: "#ddd",
                     }}
                   >
+                    {isHighlighted(item) && (
+                      <Image
+                      source={image2}
+                      resizeMode="contain"
+                      style={{
+                        position: "absolute",
+                        left: -19, 
+                        width: 38,
+                        height: 38
+                      }}
+                      />
+                    )}
                     <Text style={{ flex: 1, textAlign: "center" }}>{item.classification}</Text>
                     <Text style={{ flex: 1, textAlign: "center" }}>{item.men}</Text>
                     <Text style={{ flex: 1, textAlign: "center" }}>{item.women}</Text>

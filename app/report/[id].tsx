@@ -8,6 +8,7 @@ import ProgressSummary from "@/components/ProgressSummary"
 
 // Report Screen
 const report = () => {
+  const image = require("../../assets/images/YouArrow.png"); 
   const params: any = useLocalSearchParams();
   console.log(`id ${params.id}`)
   const [data, setData] = useState<any>({});
@@ -200,6 +201,18 @@ const report = () => {
                   borderBottomColor: "#ddd",
                 }}
               >
+                {isHighlighted(item) && (
+                  <Image
+                  source={image}
+                  resizeMode="contain"
+                  style={{
+                    position: "absolute",
+                    left: -19, 
+                    width: 38,
+                    height: 38
+                  }}
+                  />
+                )}
                 <Text style={{ flex: 1, textAlign: "center" }}>{item.classification}</Text>
                 <Text style={{ flex: 1, textAlign: "center" }}>{item.men}</Text>
                 <Text style={{ flex: 1, textAlign: "center" }}>{item.women}</Text>
