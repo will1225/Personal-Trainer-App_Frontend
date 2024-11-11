@@ -123,7 +123,7 @@ const fitnessResult = () => {
                       <Text style={{color: progressSummary.gainedFat < 0 ? 'green' : progressSummary.gainedFat > 0 ? 'red' : 'black'}}>
                         {bodyFat}{' '}
                       </Text>
-                      kg
+                      %
                     </>
                   ) : (
                     "Loading..."
