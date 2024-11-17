@@ -91,6 +91,36 @@ export const fetchWorkoutEnv = async () => {
 };
 
 /**
+ * Method to fetch string description of environment, type, equipment, and level.
+ * @returns 
+ */
+export const fetchExerciseDescByExerciseId = async (exerciseId: number) => {
+  try {
+    const response = await fetchWithTimeout(
+      `${endpoint}/routine/exerciseDescription/${exerciseId}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Fetching workout environment failed");
+    }
+
+    const data = await response.json();
+    return data;
+
+  } catch (error) {
+    console.error("Error fetching workout environment:", error);
+    return null;
+  }
+};
+
+/**
  * Method to fetch MuscleGroup options from the backend.
  * @returns muscleGroup[]
  */
