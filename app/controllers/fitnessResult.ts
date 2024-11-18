@@ -41,30 +41,28 @@ export const saveIntensityAndLevel = async (bodyFatClassification: string, ffmiC
 
     let intensityId;
     if (bodyFatClassification === "Essential Fat" || bodyFatClassification === "Athletes") {
-      if (ffmiClassification === "Advanced Built") {
+      if (ffmiClassification === "Advanced Built" || ffmiClassification === "Intermediate Built") {
         intensityId = 4;
-      } else if (ffmiClassification === "Intermediate Built") {
+      } else if (ffmiClassification === "Average") {
         intensityId = 3;
-      } else if (ffmiClassification === "Average" || ffmiClassification === "Skinny") {
+      } else if (ffmiClassification === "Skinny") {
         intensityId = 2;
       } else {
-        intensityId = null;
+        intensityId = 1; // extreme case
       }
     } else if (bodyFatClassification === "Fit") {
-      if (ffmiClassification === "Intermediate Built" || ffmiClassification === "Advanced Built") {
+      if (ffmiClassification === "Advanced Built" || ffmiClassification === "Intermediate Built") {
         intensityId = 3;
       } else if (ffmiClassification === "Average" || ffmiClassification === "Skinny") {
         intensityId = 2;
       } else {
-        intensityId = null;
+        intensityId = 1; // extreme case
       }
     } else if (bodyFatClassification === "Average") {
-      if (ffmiClassification === "Intermediate Built" || ffmiClassification === "Advanced Built") {
+      if (ffmiClassification === "Advanced Built" || ffmiClassification === "Intermediate Built") {
         intensityId = 2;
-      } else if (ffmiClassification === "Average" || ffmiClassification === "Skinny") {
-        intensityId = 1;
       } else {
-        intensityId = null;
+        intensityId = 1;
       }
     } else {
       intensityId = 1;
@@ -74,7 +72,7 @@ export const saveIntensityAndLevel = async (bodyFatClassification: string, ffmiC
     if (ffmiClassification === "Skinny" || ffmiClassification === "Average") levelId = 1;
     if (ffmiClassification === "Intermediate Built") levelId = 2;
     if (ffmiClassification === "Advanced Built" || ffmiClassification === "Extremely Muscular") levelId = 3;
-    if (ffmiClassification === "Unusual/Extreme Result") levelId = null;
+    if (ffmiClassification === "Unusual/Extreme Result") levelId = 1;
 
     const response = await fetch(
       `${endpoint}/user/profile/updateIntensityAndLevel`,

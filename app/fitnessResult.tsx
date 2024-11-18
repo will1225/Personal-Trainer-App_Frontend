@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView, Image } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, Image, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Href, Link, router, useLocalSearchParams } from "expo-router";
@@ -39,7 +39,14 @@ const fitnessResult = () => {
       setFFMIClassification(fitnessResult.ffmiClassification); 
       setRanges(fitnessResult.ranges.classifications || []);
 
-      // Save intensity and level after fetching fitness result
+      if (fitnessResult.classification === "Out of classification range" || fitnessResult.ffmiClassification === "Unusual/Extreme Result") {
+        Alert.alert(
+          "WARNING",
+          "Your body composition is outside the typical range. Consult a healthcare professional for assessment.",          
+        );
+      }
+
+      // Save intensity and level after fetching fitness result      
       const updateResult = await fitnessUtil.saveIntensityAndLevel(fitnessResult.classification, fitnessResult.ffmiClassification);
       if (updateResult.status) {
         queryClient.invalidateQueries({
@@ -99,7 +106,8 @@ const fitnessResult = () => {
                     Lean Body Mass:
                   </Text>
                   <Text className="text-xl ml-2">
-                  {muscleMass !== null ? (
+                  { muscleMass ? (
+                    progressSummary ? (
                     <>
                       {muscleMass - progressSummary.gainedMuscle} {`\u2794`}{' '}
                       <Text style={{color: progressSummary.gainedMuscle > 0 ? 'green' : progressSummary.gainedMuscle < 0 ? 'red' : 'black'}}>
@@ -107,7 +115,12 @@ const fitnessResult = () => {
                       </Text>
                       kg
                     </>
-                  ) : (
+                    ) : (
+                      <>
+                        {muscleMass} kg
+                      </>
+                    )
+                  ): (
                     "Loading..."
                   )} 
                   </Text>
@@ -117,7 +130,8 @@ const fitnessResult = () => {
                     Body Fat %:
                   </Text>
                   <Text className="text-xl ml-2">
-                  {bodyFat !== null ? (
+                  { bodyFat ? (
+                    progressSummary ? (
                     <>
                       {bodyFat - progressSummary.gainedFat} {`\u2794`}{' '}
                       <Text style={{color: progressSummary.gainedFat < 0 ? 'green' : progressSummary.gainedFat > 0 ? 'red' : 'black'}}>
@@ -125,7 +139,12 @@ const fitnessResult = () => {
                       </Text>
                       %
                     </>
-                  ) : (
+                    ) : (
+                      <>
+                        {bodyFat} kg
+                      </>
+                    )
+                  ): (
                     "Loading..."
                   )} 
                   </Text>

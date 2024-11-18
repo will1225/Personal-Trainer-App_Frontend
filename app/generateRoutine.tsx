@@ -1,5 +1,5 @@
 import { View, Text, SafeAreaView, ScrollView, Alert, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Dropdown } from "react-native-element-dropdown";
 import { Image } from "react-native";
@@ -8,7 +8,8 @@ import { Href, router } from "expo-router";
 import * as generateRoutine from "./controllers/generateRoutine";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { profileAtom } from "@/store";
-import { getDefaultStore } from "jotai";
+import { useAtom } from "jotai";
+import { useFocusEffect } from "@react-navigation/native";
 
 type weeklyRoutine = {
   startDate: string;
@@ -53,6 +54,34 @@ const GenerateRoutine = () => {
   const [dailyRoutines, setRoutines] = useState<DailyRoutine[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   const [showRoutineDisplay, setShowRoutineDisplay] = useState(false);
+  const [profile, setProfile] = useAtom(profileAtom);
+
+  // Validate if measurementId exists before proceeding
+  const isBodyMeasurementValid = async () => {    
+    if (!profile.bodyMeasurementId) {
+      Alert.alert(
+        "Body Measurement Required",
+        "Please input your body measurements to proceed.",
+        [
+          {
+            text: "OK",
+            onPress: () => router.push("./bodyMeasurement"), 
+          },
+          {
+            text: "Cancel",
+            onPress: () => router.push("/(tabs)/home")
+          }
+        ]
+      );
+    }
+  };
+
+  // Check on mount 
+  useFocusEffect(
+    useCallback(() => {
+      isBodyMeasurementValid();
+    }, []) 
+  );
 
   // Fetch workout environments and muscle groups when page starts up
   useEffect(() => {
