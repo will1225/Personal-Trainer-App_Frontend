@@ -1,11 +1,13 @@
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useState } from "react";
-import { ActivityIndicator, ScrollView, TouchableOpacity, View, Text, Alert } from "react-native";
+import { ActivityIndicator, ScrollView, TouchableOpacity, View, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker, { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { Profile } from "@/app/controllers/profile";
 import { useQueryClient } from "react-query";
+import { Text } from "@/components/Text";
+import { useColorScheme } from 'nativewind';
 
 const EditDOB = () => {
     //const { birthdate } = useLocalSearchParams();
@@ -13,7 +15,7 @@ const EditDOB = () => {
     const [dob, setDob] = useState<Date | undefined>(undefined);
     const [loading, isLoading] = useState(false);
     const [select, setSelect] = useState(false);
-
+    const { colorScheme } = useColorScheme();
     const done = async () => {
         //Update dob
         isLoading(true);
@@ -56,9 +58,12 @@ const EditDOB = () => {
 
     return (
         <SafeAreaView style={{flex: 1}}>
-            <View className="relative flex-row justify-center items-center px-[16px] border-b-[1px] border-black py-[8px]">
+            <View 
+                className="relative flex-row justify-center items-center px-[16px] border-b-[1px] py-[8px]"
+                style={{ borderColor: colorScheme === 'dark' ? 'white' : 'black' }}
+            >
                 <TouchableOpacity className="absolute left-[16px]" onPress={() => router.back()}>
-                    <MaterialIcons name="arrow-back-ios" size={18} color="black" />
+                    <MaterialIcons name="arrow-back-ios" size={18} color={colorScheme === 'dark' ? 'white' : 'black'}/>
                 </TouchableOpacity>
                 <Text className="text-lg">
                     Date of Birth
@@ -90,7 +95,7 @@ const EditDOB = () => {
                             )
                         }
                     </Text>
-                    <Ionicons name="calendar" size={30} color="black" />
+                    <Ionicons name="calendar" size={30} color={colorScheme === 'dark' ? 'white' : 'black'} />
                 </TouchableOpacity>
             </ScrollView>
             {

@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "../../components";
-import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
+import { View, ScrollView, Dimensions, Alert, Image } from "react-native";
 import * as user from "../../app/controllers/user";
 import BackButton from "../../components/BackButton";
+import { Text } from "@/components/Text"
 
 /**
  * Sign up screen.

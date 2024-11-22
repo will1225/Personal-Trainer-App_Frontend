@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView, Alert } from "react-native";
+import { View, SafeAreaView, ScrollView, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Image, TouchableOpacity } from "react-native";
@@ -13,6 +13,10 @@ import { Level, RequiredEquipment, WorkoutEnv, MuscleGroupProps, SaveRoutine} fr
 import Modal from "react-native-modal";
 import { useQuery, useQueryClient } from "react-query";
 import YoutubePlayer from 'react-native-youtube-iframe';
+import { Text } from "@/components/Text"
+import LoadingAnimation from "@/components/LoadingAnimation";
+import { useColorScheme } from 'nativewind';
+
 
 type ExerciseDetail = {
   exerciseDetailId: number;
@@ -42,6 +46,11 @@ const dailyRoutineDetail = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState<ExerciseDetail>();
   const [showVideoModal, setShowVideoModel] = useState(false);
+  const { colorScheme } = useColorScheme();
+  const headerColor = colorScheme === "dark" ? "#1B4A72" : "#0369a1";
+  const blockColor = colorScheme === "dark" ? "#2A3442" : "#e5e5e5";
+  const borderColor = colorScheme === "dark" ? "#4B5563" : "#D1D5DB";
+  const detailLinkColor = colorScheme === "dark" ? "#25BCE7" : "#0369a1";
 
   //const [isLoading, setIsLoading] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
@@ -291,20 +300,20 @@ const { isLoading, isFetching, data } = useQuery(
   return (
    
     <SafeAreaView className="flex-1">
-      <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>
-        <BackButton />
+      <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>        
     { isLoading || isFetching ? (
-         <View className="w-full flex justify-center items-center h-full my-4 px-4 mt-16">
-         <Text className="text-xl text-center">Loading...</Text>
+        <View className="w-full flex justify-center items-center h-full my-4 px-4 mt-16">
+         <LoadingAnimation isLoading={isLoading} />
        </View>
     ) : (
         <>
-        <View className="w-full flex justify-center items-center h-full my-4 px-4 mt-16">
+        <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-28">
+          <BackButton />
           <Text className="text-3xl font-bold text-center">
             Daily Routine Detail
           </Text>
 
-          <Text className="text-lg font-pregular text-left px-4 mt-4 mb-8">
+          <Text className="text-2xl font-medium text-left px-4 mt-4 mb-8">
             {dayName}
           </Text>
          
@@ -319,7 +328,14 @@ const { isLoading, isFetching, data } = useQuery(
                 <View key={item.exerciseDetailId + 1} className="w-full py-1">
                     {/* Header */}
                     <View className="flex-row items-center rounded h-6" >
-                        <View className="flex-[6] flex-row mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
+                        <View 
+                            className="flex-[7] flex-row mb-1 items-center h-7" 
+                            style={{
+                                backgroundColor: headerColor,
+                                borderTopLeftRadius: 8,
+                                borderTopRightRadius: 8,
+                              }}
+                        >
                                 <Text className="flex-[3] text-center font-semibold text-white">
                                     Exercise
                                 </Text>
@@ -334,17 +350,27 @@ const { isLoading, isFetching, data } = useQuery(
                     </View>
 
                     {/* Data row */}
-                    <View className="flex-row items-center h-10">
-                        <Text className="flex-[3] text-center">
-                            {item.exerciseName}
-                        </Text>
-                        <Text className="flex-[1] text-center">
-                            {item.sets}
-                        </Text>
-                        <Text className="flex-[1] text-center">
-                            {item.reps ? item.reps : item.minutes}
-                        </Text>
-                        <View className="flex-[1]">    
+                    <View className="flex-row items-center">
+                        <View 
+                            className="flex-[7] flex-row items-center h-10"
+                            style={{
+                                backgroundColor: blockColor,
+                                borderBottomLeftRadius: 8,
+                                borderBottomRightRadius: 8,
+                              }}
+                        >
+                            <Text className="flex-[3] text-center">
+                                {item.exerciseName}
+                            </Text>
+                            <Text className="flex-[1] text-center">
+                                {item.sets}
+                            </Text>
+                            <Text className="flex-[1] text-center">
+                                {item.reps ? item.reps : item.minutes}
+                            </Text>                        
+                        </View>
+
+                        <View className="flex-[1] items-center">    
                             <RefreshButton  onRefresh={() => refreshExercise(item.exerciseDetailId)} />
                         </View>
                     </View>
@@ -352,7 +378,7 @@ const { isLoading, isFetching, data } = useQuery(
                 ))
             }
 
-            <View className="w-full flex-row text-left mt-2" >    
+            <View className="w-full flex-row text-left mt-4" >    
                 <VideoRefreshButton 
                     onRefresh={()=>{}}
                     style= {{
@@ -392,10 +418,23 @@ const { isLoading, isFetching, data } = useQuery(
                         </TouchableOpacity>
                     </View>
 
-                    <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[95px] mb-2" style={{ backgroundColor: "#e5e5e5" }}>
+                    <View 
+                        className="flex-1 border items-center rounded-lg min-h-[95px] mb-2" 
+                        style={{ 
+                            backgroundColor: blockColor,
+                            borderColor: borderColor
+                        }}
+                    >
                     
                         {/* Exercise Details header*/}
-                        <View className="flex-row flex-[1] mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
+                        <View 
+                            className="flex-row flex-[1] mb-1 items-center h-7" 
+                            style={{
+                                backgroundColor: headerColor,
+                                borderTopLeftRadius: 8,
+                                borderTopRightRadius: 8,
+                              }}
+                        >
                             <Text className="flex-[2] text-center font-semibold text-white">
                             Exercise
                             </Text>
@@ -418,7 +457,7 @@ const { isLoading, isFetching, data } = useQuery(
                             </Text>
                         </View>
                         <TouchableOpacity className="flex-[1]" onPress={() => displayModal(item.exerciseDetailId)}>
-                                <Text style={{ color: '#0369a1' }} >See Exercise Detail</Text>
+                                <Text style={{ color: detailLinkColor }} >See Exercise Detail</Text>
                         </TouchableOpacity>
                     </View>
                 </View>      
@@ -441,30 +480,31 @@ const { isLoading, isFetching, data } = useQuery(
                     onBackdropPress={() => setShowModal(false)}
                     >
                 <View style={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}>
-                    <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10, color: '#000' }}>
                         {modalContent?.exerciseName}
                     </Text>
-                    <Text className="text-lg font-pregular">
-                        Required Equip: {modalContent?.requiredEquip.description}
+                    <Text className="text-lg font-pregular text-black">
+                        Equipment: {modalContent?.requiredEquip.description}
                     </Text>
-                    <Text className="text-lg font-pregular">
+                    <Text className="text-lg font-pregular text-black">
                         Sets: {modalContent?.sets}
                     </Text>
-                    <Text className="text-lg font-pregular">
+                    <Text className="text-lg font-pregular text-black">
                         {modalContent?.reps !== undefined && modalContent.reps > 0 ? `Reps: ${modalContent.reps}` : `Mins: ${modalContent?.minutes ?? 0}`}
                     </Text>
-                    <Text className="text-lg font-pregular">
+                    <Text className="text-lg font-pregular text-black">
                         Level: {modalContent?.level.description}
                     </Text>
-                    <Text className="text-lg font-pregular">
-                        Env: {modalContent?.workoutEnvs.map(env => env.description).join(', ')}
+                    <Text className="text-lg font-pregular text-black">
+                        Environment: {modalContent?.workoutEnvs.map(env => env.description).join(', ')}
                     </Text>
-                    <Text className="text-lg font-pregular">
-                        Part: {modalContent?.muscleGroups.map(muscle => muscle.description).join(', ')}
+                    <Text className="text-lg font-pregular text-black">
+                        Muscle Group: {modalContent?.muscleGroups.map(muscle => muscle.description).join(', ')}
                     </Text>
                 
                     <CustomButton
                         title="Close"
+                        containerStyles="mt-6"
                         handlePress={() => setShowModal(false)}
                     />
                 </View>

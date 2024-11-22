@@ -1,17 +1,16 @@
 import { Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import * as user from "../app/controllers/user";
+import { useColorScheme } from 'nativewind';
 
 const LogoutButton = () => {
+  const { colorScheme } = useColorScheme();
+  const textColor = colorScheme === "dark" ? "#B3B3B3" : "#64748b";
+
   const handleLogout = async () => {
     Alert.alert(
       "Logout", 
       "Are you sure you want to logout?", 
-      [
-        {
-          text: "No", // Cancel button
-          onPress: () => console.log("Logout cancelled"),
-          style: "cancel",
-        },
+      [        
         {
           text: "Yes", // Confirm button
           onPress: async () => {
@@ -19,13 +18,18 @@ const LogoutButton = () => {
             console.log("Logged out");
           },
         },
+        {
+          text: "No", // Cancel button
+          onPress: () => console.log("Logout cancelled"),
+          style: "cancel",
+        },
       ]
     );
   };
 
   return (
     <TouchableOpacity style={styles.button} onPress={handleLogout}>
-      <Text style={styles.text}>{"Logout"}</Text>
+      <Text style={[styles.text, { color: textColor }]}>{"Logout"}</Text>
     </TouchableOpacity>
   );
 };
@@ -39,7 +43,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    color: "#64748b",
   },
 });
 

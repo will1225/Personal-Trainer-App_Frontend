@@ -3,10 +3,11 @@ import { Href, Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { CustomButton, FormField } from "../../components";
-import { View, Text, Alert, Image } from "react-native";
+import { View, Alert, Image } from "react-native";
 import { LoginButton } from "react-native-fbsdk-next";
 import * as user from "../../app/controllers/user";
 import BackButton from "../../components/BackButton";
+import { Text } from "@/components/Text"
 
 /**
  * Sign in screen.
@@ -118,7 +119,7 @@ const SignIn = () => {
 
           <Link
             href={"/forgotPassword" as Href<string>}
-            className="text-lg font-psemibold text-secondary mt-4 mb-8"
+            className="text-lg font-semibold text-secondary mt-4 mb-8"
           >
             Forgot Password
           </Link>

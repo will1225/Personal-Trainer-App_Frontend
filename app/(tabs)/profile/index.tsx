@@ -4,9 +4,10 @@ import { ProfileProps } from "@/types";
 import { Href, router } from "expo-router";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "react-query";
+import { Text } from "@/components/Text"
 
 const ViewProfile = () => {
     const [updatable, isUpdatable] = useState(false);

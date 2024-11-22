@@ -1,13 +1,14 @@
-import { View, Text, SafeAreaView, ScrollView, Image, Alert } from "react-native";
+import { View, SafeAreaView, ScrollView, Image, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Href, Link, router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import ProgressSummary from "@/components/ProgressSummary";
-import { StatusBar } from "expo-status-bar";
 import * as fitnessUtil from "./controllers/fitnessResult";
 import { getProgressResults } from "./controllers/progress";
 import { useQueryClient } from "react-query";
+import { Text } from "@/components/Text"
+import LoadingAnimation from "@/components/LoadingAnimation";
 
 // Fitness Result screen
 const fitnessResult = () => {
@@ -74,19 +75,17 @@ const fitnessResult = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <BackButton />
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-      >
-        <View className="w-full flex justify-center items-center px-4 mb-8 mt-16">
+    <SafeAreaView className="flex-1">
+      <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>
+        <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-28">
+          <BackButton />
           <Text className="text-3xl font-bold text-center mb-8">
             Your Current Fitness Level
           </Text>
 
           {/* Render a loading state while the data is being fetched */}
           {loading ? (
-            <Text className="text-lg text-center mt-4">Loading...</Text>
+            <LoadingAnimation isLoading={loading} />
           ) : ( 
             <>
               {/* Render progress summary if needed, else render the image */}
@@ -110,7 +109,13 @@ const fitnessResult = () => {
                     progressSummary ? (
                     <>
                       {muscleMass - progressSummary.gainedMuscle} {`\u2794`}{' '}
-                      <Text style={{color: progressSummary.gainedMuscle > 0 ? 'green' : progressSummary.gainedMuscle < 0 ? 'red' : 'black'}}>
+                      <Text 
+                        style={
+                          progressSummary.gainedMuscle === 0
+                            ? {} // follow system scheme color if no changes
+                            : { color: progressSummary.gainedMuscle > 0 ? 'green' : 'red' }
+                        }
+                      >
                         {muscleMass}{' '}
                       </Text>
                       kg
@@ -134,7 +139,13 @@ const fitnessResult = () => {
                     progressSummary ? (
                     <>
                       {bodyFat - progressSummary.gainedFat} {`\u2794`}{' '}
-                      <Text style={{color: progressSummary.gainedFat < 0 ? 'green' : progressSummary.gainedFat > 0 ? 'red' : 'black'}}>
+                      <Text
+                        style={
+                          progressSummary.gainedFat === 0
+                            ? {} // follow system scheme color if no changes
+                            : { color: progressSummary.gainedFat < 0 ? 'green' : 'red' }
+                        }
+                      >
                         {bodyFat}{' '}
                       </Text>
                       %
@@ -178,7 +189,7 @@ const fitnessResult = () => {
               {/* Body Fat Percentage Table */}
               <View className="w-full mb-8">
                 <Text
-                  className="text-2xl font-bold text-center mb-0"
+                  className="text-2xl font-bold text-center mb-0 text-black"
                   style={{ backgroundColor: "#fbbf24", height: 40, lineHeight: 40 }}
                 >
                   Body Fat Chart
@@ -199,6 +210,7 @@ const fitnessResult = () => {
                       textAlign: "center",
                       fontSize: 16,
                       backgroundColor: "#fcd34d",
+                      color: '#000'
                     }}
                   >
                     Classification
@@ -210,6 +222,7 @@ const fitnessResult = () => {
                       textAlign: "center",
                       fontSize: 16,
                       backgroundColor: "#fcd34d",
+                      color: '#000'
                     }}
                   >
                     Men
@@ -221,6 +234,7 @@ const fitnessResult = () => {
                       textAlign: "center",
                       fontSize: 16,
                       backgroundColor: "#fcd34d",
+                      color: '#000'
                     }}
                   >
                     Women
@@ -252,9 +266,9 @@ const fitnessResult = () => {
                       }}
                       />
                     )}
-                    <Text style={{ flex: 1, textAlign: "center" }}>{item.classification}</Text>
-                    <Text style={{ flex: 1, textAlign: "center" }}>{item.men}</Text>
-                    <Text style={{ flex: 1, textAlign: "center" }}>{item.women}</Text>
+                    <Text style={{ flex: 1, textAlign: "center", color: '#000' }}>{item.classification}</Text>
+                    <Text style={{ flex: 1, textAlign: "center", color: '#000' }}>{item.men}</Text>
+                    <Text style={{ flex: 1, textAlign: "center", color: '#000' }}>{item.women}</Text>
                   </View>
                 ))}
               </View>
@@ -266,17 +280,18 @@ const fitnessResult = () => {
               <CustomButton
                 title="Get Personalized Routine"
                 handlePress={() => router.push("/generateRoutine" as Href<string>)}
-                containerStyles="w-[230px]"
+                containerStyles="w-[260px]"
               />
               
-              <Link href={"/(tabs)/home" as Href<string>} className="text-lg font-psemibold text-grey mt-4 mb-8">
-                I'll do it later.
+              <Link href={"/(tabs)/home" as Href<string>} className="mt-4 mb-8">
+                <Text className="text-lg font-psemibold text-grey ">
+                  I'll do it later.
+                </Text>                
               </Link>
             </>
           )}
         </View>
       </ScrollView>
-      <StatusBar backgroundColor="#161622" style="light" />
     </SafeAreaView>
   );
 };

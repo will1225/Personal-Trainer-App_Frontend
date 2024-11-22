@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
+import { View, SafeAreaView, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router';
 import BackButton from '@/components/BackButton';
@@ -8,6 +8,9 @@ import CustomButton from '@/components/CustomButton';
 import VideoRefreshButton from '@/components/VideoRefreshButton';
 import YoutubePlayer from 'react-native-youtube-iframe';
 import { Dropdown } from 'react-native-element-dropdown';
+import { Text } from "@/components/Text"
+import LoadingAnimation from '@/components/LoadingAnimation';
+import { useColorScheme } from 'nativewind';
 
 const ExerciseList = () => {
     const params = useLocalSearchParams();
@@ -33,6 +36,11 @@ const ExerciseList = () => {
     const [selectedType, setSelectedType] = useState<string | null>(null);
     const [filteredExercises, setFilteredExercises] = useState<any[]>([]);
     const [filtersActivated, setFiltersActivated] = useState(false);
+    const { colorScheme } = useColorScheme();
+    const headerColor = colorScheme === "dark" ? "#1B4A72" : "#0369a1";
+    const blockColor = colorScheme === "dark" ? "#2A3442" : "#e5e5e5";
+    const borderColor = colorScheme === "dark" ? "#4B5563" : "#D1D5DB";
+    const detailLinkColor = colorScheme === "dark" ? "#25BCE7" : "#0369a1";
 
     useEffect(() => {
         const fetchData = async () => {
@@ -310,7 +318,7 @@ const ExerciseList = () => {
                             setSelectedType(null);
                             setFiltersActivated(false);
                         }}>
-                            <Text className="font-psemibold text-base text-gray-700">
+                            <Text className="font-psemibold text-base">
                                 Reset Filters
                             </Text>
                         </TouchableOpacity>
@@ -318,17 +326,7 @@ const ExerciseList = () => {
 
                     {/* Loading indicator */}
                     {isLoading && (
-                        <View style={{ alignItems: 'center' }}>
-                            <ActivityIndicator
-                                animating={isLoading}
-                                color="#0369a1"
-                                size="large"
-                                className="mb-5"
-                            />
-                            <Text style={{ marginBottom:30, fontSize: 18, color: '#0369a1' }}>
-                                Just a moment...
-                            </Text>
-                        </View>
+                        <LoadingAnimation isLoading={isLoading} />
                     )}
 
                     {/* Refresh a new video header */}
@@ -374,10 +372,23 @@ const ExerciseList = () => {
                                     </View>
                                     
                                     {/* Exercise info blocks */}
-                                    <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[65px]" style={{ backgroundColor: "#e5e5e5" }}>
+                                    <View 
+                                        className="flex-1 border items-center rounded-lg min-h-[65px]" 
+                                        style={{ 
+                                            backgroundColor: blockColor,
+                                            borderColor: borderColor
+                                        }}
+                                    >
                                         
                                         {/* Exercise Header */}
-                                        <View className="flex-row mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
+                                        <View 
+                                            className="flex-row mb-1 items-center h-7" 
+                                            style={{
+                                                backgroundColor: headerColor,
+                                                borderTopLeftRadius: 8,
+                                                borderTopRightRadius: 8,
+                                              }}
+                                        >
                                             <Text className="flex-[2] text-center font-semibold text-white">
                                                 Exercise
                                             </Text>
@@ -404,7 +415,7 @@ const ExerciseList = () => {
 
                                         {/* Exercise Details Modal button */}
                                         <TouchableOpacity className="flex-[1] mt-3" onPress={() => displayModal(exercise)}>
-                                            <Text style={{ color: '#0369a1' }} >See Exercise Detail</Text>
+                                            <Text style={{ color: detailLinkColor }} >See Exercise Detail</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -417,11 +428,11 @@ const ExerciseList = () => {
                 {showModal && modalContent && (
                     <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
                         <View style={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}>
-                            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}>
+                            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10, color: '#333' }}>
                                 {modalContent.name}
                             </Text>
                             
-                            <Text className="text-lg font-pregular">
+                            <Text className="text-lg font-pregular" style={{ color: '#333' }}>
                                 Muscle Group: {description}{'\n'}
                                 Type: {modalContent.type.description}{'\n'}
                                 Level: {modalContent.level.description}{'\n'}

@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Text } from "@/components/Text"
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   TextInputProps,

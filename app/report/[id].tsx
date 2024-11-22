@@ -1,10 +1,12 @@
-import { View, Text, SafeAreaView, ScrollView, Image } from "react-native";
+import { View, SafeAreaView, ScrollView, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Href, Link, router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import { getSelectedReport } from "../controllers/report";
 import ProgressSummary from "@/components/ProgressSummary"
+import { Text } from "@/components/Text"
+import LoadingAnimation from "@/components/LoadingAnimation";
 
 // Report Screen
 const report = () => {
@@ -44,23 +46,29 @@ const report = () => {
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView
         contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-      >
-        <BackButton />
+      >        
         { isLoading ? (
-         <View className="w-full flex justify-center items-center h-full my-4 px-4 mt-16">
-         <Text className="text-xl text-center">Loading...</Text>
+        <View className="w-full flex justify-center items-center h-full my-4 px-4 mt-16">
+         <LoadingAnimation isLoading={isLoading} />
        </View>
     ) : (
       <>
-        <View className="w-full flex justify-center items-center px-4 mb-8 mt-12">
-          <Text className="text-3xl font-bold text-center mb-1 pb-1">
+        <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-28">
+          <BackButton />
+          <Text className="text-3xl font-bold text-center mb-2 pb-1">
             Progress Report
           </Text>
-          <Text className="text-m font-bold text-center mb-1 pb-1">
+
+          <Text className="text-xl font-bold text-center mb-6 pb-1">
             {new Date(data.reportDate).toLocaleDateString(undefined, options) + ", " + new Date(data.startDate).getFullYear()}
           </Text>
-          <ProgressSummary data={summaryData} fontSize={18}></ProgressSummary>
-          <View className="flex flex-col items-center mb-4 mt-2 w-full">
+
+          <ProgressSummary data={summaryData} fontSize={20}></ProgressSummary>
+
+          <View className="flex flex-col items-center mb-4 mt-6 w-full">
+            <Text className="text-xl font-medium text-center mb-2 pb-1">
+              {'Workout Period: ' + new Date(data.startDate).toLocaleDateString(undefined, options)} ~ {new Date(data.endDate).toLocaleDateString(undefined, options) + ', ' + new Date(data.startDate).getFullYear() + '' }
+            </Text>
             <View className="flex flex-row justify-center">
               <Text className="text-xl w-36 text-right">
                 Body Fat %:
@@ -134,13 +142,11 @@ const report = () => {
               </Text>
             </View>
           </View>
-          <Text className="text-m font-bold text-center mb-3 pb-1">
-            {'Workout Period: ' + new Date(data.startDate).toLocaleDateString(undefined, options)} ~ {new Date(data.endDate).toLocaleDateString(undefined, options) + ' (' + new Date(data.startDate).getFullYear() + ') ' }
-            </Text>
+          
           {/* Body Fat Percentage Table */}
           <View className="w-full mb-8">
             <Text
-              className="text-2xl font-bold text-center mb-0"
+              className="text-2xl font-bold text-center mb-0 text-black"
               style={{ backgroundColor: "#fbbf24", height: 40, lineHeight: 40 }}
             >
               Body Fat Chart
@@ -161,6 +167,7 @@ const report = () => {
                   textAlign: "center",
                   fontSize: 16,
                   backgroundColor: "#fcd34d",
+                  color: '#000'
                 }}
               >
                 Classification
@@ -172,6 +179,7 @@ const report = () => {
                   textAlign: "center",
                   fontSize: 16,
                   backgroundColor: "#fcd34d",
+                  color: '#000'
                 }}
               >
                 Men
@@ -183,6 +191,7 @@ const report = () => {
                   textAlign: "center",
                   fontSize: 16,
                   backgroundColor: "#fcd34d",
+                  color: '#000'
                 }}
               >
                 Women
@@ -213,9 +222,9 @@ const report = () => {
                   }}
                   />
                 )}
-                <Text style={{ flex: 1, textAlign: "center" }}>{item.classification}</Text>
-                <Text style={{ flex: 1, textAlign: "center" }}>{item.men}</Text>
-                <Text style={{ flex: 1, textAlign: "center" }}>{item.women}</Text>
+                <Text style={{ flex: 1, textAlign: "center", color: '#000' }}>{item.classification}</Text>
+                <Text style={{ flex: 1, textAlign: "center", color: '#000' }}>{item.men}</Text>
+                <Text style={{ flex: 1, textAlign: "center", color: '#000' }}>{item.women}</Text>
               </View>
             ))}
           </View>

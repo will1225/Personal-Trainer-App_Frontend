@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { View, Text, Alert, Image } from "react-native";
+import { View, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "@/components";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Href, router, useLocalSearchParams } from "expo-router";
 import * as user from "../../app/controllers/user";
 import BackButton from "../../components/BackButton";
+import { Text } from "@/components/Text"
 
 const ChangePassword = () => {
   const { email } = useLocalSearchParams(); // Get email from previous screen

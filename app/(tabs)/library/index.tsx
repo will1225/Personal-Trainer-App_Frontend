@@ -1,8 +1,9 @@
-import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, ImageSourcePropType } from 'react-native'
+import { View, SafeAreaView, ScrollView, Image, TouchableOpacity, ImageSourcePropType } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import BackButton from '@/components/BackButton'
 import * as generateRoutine from "../../controllers/generateRoutine";
 import { router } from 'expo-router';
+import { Text } from "@/components/Text"
 
 type MuscleGroupImg = {
     id: number;

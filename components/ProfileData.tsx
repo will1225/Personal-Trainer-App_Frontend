@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { View, Text, TouchableOpacity, Alert } from "react-native";
+import { View, TouchableOpacity, Alert } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { Text } from "@/components/Text"
 
 interface Props {
     label: string,
@@ -44,16 +45,16 @@ const ProfileData = ({ label, value, isEditable, setText, textValue }: Props) =>
     };
 
     return (
-        <View className=" gap-1 py-2">
+        <View className=" gap-1 py-2 w-full max-w-screen">
             <Text className="text-lg">
                 {label}:
             </Text>
-            <View className="border-[1px] border-black rounded-md px-[16px] py-[8px] fflex-1 flex-row items-center">
+            <View className="w-full h-12 px-4 rounded-2xl border-2 flex flex-row items-center" style={{ backgroundColor: 'white' }}>
                 {
                     !editMode ?
                         (
                             <>
-                                <Text className="text-lg font-bold flex-1">
+                                <Text className="text-lg font-bold flex-1" style={{ color: '#000' }}>
                                     {value}
                                 </Text>
                                 {isEditable &&

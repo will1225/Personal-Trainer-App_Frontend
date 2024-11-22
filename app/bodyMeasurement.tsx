@@ -8,7 +8,6 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as measurement from "./controllers/bodyMeasurement";
 import {
   View,
-  Text,
   Alert,
   Image,
   Switch,
@@ -20,7 +19,7 @@ import { useAtom } from "jotai";
 import { profileAtom } from "@/store";
 import { useQuery, useQueryClient } from "react-query";
 import { Profile } from "./controllers/profile";
-
+import { Text } from "@/components/Text"
 
 /**
  * Body Measurement screen.
@@ -364,11 +363,11 @@ const BodyMeasurement = () => {
             style={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}
           >
             <Text
-              style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}
+              style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10, color: '#000' }}
             >
               {modalContent.title}
             </Text>
-            <Text className="text-lg font-pregular">{modalContent.text}</Text>
+            <Text className="text-lg font-pregular" style={{ color: '#000' }}>{modalContent.text}</Text>
             {modalContent.image && (
               <Image
                 source={modalContent.image}

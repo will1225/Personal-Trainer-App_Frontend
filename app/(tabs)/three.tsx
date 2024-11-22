@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, Alert, Image} from "react-native";
+import { View, SafeAreaView, ScrollView, TouchableOpacity, Alert, Image} from "react-native";
 import { Bar } from "react-native-progress";
 import { router } from "expo-router";
 import { CustomButton } from "@/components";
@@ -10,7 +10,9 @@ import { useAtom } from "jotai";
 import { currentWeekRoutineAtom } from "../../store";
 import { useQuery } from "react-query";
 import Ionicons from "@expo/vector-icons/Ionicons";
-
+import { Text } from "@/components/Text"
+import LoadingAnimation from "@/components/LoadingAnimation";
+import ExerciseDetailsBlock from "@/components/ExerciseDetailsBlock";
 
 // Current Week's Routine Page Generation
 const CurrentWeeklyRoutine = () => {    
@@ -89,7 +91,7 @@ const CurrentWeeklyRoutine = () => {
           <BackButton />
         
           { isLoading || isFetching ? ( 
-            <Text className="text-lg text-center mt-4">Loading...</Text>
+            <LoadingAnimation isLoading={isLoading} />
           ) : weeklyRoutine.id != 0 ? (
             <>
               <Text className="text-3xl font-bold text-center">
@@ -117,6 +119,7 @@ const CurrentWeeklyRoutine = () => {
                     borderWidth={2}
                     borderColor="black"
                     borderRadius={15}
+                    unfilledColor="#fff"
                   />
                 </View>
               </View>
@@ -194,47 +197,8 @@ const CurrentWeeklyRoutine = () => {
                       >
                       
                       {/* Exercise Details blocks */}
-                      {routine.exerciseDetails.map((exercise, index) => (
-                        <View key={index} className="flex-row mb-1 items-center">
-                          {/* YouTube Thumbnails */}
-                          <Image 
-                            source={exercise.thumbnailURL ? { uri: exercise.thumbnailURL } : placeholderImage} 
-                            className="w-[70] h-[70] mr-2" 
-                            resizeMode="cover" 
-                          />
-
-                          <View className="flex-1 border border-gray-300 items-center rounded-lg min-h-[65px]"
-                            style={{ backgroundColor: "#e5e5e5" }}>
-                            {/* Exercise Details header */}
-                            <View
-                              className="flex-row mb-1 items-center rounded h-7"
-                              style={{ backgroundColor: "#0369a1" }}
-                            >
-                              <Text className="flex-[2] text-center font-semibold text-white">
-                                Exercise
-                              </Text>
-                              <Text className="flex-[1] text-center font-semibold text-white">
-                                Sets
-                              </Text>
-                              <Text className="flex-[1] text-center font-semibold text-white">
-                                {exercise.reps ? "Reps" : "Mins"}
-                              </Text>
-                            </View>
-
-                            {/* Data row */}
-                            <View className="flex-row items-center">
-                              <Text className="flex-[2] text-center">
-                                {exercise.exercise.name}
-                              </Text>
-                              <Text className="flex-[1] text-center">
-                                {exercise.sets}
-                              </Text>
-                              <Text className="flex-[1] text-center">
-                                {exercise.reps ? exercise.reps : exercise.minutes}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
+                      {routine.exerciseDetails.map((exercise) => (
+                        <ExerciseDetailsBlock key={exercise.exercise.id} exercise={exercise} />
                       ))}
                   </TouchableOpacity>
                   </View>
