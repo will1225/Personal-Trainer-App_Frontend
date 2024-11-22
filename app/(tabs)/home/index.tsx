@@ -116,7 +116,7 @@ export default function TabOneScreen() {
           <View className="flex justify-center pt-5 flex-row gap-2 pb-5">
             <Text className="text-lg font-pregular">About Us - </Text>
             <Link
-              href={"../aboutUs" as Href<string>}
+              href={"../../aboutUs" as Href<string>}
               className="text-lg font-semibold text-secondary"
             >
               Meet The Team
