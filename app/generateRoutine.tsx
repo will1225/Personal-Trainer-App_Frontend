@@ -1,4 +1,4 @@
-import { View, SafeAreaView, ScrollView, Alert, TouchableOpacity, Text } from "react-native";
+import { View, SafeAreaView, ScrollView, Alert, TouchableOpacity } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Dropdown } from "react-native-element-dropdown";
@@ -9,7 +9,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { profileAtom } from "@/store";
 import { useAtom } from "jotai";
 import { useFocusEffect } from "@react-navigation/native";
-//import { Text } from "@/components/Text"
+import { Text } from "@/components/Text"
 import ExerciseDetailsBlock from "@/components/ExerciseDetailsBlock";
 
 type weeklyRoutine = {
