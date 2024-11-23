@@ -2,7 +2,6 @@ import { View, SafeAreaView, ScrollView, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Href, Link, router, useLocalSearchParams } from "expo-router";
-import CustomButton from "@/components/CustomButton";
 import { getSelectedReport } from "../controllers/report";
 import ProgressSummary from "@/components/ProgressSummary"
 import { Text } from "@/components/Text"
@@ -252,6 +251,29 @@ const report = () => {
               </View>
             ))}
           </View>
+          {/* <View className="flex-[2] mr-2">
+              <Text className="font-psemibold text-base mb-1">Environment</Text>
+              <Dropdown
+                style={{
+                  height: 48,
+                  borderWidth: 2,
+                  borderColor: "black",
+                  backgroundColor: "white",
+                  borderRadius: 16,
+                  paddingHorizontal: 16,
+                }}
+                placeholderStyle={{ fontSize: 16, color: "gray" }}
+                selectedTextStyle={{ fontSize: 16 }}
+                data={data.progress}
+                labelField="description"
+                valueField="id"
+                placeholder={"Select a Progress"}
+                value={data.progress.id}
+                onChange={(item) => {
+                  setPrevId(item.id);                  
+                }}
+              />
+            </View> */}
         </View>
         </>)}
       </ScrollView>
