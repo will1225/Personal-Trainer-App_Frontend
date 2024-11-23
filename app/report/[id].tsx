@@ -22,6 +22,11 @@ const report = () => {
   const [prevId, setPrevId] = useState<string | null>(null);
   const [dropdownData, setDropdownData] = useState<{id: string, description: string}[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fatLevel = ["Essential Fat", "Athletes", "Fit", "Average", "Below Average", "Poor", "Out of classification range"]
+  const ffmiLevel = ["Skinny", "Average", "Intermediate Built", "Advanced Built", "Extremely Muscular", "Unusual/Extreme Result"]
+
+
   console.log(data);
   useEffect(() => {
     const getReportData = async () => {
@@ -79,7 +84,7 @@ const report = () => {
           <Text className="text-m font-bold text-center mb-1 pb-1">
             {new Date(data.reportDate).toLocaleDateString(undefined, options) + ", " + new Date(data.reportDate).getFullYear()}
           </Text>
-          <Text className="text-lg font-bold">
+          <Text className="text-lg font-bold text-center">
             {data.assess} You've{' '}
             {data && typeof data.gainedMuscle === 'number' ? (
               <>
@@ -108,80 +113,115 @@ const report = () => {
             {" " + new Date(data.lastReportDate).toLocaleDateString(undefined, options) + ", " + new Date(data.lastReportDate).getFullYear()}
             </Text>
           </Text>
-          <View className="flex flex-col items-center mb-4 mt-2 w-full">
-            <View className="flex flex-row justify-center">
-              <Text className="text-xl w-36 text-right">
-                Body Fat %:
-              </Text>
-              <Text className="text-xl ml-2">
-                {data.fat}
-              </Text>
+
+          <View className="flex flex-col items-center mb-6 mt-8 w-full px-4">
+            <View className="flex flex-row justify-between items-center mb-3 w-full">
+              <Text className="text-xl font-semibold text-right w-[28%]">{``}</Text>
+              <Text className="text-lg w-[28%] text-center truncate font-semibold">{new Date(data.lastReportDate).toLocaleDateString(undefined, options)}</Text>
+              <Text className="text-xl w-[14%] text-center">{``}</Text>
+              <Text className="text-lg w-[28%] text-center truncate font-semibold">{new Date(data.reportDate).toLocaleDateString(undefined, options)}</Text>
             </View>
-            <View className="flex flex-row justify-center mt-2 w-full">
-              <Text className="text-xl w-36 text-right">
-                Muscle Mass:
-              </Text>
-              <Text className="text-xl ml-2">
-                {data.muscle} kg
-              </Text>
+
+            {/* Body Fat */}
+            <View className="flex flex-row justify-between items-center mb-3 w-full">
+              <Text className="text-xl font-semibold text-right w-[28%]">{`Body Fat:`}</Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.prevFat}</Text>
+              <Text
+              className={`text-xl w-[14%] text-center ${data.fat - data.prevFat > 0 ? 'text-red-500' : 'text-green-500'}`}
+            >
+              {`\u2794`}
+            </Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.fat} %</Text>
             </View>
-            <View className="flex flex-row justify-center mt-2">
-              <Text className="text-xl w-36 text-right">
-                Chest:
-              </Text>
-              <Text className="text-xl ml-2">
-                {data.chest} mm
-              </Text>
+
+            {/* Muscle Mass */}
+            <View className="flex flex-row justify-between items-center mb-3 w-full">
+              <Text className="text-xl font-semibold text-right w-[28%]">{`Muscle Mass:`}</Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.prevMuscle}</Text>
+              <Text
+              className={`text-xl w-[14%] text-center ${data.prevMuscle - data.muscle > 0 ? 'text-red-500' : 'text-green-500'}`}
+            >
+              {`\u2794`}
+            </Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.muscle} kg</Text>
             </View>
-            <View className="flex flex-row justify-center mt-2">
-              <Text className="text-xl w-36 text-right">
-                Abdomen:
-              </Text>
-              <Text className="text-xl ml-2">
-                {data.abdomen} mm
-              </Text>
+
+            {/* Chest */}
+            <View className="flex flex-row justify-between items-center mb-3 w-full">
+              <Text className="text-xl font-semibold text-right w-[28%]">{`Chest:`}</Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.prevChest}</Text>
+              <Text
+              className={`text-xl w-[14%] text-center ${data.prevChest - data.chest < 0 ? 'text-red-500' : 'text-green-500'}`}
+            >
+              {`\u2794`}
+            </Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.chest} mm</Text>
             </View>
-            <View className="flex flex-row justify-center mt-2">
-              <Text className="text-xl w-36 text-right">
-                Thigh:
-              </Text>
-              <Text className="text-xl ml-2">
-                {data.thigh} mm
-              </Text>
+
+            {/* Abdomen */}
+            <View className="flex flex-row justify-between items-center mb-3 w-full">
+              <Text className="text-xl font-semibold text-right w-[29%]">{`Abdomen:`}</Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.prevAbdomen}</Text>
+              <Text
+              className={`text-xl w-[14%] text-center ${data.prevAbdomen - data.abdomen < 0 ? 'text-red-500' : 'text-green-500'}`}
+            >
+              {`\u2794`}
+            </Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.abdomen} mm</Text>
             </View>
-            <View className="flex flex-row justify-center mt-2">
-              <Text className="text-xl w-36 text-right">
-                Weight:
-              </Text>
-              <Text className="text-xl ml-2">
-                {data.weight} kg
-              </Text>
+
+            {/* Thigh */}
+            <View className="flex flex-row justify-between items-center mb-3 w-full">
+              <Text className="text-xl font-semibold text-right w-[28%]">{`Thigh:`}</Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.prevThigh}</Text>
+              <Text
+              className={`text-xl w-[14%] text-center ${data.prevThigh - data.thigh < 0 ? 'text-red-500' : 'text-green-500'}`}
+            >
+              {`\u2794`}
+            </Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.thigh} mm</Text>
             </View>
-            <View className="flex flex-row justify-center mt-2">
-              <Text className="text-xl w-36 text-right">
-                Hight:
-              </Text>
-              <Text className="text-xl ml-2">
-                {data.height} cm
-              </Text>
+
+            {/* Weight */}
+            <View className="flex flex-row justify-between items-center mb-3 w-full">
+              <Text className="text-xl font-semibold text-right w-[28%]">{`Weight:`}</Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.prevWeight}</Text>
+              <Text
+              className={`text-xl w-[14%] text-center ${data.prevWeight - data.weight < 0 ? 'text-red-500' : 'text-green-500'}`}
+            >
+              {`\u2794`}
+            </Text>
+              <Text className="text-xl w-[28%] text-center truncate">{data.weight} kg</Text>
             </View>
-            <View className="flex flex-row justify-center mt-2">
-              <Text className="text-xl w-36 text-right">
-                Fat Levels:
-              </Text>
-              <Text className="text-xl ml-2">
-                {data.fatClassification}
-              </Text>
+
+
+            <View className="flex flex-row justify-between items-center mb-3 w-full">
+              <Text className="text-xl font-semibold text-right w-[28%]">{`Fat Level:`}</Text>
+              <Text className="text-lg w-[28%] text-center truncate">{data.prevFatClassification}</Text>
+              <Text
+              className={`text-xl w-[14%] text-center
+                ${fatLevel.indexOf(data.prevFatClassification) - fatLevel.indexOf(data.fatClassification) < 0 ? 'text-red-500' : 'text-green-500'}`}
+            >
+              {`\u2794`}
+            </Text>
+              <Text className="text-lg w-[28%] text-center truncate">{data.fatClassification}</Text>
             </View>
-            <View className="flex flex-row justify-center mt-2">
-              <Text className="text-xl w-36 text-right">
-                FFMI :
-              </Text>
-              <Text className="text-xl ml-2">
-                {data.ffmiClassification}
-              </Text>
+
+            <View className="flex flex-row justify-between items-center mb-3 w-full">
+              <Text className="text-xl font-semibold text-right w-[28%]">{`FFMI:`}</Text>
+              <Text className="text-sm w-[28%] text-center truncate">{data.prevFfmiClassification}</Text>
+              <Text
+              className={`text-xl w-[14%] text-center
+                ${ffmiLevel.indexOf(data.prevFfmiClassification) - ffmiLevel.indexOf(data.ffmiClassification) < 0 ? 'text-red-500' : 'text-green-500'}`}
+            >
+              {`\u2794`}
+            </Text>
+              <Text className="text-sm w-[28%] text-center truncate">{data.ffmiClassification}</Text>
             </View>
           </View>
+
+
+
           
           {/* Body Fat Percentage Table */}
           <View className="w-full mb-4">
@@ -284,7 +324,7 @@ const report = () => {
                 data={dropdownData}
                 labelField="description"
                 valueField="id"
-                placeholder={"Select a Report"}
+                placeholder={dropdownData.length > 0 ? "Select a Report" : "No Previous Report"}
                 value={prevId}
                 onChange={(item) => {
                   setPrevId(item.id);

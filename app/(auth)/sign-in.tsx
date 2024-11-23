@@ -131,7 +131,7 @@ const SignIn = () => {
               <LoginButton
                 onLoginFinished={user.facebookLogin}
                 onLogoutFinished={() => console.log("User logged out")}
-                //permissions={["email", "public_profile"]}
+                permissions={["email", "public_profile"]}
               />
             </View>
           </View>
