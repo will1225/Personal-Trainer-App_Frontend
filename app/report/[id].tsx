@@ -17,6 +17,8 @@ const report = () => {
   const [ranges, setRanges] = useState<any[]>([]);
   const [isLoading, setLoading] = useState(false);
   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+  const [prevId, setPrevId] = useState<number>(0);
+  const [progressList, setProgressList] = useState<any[]>([]);
   console.log(data);
   const summaryData = {
     assess: data.assess,
@@ -26,7 +28,7 @@ const report = () => {
   useEffect(() => {
     const getReportData = async () => {
       setLoading(true)
-      const fetchedData = await getSelectedReport(params.id);
+      const fetchedData = await getSelectedReport(params.id, prevId);
       setData(fetchedData);
       setRanges(fetchedData.ranges.classifications || []);
       setLoading(false);
@@ -58,17 +60,39 @@ const report = () => {
           <Text className="text-3xl font-bold text-center mb-2 pb-1">
             Progress Report
           </Text>
-
-          <Text className="text-xl font-bold text-center mb-6 pb-1">
-            {new Date(data.reportDate).toLocaleDateString(undefined, options) + ", " + new Date(data.startDate).getFullYear()}
+          <Text className="text-m font-bold text-center mb-1 pb-1">
+            {new Date(data.reportDate).toLocaleDateString(undefined, options) + ", " + new Date(data.reportDate).getFullYear()}
           </Text>
+          <Text className="text-lg font-bold">
+            {data.assess} You've{' '}
+            {data && typeof data.gainedMuscle === 'number' ? (
+              <>
+                {data.gainedMuscle < 0 ? 'lost ' : 'gained '}
+                <Text style={{ color: data.gainedMuscle < 0 ? 'red' : 'green' }}>
+                  {Math.abs(data.gainedMuscle).toFixed(2)} kg
+                </Text>{' '}
+                of Lean Muscle and{' '}
+              </>
+            ) : (
+              '0.00'
+            )}
 
-          <ProgressSummary data={summaryData} fontSize={20}></ProgressSummary>
-
-          <View className="flex flex-col items-center mb-4 mt-6 w-full">
-            <Text className="text-xl font-medium text-center mb-2 pb-1">
-              {'Workout Period: ' + new Date(data.startDate).toLocaleDateString(undefined, options)} ~ {new Date(data.endDate).toLocaleDateString(undefined, options) + ', ' + new Date(data.startDate).getFullYear() + '' }
+            {data && typeof data.gainedFat === 'number' ? (
+              <>
+                {data.gainedFat < 0 ? 'lost ' : 'gained '}
+                <Text style={{ color: data.gainedFat < 0 ? 'green' : 'red' }}>
+                  {Math.abs(data.gainedFat).toFixed(2)} %
+                </Text>
+              </>
+            ) : (
+              '0.00'
+            )}{' '}
+            of Body Fat Compared to
+            <Text style={{ color: 'purple' }}>
+            {" " + new Date(data.lastReportDate).toLocaleDateString(undefined, options) + ", " + new Date(data.lastReportDate).getFullYear()}
             </Text>
+          </Text>
+          <View className="flex flex-col items-center mb-4 mt-2 w-full">
             <View className="flex flex-row justify-center">
               <Text className="text-xl w-36 text-right">
                 Body Fat %:

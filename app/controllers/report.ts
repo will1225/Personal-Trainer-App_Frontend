@@ -1,16 +1,18 @@
 import { fetchWithTimeout } from "./generateRoutine";
 import { endpoint } from '../config';
+import * as user from "./user";
 
-export const getSelectedReport = async (id: number) => {
+export const getSelectedReport = async (id: number, prevId: number) => {
     const progressId = id;
     try {
         console.log("called");
         const response = await fetchWithTimeout (
-            `${endpoint}/report/getReport/${progressId}`,
+            `${endpoint}/report/getReport/${progressId}?prevId=${prevId}`,
         {
             method: "GET",
             headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${await user.getToken()}`,
             },
         });
     
