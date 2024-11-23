@@ -2,7 +2,7 @@ import { fetchWithTimeout } from "./generateRoutine";
 import { endpoint } from '../config';
 import * as user from "./user";
 
-export const getSelectedReport = async (id: number, prevId: number) => {
+export const getSelectedReport = async (id: number, prevId: string | null) => {
     const progressId = id;
     try {
         console.log("called");

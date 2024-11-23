@@ -1,9 +1,12 @@
-import { View, SafeAreaView, ScrollView, Image } from "react-native";
+import { View, SafeAreaView, ScrollView, Image, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import BackButton from "@/components/BackButton";
+import Modal from "react-native-modal";
 import { Href, Link, router, useLocalSearchParams } from "expo-router";
 import { getSelectedReport } from "../controllers/report";
-import ProgressSummary from "@/components/ProgressSummary"
+import { Dropdown } from "react-native-element-dropdown";
+import { CustomButton} from "@/components";
 import { Text } from "@/components/Text"
 import LoadingAnimation from "@/components/LoadingAnimation";
 
@@ -16,19 +19,20 @@ const report = () => {
   const [ranges, setRanges] = useState<any[]>([]);
   const [isLoading, setLoading] = useState(false);
   const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-  const [prevId, setPrevId] = useState<number>(0);
-  const [progressList, setProgressList] = useState<any[]>([]);
+  const [prevId, setPrevId] = useState<string | null>(null);
+  const [dropdownData, setDropdownData] = useState<{id: string, description: string}[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   console.log(data);
-  const summaryData = {
-    assess: data.assess,
-    gainedFat: data.gainedFat,
-    gainedMuscle: data.gainedMuscle
-  }
   useEffect(() => {
     const getReportData = async () => {
       setLoading(true)
       const fetchedData = await getSelectedReport(params.id, prevId);
       setData(fetchedData);
+      const dropdownItems = fetchedData.progress.map((item: {id: string, date: string}) => ({
+        id: item.id,
+        description: new Date(item.date).toDateString()
+      }));
+      setDropdownData(dropdownItems);
       setRanges(fetchedData.ranges.classifications || []);
       setLoading(false);
     };
@@ -43,6 +47,19 @@ const report = () => {
     return data.fat >= range.min && (range.max === null || data.fat <= range.max);
   };
 
+  const handleCompare = async () => {
+    setLoading(true)
+    const fetchedData = await getSelectedReport(params.id, prevId);
+    setData(fetchedData);
+    const dropdownItems = fetchedData.progress.map((item: {id: string, date: string}) => ({
+      id: item.id,
+      description: new Date(item.date).toDateString()
+    }));
+    setDropdownData(dropdownItems);
+    setRanges(fetchedData.ranges.classifications || []);
+    setLoading(false);
+  }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView
@@ -54,8 +71,8 @@ const report = () => {
        </View>
     ) : (
       <>
-        <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-28">
-          <BackButton />
+      <BackButton />
+        <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-12">
           <Text className="text-3xl font-bold text-center mb-2 pb-1">
             Progress Report
           </Text>
@@ -167,7 +184,7 @@ const report = () => {
           </View>
           
           {/* Body Fat Percentage Table */}
-          <View className="w-full mb-8">
+          <View className="w-full mb-4">
             <Text
               className="text-2xl font-bold text-center mb-0 text-black"
               style={{ backgroundColor: "#fbbf24", height: 40, lineHeight: 40 }}
@@ -251,11 +268,11 @@ const report = () => {
               </View>
             ))}
           </View>
-          {/* <View className="flex-[2] mr-2">
-              <Text className="font-psemibold text-base mb-1">Environment</Text>
+          <View className="flex flex-row justify-center min-w-full ">
               <Dropdown
                 style={{
                   height: 48,
+                  minWidth: 200,
                   borderWidth: 2,
                   borderColor: "black",
                   backgroundColor: "white",
@@ -264,17 +281,50 @@ const report = () => {
                 }}
                 placeholderStyle={{ fontSize: 16, color: "gray" }}
                 selectedTextStyle={{ fontSize: 16 }}
-                data={data.progress}
+                data={dropdownData}
                 labelField="description"
                 valueField="id"
-                placeholder={"Select a Progress"}
-                value={data.progress.id}
+                placeholder={"Select a Report"}
+                value={prevId}
                 onChange={(item) => {
-                  setPrevId(item.id);                  
+                  setPrevId(item.id);
                 }}
               />
-            </View> */}
+               <CustomButton
+                        title="Compare"
+                        containerStyles="ml-2 w-26"
+                        handlePress={() => handleCompare()}
+              />
+              <TouchableOpacity
+                onPress={() => setIsModalOpen(true)}
+                >
+                <Ionicons name="help-circle-outline" size={40} color="gray" />
+            </TouchableOpacity>
+
+              
+            </View>
+
+            <Modal
+                    isVisible={isModalOpen}
+                    onBackdropPress={() => setIsModalOpen(false)}
+                    >
+                <View style={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}>
+                    <Text className="text-center text-lg font-bold">
+                       You can compare the current report with an eariler one by selecting the date
+                    </Text>
+                    <Text className="text-sm font-pregular text-red-600 text-center mt-6">
+                        * You can only compare with earlier reports *
+                    </Text>
+                
+                    <CustomButton
+                        title="Close"
+                        containerStyles="mt-6"
+                        handlePress={() => setIsModalOpen(false)}
+                    />
+                </View>
+            </Modal>
         </View>
+        
         </>)}
       </ScrollView>
     </SafeAreaView>

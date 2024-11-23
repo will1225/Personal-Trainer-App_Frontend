@@ -47,7 +47,8 @@
     "react-native-webview": "^13.12.3",
     "react-native-youtube-iframe": "^2.3.0",
     "react-query": "^3.39.3",
-    "uri-scheme": "^1.2.2"
+    "uri-scheme": "^1.2.2",
+    "expo-linear-gradient": "~13.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
