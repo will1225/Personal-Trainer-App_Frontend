@@ -8,6 +8,8 @@ import { StatusBar } from "expo-status-bar";
 import * as fitnessUtil from "./controllers/fitnessResult";
 import { getProgressResults } from "./controllers/progress";
 import { useQueryClient } from "react-query";
+import { useAtom } from "jotai";
+import { profileAtom } from "@/store";
 
 // Fitness Result screen
 const fitnessResult = () => {
@@ -16,6 +18,9 @@ const fitnessResult = () => {
   const { measurementId, isProgress } = useLocalSearchParams(); // measurementId, progress passing from the previous screen
   if (!measurementId) throw "Measurement ID is missing";
 
+  // Access profile atom to get gender
+  const [profile] = useAtom(profileAtom);
+  const gender = profile?.gender;
   
   // State variables
   const [bodyFat, setBodyFat] = useState<number | null>(null);
@@ -165,25 +170,9 @@ const fitnessResult = () => {
                   </Text>
                   <Text
                     className="font-bold"
-                    style={{
-                      flex: 1,
-                      textAlign: "center",
-                      fontSize: 16,
-                      backgroundColor: "#fcd34d",
-                    }}
+                    style={{ flex: 1, textAlign: "center", fontSize: 16 }}
                   >
-                    Men
-                  </Text>
-                  <Text
-                    className="font-bold"
-                    style={{
-                      flex: 1,
-                      textAlign: "center",
-                      fontSize: 16,
-                      backgroundColor: "#fcd34d",
-                    }}
-                  >
-                    Women
+                    {gender === "F" ? "Women" : "Men"}
                   </Text>
                 </View>
 
@@ -201,8 +190,9 @@ const fitnessResult = () => {
                     }}
                   >
                     <Text style={{ flex: 1, textAlign: "center" }}>{item.classification}</Text>
-                    <Text style={{ flex: 1, textAlign: "center" }}>{item.men}</Text>
-                    <Text style={{ flex: 1, textAlign: "center" }}>{item.women}</Text>
+                    <Text style={{ flex: 1, textAlign: "center" }}>
+                      {gender === "F" ? item.women : item.men}
+                    </Text>
                   </View>
                 ))}
               </View>
