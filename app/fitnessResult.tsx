@@ -1,13 +1,14 @@
-import { View, Text, SafeAreaView, ScrollView, Image } from "react-native";
+import { View, SafeAreaView, ScrollView, Image, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Href, Link, router, useLocalSearchParams } from "expo-router";
 import CustomButton from "@/components/CustomButton";
 import ProgressSummary from "@/components/ProgressSummary";
-import { StatusBar } from "expo-status-bar";
 import * as fitnessUtil from "./controllers/fitnessResult";
 import { getProgressResults } from "./controllers/progress";
 import { useQueryClient } from "react-query";
+import { Text } from "@/components/Text"
+import LoadingAnimation from "@/components/LoadingAnimation";
 import { useAtom } from "jotai";
 import { profileAtom } from "@/store";
 
@@ -15,6 +16,7 @@ import { profileAtom } from "@/store";
 const fitnessResult = () => {
   const queryClient = useQueryClient();
   const image = require("../assets/images/neonDumbell.png");  
+  const image2 = require("../assets/images/YouArrow.png"); 
   const { measurementId, isProgress } = useLocalSearchParams(); // measurementId, progress passing from the previous screen
   if (!measurementId) throw "Measurement ID is missing";
 
@@ -43,7 +45,14 @@ const fitnessResult = () => {
       setFFMIClassification(fitnessResult.ffmiClassification); 
       setRanges(fitnessResult.ranges.classifications || []);
 
-      // Save intensity and level after fetching fitness result
+      if (fitnessResult.classification === "Out of classification range" || fitnessResult.ffmiClassification === "Unusual/Extreme Result") {
+        Alert.alert(
+          "WARNING",
+          "Your body composition is outside the typical range. Consult a healthcare professional for assessment.",          
+        );
+      }
+
+      // Save intensity and level after fetching fitness result      
       const updateResult = await fitnessUtil.saveIntensityAndLevel(fitnessResult.classification, fitnessResult.ffmiClassification);
       if (updateResult.status) {
         queryClient.invalidateQueries({
@@ -71,24 +80,22 @@ const fitnessResult = () => {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <BackButton />
-      <ScrollView
-        contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
-      >
-        <View className="w-full flex justify-center items-center px-4 mb-8 mt-16">
+    <SafeAreaView className="flex-1">
+      <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>
+        <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-28">
+          <BackButton />
           <Text className="text-3xl font-bold text-center mb-8">
             Your Current Fitness Level
           </Text>
 
           {/* Render a loading state while the data is being fetched */}
           {loading ? (
-            <Text className="text-lg text-center mt-4">Loading...</Text>
+            <LoadingAnimation isLoading={loading} />
           ) : ( 
             <>
               {/* Render progress summary if needed, else render the image */}
               {progressSummary ? (
-                <ProgressSummary data={progressSummary} />
+                <ProgressSummary data={progressSummary} fontSize={17}/>
               ) : !isProgress ? (
                 <Image
                   source={image}
@@ -97,21 +104,65 @@ const fitnessResult = () => {
                 />
               ) : null}
 
-              <View className="flex flex-col items-center mb-6 mt-2">
+              <View className="flex flex-col items-center mb-6 mt-2">                
                 <View className="flex flex-row justify-center">
-                  <Text className="text-xl w-48 text-right">
-                    Body Fat %:
-                  </Text>
-                  <Text className="text-xl ml-2">
-                    {bodyFat !== null ? `${bodyFat} %` : "Loading..."}
-                  </Text>
-                </View>
-                <View className="flex flex-row justify-center mt-2">
                   <Text className="text-xl w-48 text-right">
                     Lean Body Mass:
                   </Text>
                   <Text className="text-xl ml-2">
-                    {muscleMass !== null ? `${muscleMass} kg` : "Loading..."}
+                  { muscleMass ? (
+                    progressSummary ? (
+                    <>
+                      {muscleMass - progressSummary.gainedMuscle} {`\u2794`}{' '}
+                      <Text 
+                        style={
+                          progressSummary.gainedMuscle === 0
+                            ? {} // follow system scheme color if no changes
+                            : { color: progressSummary.gainedMuscle > 0 ? 'green' : 'red' }
+                        }
+                      >
+                        {muscleMass}{' '}
+                      </Text>
+                      kg
+                    </>
+                    ) : (
+                      <>
+                        {muscleMass} kg
+                      </>
+                    )
+                  ): (
+                    "Loading..."
+                  )} 
+                  </Text>
+                </View>
+                <View className="flex flex-row justify-center mt-2">
+                  <Text className="text-xl w-48 text-right">
+                    Body Fat %:
+                  </Text>
+                  <Text className="text-xl ml-2">
+                  { bodyFat ? (
+                    progressSummary ? (
+                    <>
+                      {bodyFat - progressSummary.gainedFat} {`\u2794`}{' '}
+                      <Text
+                        style={
+                          progressSummary.gainedFat === 0
+                            ? {} // follow system scheme color if no changes
+                            : { color: progressSummary.gainedFat < 0 ? 'green' : 'red' }
+                        }
+                      >
+                        {bodyFat}{' '}
+                      </Text>
+                      %
+                    </>
+                    ) : (
+                      <>
+                        {bodyFat} kg
+                      </>
+                    )
+                  ): (
+                    "Loading..."
+                  )} 
                   </Text>
                 </View>
                 {classification && (
@@ -143,7 +194,7 @@ const fitnessResult = () => {
               {/* Body Fat Percentage Table */}
               <View className="w-full mb-8">
                 <Text
-                  className="text-2xl font-bold text-center mb-0"
+                  className="text-2xl font-bold text-center mb-0 text-black"
                   style={{ backgroundColor: "#fbbf24", height: 40, lineHeight: 40 }}
                 >
                   Body Fat Chart
@@ -164,15 +215,32 @@ const fitnessResult = () => {
                       textAlign: "center",
                       fontSize: 16,
                       backgroundColor: "#fcd34d",
+                      color: '#000'
                     }}
                   >
                     Classification
                   </Text>
                   <Text
                     className="font-bold"
-                    style={{ flex: 1, textAlign: "center", fontSize: 16 }}
+                    style={{
+                      flex: 1,
+                      textAlign: "center",
+                      fontSize: 16,
+                      backgroundColor: "#fcd34d",
+                    }}
                   >
-                    {gender === "F" ? "Women" : "Men"}
+                    Men
+                  </Text>
+                  <Text
+                    className="font-bold"
+                    style={{
+                      flex: 1,
+                      textAlign: "center",
+                      fontSize: 16,
+                      backgroundColor: "#fcd34d",
+                    }}
+                  >
+                    Women
                   </Text>
                 </View>
 
@@ -190,9 +258,8 @@ const fitnessResult = () => {
                     }}
                   >
                     <Text style={{ flex: 1, textAlign: "center" }}>{item.classification}</Text>
-                    <Text style={{ flex: 1, textAlign: "center" }}>
-                      {gender === "F" ? item.women : item.men}
-                    </Text>
+                    <Text style={{ flex: 1, textAlign: "center" }}>{item.men}</Text>
+                    <Text style={{ flex: 1, textAlign: "center" }}>{item.women}</Text>
                   </View>
                 ))}
               </View>
@@ -204,17 +271,18 @@ const fitnessResult = () => {
               <CustomButton
                 title="Get Personalized Routine"
                 handlePress={() => router.push("/generateRoutine" as Href<string>)}
-                containerStyles="w-[230px]"
+                containerStyles="w-[260px]"
               />
               
-              <Link href={"/(tabs)/home" as Href<string>} className="text-lg font-psemibold text-grey mt-4 mb-8">
-                I'll do it later.
+              <Link href={"/(tabs)/home" as Href<string>} className="mt-4 mb-8">
+                <Text className="text-lg font-psemibold text-grey ">
+                  I'll do it later.
+                </Text>                
               </Link>
             </>
           )}
         </View>
       </ScrollView>
-      <StatusBar backgroundColor="#161622" style="light" />
     </SafeAreaView>
   );
 };

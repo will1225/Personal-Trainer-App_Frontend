@@ -3,9 +3,10 @@ import { Href, router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { CustomButton, FormField } from "../../components";
-import { View, Text, Alert, Image, TouchableOpacity } from "react-native";
+import { View, Alert, Image, TouchableOpacity } from "react-native";
 import * as otp from "../../app/controllers/otp";
 import BackButton from "../../components/BackButton";
+import { Text } from "@/components/Text"
 
 /**
  * OTP Verification Screen.

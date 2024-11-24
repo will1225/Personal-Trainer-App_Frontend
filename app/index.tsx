@@ -1,11 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { router, Link, Href } from "expo-router";
-import { View, Text, Image } from "react-native";
+import { View,  Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton } from "../components";
 import * as user from "../app/controllers/user"; 
-
+import { Text } from "@/components/Text"
+import ThemeSwitch from "@/components/ThemeSwitch";
 
 /**
  * Landing screen
@@ -57,6 +58,7 @@ const LandingPage = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View className="w-full flex justify-center items-center h-full px-4">
+        <ThemeSwitch />
         <Text className="text-3xl font-bold text-center">
           Personal Trainer App
         </Text>
@@ -83,12 +85,11 @@ const LandingPage = () => {
         </Text>
         <Link
           href={"/sign-up" as Href<string>}
-          className="text-lg font-psemibold text-secondary"
+          className="text-lg font-semibold text-secondary"
         >
           Register Here
         </Link>
       </View>
-      <StatusBar backgroundColor="#161622" style="light" />
     </SafeAreaView>
   );
 };

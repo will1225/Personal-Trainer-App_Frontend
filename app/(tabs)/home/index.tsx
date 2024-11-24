@@ -1,6 +1,6 @@
 import { Href, Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, ScrollView, Image } from "react-native";
+import { View, ScrollView, Image } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import LogoutButton from "../../../components/LogoutButton";
@@ -9,6 +9,8 @@ import { useAtom } from "jotai";
 import { profileAtom } from "@/store";
 import { useQuery } from "react-query";
 import { Profile } from "@/app/controllers/profile";
+import { Text } from "@/components/Text"
+import ThemeSwitch from "@/components/ThemeSwitch";
 
 export default function TabOneScreen() {
   const image1 = require("../../../assets/images/HomePagePic1.jpeg");
@@ -37,11 +39,14 @@ export default function TabOneScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ padding: 15 }}>
+      <View className="w-full flex-row justify-between items-center" style={{ padding: 15 }}>
+        <ThemeSwitch />
         <LogoutButton />
       </View>
+      
       <ScrollView>
         <View className="w-full flex justify-center items-center h-full my-4">
+          
           <Text className="text-3xl font-semibold font-psemibold text-center w-full mb-4">
             Home
           </Text>
@@ -87,7 +92,7 @@ export default function TabOneScreen() {
               className="w-full h-[200px]"
             />
             <Link
-              href={"../four" as Href<string>}
+              href={"../../analysis" as Href<string>}
               className="bg-primary text-2xl font-psemibold text-white absolute"
             >
               Progress Analysis
@@ -101,20 +106,20 @@ export default function TabOneScreen() {
               className="w-full h-[200px]"
             />
             <Link
-              href={"../../report" as Href<string>}
+              href={"../library" as Href<string>}
               className="bg-primary text-2xl font-psemibold text-white absolute"
             >
-              Something else
+              Exercise Library
             </Link>
           </View>
 
-          <View className="flex justify-center pt-5 flex-row gap-2">
-            <Text className="text-lg font-pregular">Contact us</Text>
+          <View className="flex justify-center pt-5 flex-row gap-2 pb-5">
+            <Text className="text-lg font-pregular">About Us - </Text>
             <Link
-              href={"../toBeDone" as Href<string>}
-              className="text-lg font-psemibold text-secondary"
+              href={"../../aboutUs" as Href<string>}
+              className="text-lg font-semibold text-secondary"
             >
-              link
+              Meet The Team
             </Link>
           </View>
         </View>

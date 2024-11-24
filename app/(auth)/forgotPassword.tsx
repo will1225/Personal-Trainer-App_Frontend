@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { View, Text, Alert, Image } from "react-native";
+import { View, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "@/components";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Link, router } from "expo-router";
 import * as otp from "../../app/controllers/otp";
 import BackButton from "../../components/BackButton";
+import { Text } from "@/components/Text"
 
 /**
  * Forgot Password screen.

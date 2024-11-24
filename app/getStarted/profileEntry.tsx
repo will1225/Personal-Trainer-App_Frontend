@@ -3,14 +3,14 @@ import { StyleSheet } from 'react-native';
 import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "../../components";
-import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
+import { View, ScrollView, Dimensions, Alert, Image } from "react-native";
 import BackButton from "../../components/BackButton";
 import { useQuery} from 'react-query';
 import { Profile } from '../controllers/profile';
 import { profileAtom } from "../../store";
 import { useAtom } from "jotai";
 import { router } from "expo-router";
-
+import { Text } from "@/components/Text"
 
 export default function TabTwoScreen() {
   const image = require("../../assets/images/neonDumbell.png");

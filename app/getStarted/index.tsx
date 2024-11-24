@@ -1,7 +1,9 @@
 import LogoutButton from "@/components/LogoutButton";
 import { router } from "expo-router";
-import { ScrollView, Text, TouchableOpacity, View, Image } from "react-native";
+import { ScrollView, TouchableOpacity, View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Text } from "@/components/Text"
+import CustomButton from "@/components/CustomButton";
 
 const GetStarted = () => {
     const image = require("../../assets/images/neonDumbell.png");
@@ -21,10 +23,10 @@ const GetStarted = () => {
                     resizeMode="contain"
                     className="w-[200px] h-[50px] justify-center mt-1 mb-10"
                 />
-                <Text className="text-4xl mb-2">
+                <Text className="text-3xl mb-2">
                     Welcome to the
                 </Text>
-                <Text className="font-bold text-4xl">Personal Trainer App!</Text>
+                <Text className="font-bold text-3xl">Personal Trainer App!</Text>
                 <View className="flex-1 justify-center items-center my-12 px-2">
                     <Image
                         source={image1}
@@ -32,17 +34,15 @@ const GetStarted = () => {
                         className="w-[370] h-[200px]"
                     />
 
-                    <Text className="text-xl semi-bold text-center mt-6">
+                    <Text className="text-2xl semi-bold text-center mt-10">
                         Let's begin by assessing your fitness level.
                     </Text>
 
-                    <TouchableOpacity className="items-center my-5" onPress={() => router.push("/getStarted/profileEntry")}>
-                        <View className="rounded-xl bg-indigo-500 py-[16px] px-[25px]">
-                            <Text className="text-lg text-white font-bold">
-                                Get Started
-                            </Text>
-                        </View>
-                    </TouchableOpacity>
+                    <CustomButton
+                        title="Get Started"
+                        handlePress={() => router.push("/getStarted/profileEntry")}
+                        containerStyles="w-48 mt-6"
+                    />
                 </View>
             </ScrollView>
         </SafeAreaView>

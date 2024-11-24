@@ -1,14 +1,16 @@
-import { View, Text, SafeAreaView, ScrollView, Alert, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, SafeAreaView, ScrollView, Alert, TouchableOpacity } from "react-native";
+import React, { useCallback, useEffect, useState } from "react";
 import BackButton from "@/components/BackButton";
 import { Dropdown } from "react-native-element-dropdown";
-import { Image } from "react-native";
 import { CustomButton, FormField } from "@/components";
 import { Href, router } from "expo-router";
 import * as generateRoutine from "./controllers/generateRoutine";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { profileAtom } from "@/store";
-import { getDefaultStore } from "jotai";
+import { useAtom } from "jotai";
+import { useFocusEffect } from "@react-navigation/native";
+import { Text } from "@/components/Text"
+import ExerciseDetailsBlock from "@/components/ExerciseDetailsBlock";
 
 type weeklyRoutine = {
   startDate: string;
@@ -53,6 +55,34 @@ const GenerateRoutine = () => {
   const [dailyRoutines, setRoutines] = useState<DailyRoutine[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   const [showRoutineDisplay, setShowRoutineDisplay] = useState(false);
+  const [profile, setProfile] = useAtom(profileAtom);
+
+  // Validate if measurementId exists before proceeding
+  const isBodyMeasurementValid = async () => {    
+    if (!profile.bodyMeasurementId) {
+      Alert.alert(
+        "Body Measurement Required",
+        "Please input your body measurements to proceed.",
+        [
+          {
+            text: "OK",
+            onPress: () => router.push("./bodyMeasurement"), 
+          },
+          {
+            text: "Cancel",
+            onPress: () => router.push("/(tabs)/home")
+          }
+        ]
+      );
+    }
+  };
+
+  // Check on mount 
+  useFocusEffect(
+    useCallback(() => {
+      isBodyMeasurementValid();
+    }, []) 
+  );
 
   // Fetch workout environments and muscle groups when page starts up
   useEffect(() => {
@@ -201,7 +231,7 @@ const GenerateRoutine = () => {
 
   return (
     <SafeAreaView>
-      <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>        
+      <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>
         <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-28">
           <BackButton />
           <Text className="text-3xl font-bold text-center">
@@ -352,43 +382,8 @@ const GenerateRoutine = () => {
                       </Text>
 
                       {/* Exercise Details blocks */}
-                      {routine.exerciseDetails.map((exercise, index) => (
-                        <View key={index} className="flex-row mb-1 items-center">
-
-                          {/* YouTube Thumbnails */}
-                          <Image source={{ uri: exercise.thumbnailURL }} className="w-[70] h-[70] mr-2" resizeMode="cover" />
-
-                          <View
-                            className="flex-1 border border-gray-300 items-center rounded-lg min-h-[65px]"
-                            style={{ backgroundColor: "#e5e5e5" }}
-                          >
-                            {/* Exercise Details Header */}
-                            <View className="flex-row mb-1 items-center rounded h-7" style={{ backgroundColor: "#0369a1" }}>
-                              <Text className="flex-[2] text-center font-semibold text-white">
-                                Exercise
-                              </Text>
-                              <Text className="flex-[1] text-center font-semibold text-white">
-                                Sets
-                              </Text>
-                              <Text className="flex-[1] text-center font-semibold text-white">
-                                {exercise.reps ? "Reps" : "Mins"}
-                              </Text>
-                            </View>
-
-                            {/* Data Row */}
-                            <View className="flex-row items-center">
-                              <Text className="flex-[2] text-center">
-                                {exercise.name}
-                              </Text>
-                              <Text className="flex-[1] text-center">
-                                {exercise.sets}
-                              </Text>
-                              <Text className="flex-[1] text-center">
-                                {exercise.reps ? exercise.reps : exercise.minutes}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
+                      {routine.exerciseDetails.map((exercise) => (
+                        <ExerciseDetailsBlock key={exercise.exerciseId} exercise={exercise} />
                       ))}
                     </View>
                   );
@@ -406,7 +401,7 @@ const GenerateRoutine = () => {
               <CustomButton
                 title="Confirm"
                 handlePress={handleSaveRoutine}
-                containerStyles="w-52 bg-green-800"
+                containerStyles="w-52"
                 isLoading={isSubmitting}
               />
               <Text className="font-psemibold text-base text-center px-8 mt-4">
