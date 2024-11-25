@@ -33,10 +33,10 @@ const AboutUs = () => {
             image: null 
         },
         { 
-            name: "Arina Kolodeznikova", 
+            name: "Arina", 
             role: "Full-Stack Developer", 
             email: "arinak1017@gmail.com", 
-            description: "Hi all, if you see this it means I forgot to edit the description at the end of term", 
+            description: "Hi all, if you see this it means I forgot to edit the description at the end of the term", 
             image: require("../assets/images/Arina.jpg")
         }      
     ];
