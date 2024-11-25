@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { useColorScheme } from 'nativewind';
+import { useColorScheme } from "nativewind";
 
 const BackButton = () => {
   const { back } = useRouter();
@@ -11,7 +11,7 @@ const BackButton = () => {
     <TouchableOpacity
       style={styles.button}
       onPress={() => {
-        back(); 
+        back();
       }}
     >
       <Text style={[styles.text, { color: textColor }]}>{"< Back"}</Text>
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   text: {
-    fontSize: 18
+    fontSize: 18,
   },
 });
 

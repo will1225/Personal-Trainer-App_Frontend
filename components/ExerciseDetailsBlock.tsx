@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Image } from 'react-native';
-import { useColorScheme } from 'nativewind';
-import { Text } from "@/components/Text"
+import React from "react";
+import { View, Image } from "react-native";
+import { useColorScheme } from "nativewind";
+import { Text } from "@/components/Text";
 
 type ExerciseDetailVariation1 = {
   sets: number;
@@ -27,8 +27,10 @@ interface ExerciseDetailsBlockProps {
   exercise: ExerciseDetail;
 }
 
-const ExerciseDetailsBlock: React.FC<ExerciseDetailsBlockProps> = ({ exercise }) => {
-  const name = 'name' in exercise ? exercise.name : exercise.exercise.name;
+const ExerciseDetailsBlock: React.FC<ExerciseDetailsBlockProps> = ({
+  exercise,
+}) => {
+  const name = "name" in exercise ? exercise.name : exercise.exercise.name;
   const thumbnailURL = exercise.thumbnailURL;
   const { colorScheme } = useColorScheme();
   const headerColor = colorScheme === "dark" ? "#1B4A72" : "#0369a1";
@@ -37,19 +39,22 @@ const ExerciseDetailsBlock: React.FC<ExerciseDetailsBlockProps> = ({ exercise })
 
   return (
     <View className="flex-row mb-1 items-center">
-      
       {/* YouTube Thumbnails */}
       <Image
-        source={typeof thumbnailURL === 'string' ? { uri: thumbnailURL } : thumbnailURL}
+        source={
+          typeof thumbnailURL === "string"
+            ? { uri: thumbnailURL }
+            : thumbnailURL
+        }
         className="w-[70] h-[70] mr-2"
         resizeMode="cover"
       />
 
       <View
         className="flex-1 border items-center rounded-lg min-h-[65px]"
-        style={{ 
+        style={{
           backgroundColor: blockColor,
-          borderColor: borderColor
+          borderColor: borderColor,
         }}
       >
         {/* Exercise Details Header */}
@@ -74,12 +79,8 @@ const ExerciseDetailsBlock: React.FC<ExerciseDetailsBlockProps> = ({ exercise })
 
         {/* Data Row */}
         <View className="flex-row items-center">
-          <Text className="flex-[2] text-center">
-            {name}
-          </Text>
-          <Text className="flex-[1] text-center">
-            {exercise.sets}
-          </Text>
+          <Text className="flex-[2] text-center">{name}</Text>
+          <Text className="flex-[1] text-center">{exercise.sets}</Text>
           <Text className="flex-[1] text-center">
             {exercise.reps ? exercise.reps : exercise.minutes}
           </Text>

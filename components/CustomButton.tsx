@@ -30,24 +30,30 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       style={{
         borderRadius: 15,
         overflow: "hidden", // Ensures the gradient covering the whole area
-        opacity: disabled ? 0.6 : 1
+        opacity: disabled ? 0.6 : 1,
       }}
     >
       <LinearGradient
-        colors={ disabled ? ["#ccc", "#ccc"] : ['#5851DB', '#5873F4', '#458EEF', '#25BCE7', '#10DAE2'] } // disable colors : normal colors
+        colors={
+          disabled
+            ? ["#ccc", "#ccc"]
+            : ["#5851DB", "#5873F4", "#458EEF", "#25BCE7", "#10DAE2"]
+        } // disable colors : normal colors
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        locations={[ 0, 0.25, 0.5, 0.85, 1 ]}
+        locations={[0, 0.25, 0.5, 0.85, 1]}
         style={{
           paddingVertical: 10,
           paddingHorizontal: 20,
           borderRadius: 20,
           alignItems: "center",
           justifyContent: "center",
-          flexDirection: "row"
+          flexDirection: "row",
         }}
       >
-        <Text className={`text-primary text-white font-bold text-lg ${textStyles}`}>
+        <Text
+          className={`text-primary text-white font-bold text-lg ${textStyles}`}
+        >
           {title}
         </Text>
 
