@@ -1,5 +1,5 @@
 import React from "react";
-import { View } from "react-native";
+import { View, Image } from "react-native";
 import { Text } from "@/components/Text";
 
 const BodyFatChart = ({
@@ -15,6 +15,8 @@ const BodyFatChart = ({
     max: number;
   }) => boolean;
 }) => {
+  const image = require("../assets/images/YouArrow.png");
+
   return (
     <View className="w-full mb-8">
       <Text
@@ -70,6 +72,18 @@ const BodyFatChart = ({
             borderBottomColor: "#ddd",
           }}
         >
+          {isHighlighted(item) && (
+                  <Image
+                  source={image}
+                  resizeMode="contain"
+                  style={{
+                    position: "absolute",
+                    left: -19, 
+                    width: 38,
+                    height: 38
+                  }}
+                  />
+                )}
           <Text style={{ flex: 1, textAlign: "center" }}>
             {item.classification}
           </Text>
