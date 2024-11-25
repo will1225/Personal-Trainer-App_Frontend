@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { router, Link, Href } from "expo-router";
 import { View,  Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,6 +7,7 @@ import { CustomButton } from "../components";
 import * as user from "../app/controllers/user"; 
 import { Text } from "@/components/Text"
 import ThemeSwitch from "@/components/ThemeSwitch";
+import LoadingAnimation from "@/components/LoadingAnimation";
 
 /**
  * Landing screen
@@ -14,6 +15,7 @@ import ThemeSwitch from "@/components/ThemeSwitch";
  */
 const LandingPage = () => {
   const image = require("../assets/images/download.jpeg");
+  const [isLoading, setIsLoading] = useState(true);
 
   // Flag to skip landing screen if token presents, must set to true in production
   let skipLandingPage = true;
@@ -48,15 +50,25 @@ const LandingPage = () => {
             }
           } catch (error: any) {
             throw new Error(error.message || "Something went wrong");    
-          }      
+          } finally {
+            setIsLoading(false);
+          }
+        } else {
+          setIsLoading(false);
         }
       };
       checkToken();
-    }, []);
+    }, [skipLandingPage]);
   }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      {isLoading ? (
+        <View className="flex-1 justify-center items-center">
+          <LoadingAnimation isLoading={isLoading} message="Verifying Token..."/>
+        </View>
+      ) : (
+
       <View className="w-full flex justify-center items-center h-full px-4">
         <ThemeSwitch />
         <Text className="text-3xl font-bold text-center">
@@ -90,6 +102,7 @@ const LandingPage = () => {
           Register Here
         </Link>
       </View>
+      )}
     </SafeAreaView>
   );
 };

@@ -3,8 +3,11 @@ import React from 'react'
 import { Text } from "@/components/Text"
 import { LinearGradient } from "react-native-linear-gradient";
 import BackButton from '@/components/BackButton';
+import { useColorScheme } from 'nativewind';
 
 const AboutUs = () => {
+    const { colorScheme } = useColorScheme();
+    const backgroundColor = colorScheme === "dark" ? ['#181B2B', '#2D335E', '#429EB6', '#FFC857'] : ['#F5F5F5', '#F5F5F5', '#D9D9E6', '#FFC857'];
 
     // TODO: Fill in your info and upload an image
     const members = [
@@ -44,53 +47,61 @@ const AboutUs = () => {
     };
     
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                <View className="w-full flex justify-center items-center h-full px-1 my-16">
-                    <BackButton />
+        <LinearGradient
+            colors={backgroundColor} // Gradient colors
+            style={{ flex: 1 }}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            locations={[0, 0.4, 0.9, 1]}
+        >
+            <SafeAreaView style={{ flex: 1 }}>
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+                    <View className="w-full flex justify-center items-center h-full px-1 my-16">
+                        <BackButton />
 
-                    <Text className="text-3xl font-bold text-center mb-4">
-                        About Us
-                    </Text>
+                        <Text className="text-3xl font-bold text-center mb-4">
+                            About Us
+                        </Text>
 
-                    {members.map((member, index) => (
-                        <View key={index} className="flex-row items-center my-4 p-4 rounded-lg">
+                        {members.map((member, index) => (
+                            <View key={index} className="flex-row items-center my-4 p-4 rounded-lg">
 
-                            {/* Gradient background for Profile Pic */}
-                            <LinearGradient
-                                colors={getRandomGradientColors()}
-                                className="p-[2px] rounded-full"
-                                start={{ x: 0, y: 0 }}
-                                end={{ x: 1, y: 1 }}
-                                locations={[ 0, 0.25, 0.75, 1 ]}
-                                style={{ width: 110, height: 110, justifyContent: 'center', alignItems: 'center' }}
-                            >
-                                <View 
-                                    className="bg-white rounded-full overflow-hidden"
-                                    style={{ width: 100, height: 100 }}
+                                {/* Gradient background for Profile Pic */}
+                                <LinearGradient
+                                    colors={getRandomGradientColors()}
+                                    className="p-[2px] rounded-full"
+                                    start={{ x: 0, y: 0 }}
+                                    end={{ x: 1, y: 1 }}
+                                    locations={[ 0, 0.25, 0.75, 1 ]}
+                                    style={{ width: 110, height: 110, justifyContent: 'center', alignItems: 'center' }}
                                 >
-                                    <Image
-                                        source={ member.image ? member.image : require("../assets/images/HomePagePic1.jpeg") }
-                                        className="w-full h-full"
-                                        resizeMode="cover"
-                                    />
-                                </View>
-                            </LinearGradient>
+                                    <View 
+                                        className="bg-white rounded-full overflow-hidden"
+                                        style={{ width: 100, height: 100 }}
+                                    >
+                                        <Image
+                                            source={ member.image ? member.image : require("../assets/images/HomePagePic1.jpeg") }
+                                            className="w-full h-full"
+                                            resizeMode="cover"
+                                        />
+                                    </View>
+                                </LinearGradient>
 
-                            {/* Member info */}
-                            <View className="ml-8 flex-1 justify-between" style={{ gap: 8 }}>
-                                <Text className="text-xl font-bold">{member.name}</Text>
-                                <Text className="text-base">{member.role}</Text>
-                                <TouchableOpacity onPress={() => handleEmailPress(member.email)}>                                    
-                                    <Text className='text-base underline'>{member.email}</Text>
-                                </TouchableOpacity>
-                                <Text className="text-base italic">{member.description}</Text>
+                                {/* Member info */}
+                                <View className="ml-8 flex-1 justify-between" style={{ gap: 8 }}>
+                                    <Text className="text-xl font-bold">{member.name}</Text>
+                                    <Text className="text-base">{member.role}</Text>
+                                    <TouchableOpacity onPress={() => handleEmailPress(member.email)}>                                    
+                                        <Text className='text-base underline'>{member.email}</Text>
+                                    </TouchableOpacity>
+                                    <Text className="text-base italic">{member.description}</Text>
+                                </View>
                             </View>
-                        </View>
-                    ))}
-                </View>
-            </ScrollView>
-        </SafeAreaView>
+                        ))}
+                    </View>
+                </ScrollView>
+            </SafeAreaView>
+        </LinearGradient>
     )
 };
 
