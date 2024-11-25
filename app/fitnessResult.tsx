@@ -11,6 +11,7 @@ import { Text } from "@/components/Text"
 import LoadingAnimation from "@/components/LoadingAnimation";
 import { useAtom } from "jotai";
 import { profileAtom } from "@/store";
+import BodyFatChart from "@/components/BodyFatChart";
 
 // Fitness Result screen
 const fitnessResult = () => {
@@ -192,77 +193,7 @@ const fitnessResult = () => {
               </View>
 
               {/* Body Fat Percentage Table */}
-              <View className="w-full mb-8">
-                <Text
-                  className="text-2xl font-bold text-center mb-0 text-black"
-                  style={{ backgroundColor: "#fbbf24", height: 40, lineHeight: 40 }}
-                >
-                  Body Fat Chart
-                </Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    backgroundColor: "#fcd34d",
-                    height: 30,
-                  }}
-                >
-                  <Text
-                    className="font-bold"
-                    style={{
-                      flex: 1,
-                      textAlign: "center",
-                      fontSize: 16,
-                      backgroundColor: "#fcd34d",
-                      color: '#000'
-                    }}
-                  >
-                    Classification
-                  </Text>
-                  <Text
-                    className="font-bold"
-                    style={{
-                      flex: 1,
-                      textAlign: "center",
-                      fontSize: 16,
-                      backgroundColor: "#fcd34d",
-                    }}
-                  >
-                    Men
-                  </Text>
-                  <Text
-                    className="font-bold"
-                    style={{
-                      flex: 1,
-                      textAlign: "center",
-                      fontSize: 16,
-                      backgroundColor: "#fcd34d",
-                    }}
-                  >
-                    Women
-                  </Text>
-                </View>
-
-                {ranges.map((item, index) => (
-                  <View
-                    key={index}
-                    style={{
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      height: 32,
-                      backgroundColor: isHighlighted(item) ? "#4ade80" : "#e5e5e5",
-                      borderBottomWidth: 1,
-                      borderBottomColor: "#ddd",
-                    }}
-                  >
-                    <Text style={{ flex: 1, textAlign: "center" }}>{item.classification}</Text>
-                    <Text style={{ flex: 1, textAlign: "center" }}>{item.men}</Text>
-                    <Text style={{ flex: 1, textAlign: "center" }}>{item.women}</Text>
-                  </View>
-                ))}
-              </View>
+              <BodyFatChart ranges={ranges} gender={gender} isHighlighted={isHighlighted} />
 
               <Text className="text-xl text-left mb-8">
                 Ready to get in shape?
