@@ -9,10 +9,10 @@ const LoadingAnimation = ({
   isLoading: boolean;
   message?: string;
 }) => {
-  if (!isLoading) return null;
-
   const { colorScheme } = useColorScheme();
   const textColor = colorScheme === "dark" ? "#25BCE7" : "#0369a1";
+
+  if (!isLoading) return null;
 
   return (
     <View style={{ alignItems: "center" }}>

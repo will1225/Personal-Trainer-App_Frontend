@@ -1,5 +1,5 @@
-import { View, SafeAreaView, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { View, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useLocalSearchParams } from 'expo-router';
 import BackButton from '@/components/BackButton';
 import * as generateRoutine from "../../controllers/generateRoutine";
@@ -110,7 +110,19 @@ const ExerciseList = () => {
             }
         };  
         fetchData();
-    }, []);
+    }, [description, muscleGroupId]);
+
+    // Helper to filter exercises based on the selected criteria
+    const filterExercises = useCallback(() => {
+        return exercises.filter((exercise) => {
+            const matchesEnv = selectedEnv ? exercise.env.some((env: { id: string; }) => env.id === selectedEnv) : true;
+            const matchesLevel = selectedLevel ? exercise.level.id === selectedLevel : true;
+            const matchesEquipment = selectedEquipment ? exercise.equipment.id === selectedEquipment : true;
+            const matchesType = selectedType ? exercise.type.id === selectedType : true;
+    
+            return matchesEnv && matchesLevel && matchesEquipment && matchesType;
+        });
+    }, [selectedEnv, selectedLevel, selectedEquipment, selectedType, exercises]);
 
     // Listen to the filters
     useEffect(() => {
@@ -123,19 +135,7 @@ const ExerciseList = () => {
         const activatedFilters = !!selectedEnv || !!selectedLevel || !!selectedEquipment || !!selectedType; // explicit way to convert to boolean
         setFiltersActivated(activatedFilters);
 
-    }, [selectedEnv, selectedLevel, selectedEquipment, selectedType, exercises]);
-    
-    // Helper to filter exercises based on the selected criteria
-    const filterExercises = () => {
-        return exercises.filter((exercise) => {
-            const matchesEnv = selectedEnv ? exercise.env.some((env: { id: string; }) => env.id === selectedEnv) : true;
-            const matchesLevel = selectedLevel ? exercise.level.id === selectedLevel : true;
-            const matchesEquipment = selectedEquipment ? exercise.equipment.id === selectedEquipment : true;
-            const matchesType = selectedType ? exercise.type.id === selectedType : true;
-    
-            return matchesEnv && matchesLevel && matchesEquipment && matchesType;
-        });
-    };
+    }, [selectedEnv, selectedLevel, selectedEquipment, selectedType, exercises, filterExercises]);
     
     // Helper to set selected Exercise Details Modal
     const displayModal = (exercise: any) => {

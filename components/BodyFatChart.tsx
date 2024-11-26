@@ -53,6 +53,7 @@ const BodyFatChart = ({
             textAlign: "center",
             fontSize: 16,
             backgroundColor: "#fcd34d",
+            color: "#000",
           }}
         >
           {gender === "F" ? "Women" : "Men"}
@@ -84,10 +85,10 @@ const BodyFatChart = ({
                   }}
                   />
                 )}
-          <Text style={{ flex: 1, textAlign: "center" }}>
+          <Text style={{ flex: 1, textAlign: "center", color: "#000", }}>
             {item.classification}
           </Text>
-          <Text style={{ flex: 1, textAlign: "center" }}>
+          <Text style={{ flex: 1, textAlign: "center", color: "#000", }}>
             {gender === "F" ? item.women : item.men}
           </Text>
         </View>

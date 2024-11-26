@@ -13,7 +13,7 @@ import { Text } from "@/components/Text"
  * User enters an email and proceeds to the next Change Password Screen.
  * @returns
  */
-const forgotPassword = () => {
+const ForgotPassword = () => {
   const image = require("../../assets/images/neonDumbell.png");
 
   // State variables
@@ -35,7 +35,7 @@ const forgotPassword = () => {
 
     try {
       // For security purpose, direct to the next screen even if there are errors, passing email form data
-      const result = await otp.sendOtp(email);
+      await otp.sendOtp(email);
       router.replace({ pathname: "/changePassword", params: { email: email } });
     } catch (error: any) {
       Alert.alert("Error", error.message);
@@ -104,4 +104,4 @@ const forgotPassword = () => {
   );
 };
 
-export default forgotPassword;
+export default ForgotPassword;

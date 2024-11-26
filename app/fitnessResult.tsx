@@ -14,10 +14,9 @@ import { profileAtom } from "@/store";
 import BodyFatChart from "@/components/BodyFatChart";
 
 // Fitness Result screen
-const fitnessResult = () => {
+const FitnessResult = () => {
   const queryClient = useQueryClient();
-  const image = require("../assets/images/neonDumbell.png");  
-  const image2 = require("../assets/images/YouArrow.png"); 
+  const image = require("../assets/images/neonDumbell.png");
   const { measurementId, isProgress } = useLocalSearchParams(); // measurementId, progress passing from the previous screen
   if (!measurementId) throw "Measurement ID is missing";
 
@@ -71,7 +70,7 @@ const fitnessResult = () => {
 
 
     getFitnessData();
-  }, [measurementId]);
+  }, [isProgress, measurementId, queryClient]);
 
   // Highlight the corresponding row based on body fat %
   const isHighlighted = (range: { classification: string; min: number; max: number }) => {
@@ -218,4 +217,4 @@ const fitnessResult = () => {
   );
 };
 
-export default fitnessResult;
+export default FitnessResult;

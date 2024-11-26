@@ -67,7 +67,7 @@ function RootLayoutNav() {
     };
 
     loadTheme();
-  }, []);
+  }, [setColorScheme]);
 
   // Save theme changes to SecureStore
   useEffect(() => {    

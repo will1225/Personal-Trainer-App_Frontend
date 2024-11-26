@@ -1,4 +1,3 @@
-import { router } from "expo-router";
 import {getToken} from "./user";
 import { endpoint } from '../config';
 

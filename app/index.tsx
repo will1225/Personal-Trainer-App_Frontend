@@ -1,4 +1,3 @@
-import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { router, Link, Href } from "expo-router";
 import { View,  Image } from "react-native";
@@ -21,9 +20,10 @@ const LandingPage = () => {
   let skipLandingPage = true;
 
   // Check stored token on app, skip landing page if already logged in
-  if (skipLandingPage) {
-    useEffect(() => {
-      const checkToken = async () => {
+  
+  useEffect(() => {
+    const checkToken = async () => {
+      if (skipLandingPage) {
         const token = await user.getToken();
         if (token) {
           try {
@@ -33,11 +33,11 @@ const LandingPage = () => {
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`
-                }
+                  Authorization: `Bearer ${token}`,
+                },
               }
             );
-        
+
             if (response.ok) {
               const data = await response.json();
 
@@ -56,10 +56,13 @@ const LandingPage = () => {
         } else {
           setIsLoading(false);
         }
-      };
-      checkToken();
-    }, [skipLandingPage]);
-  }
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    checkToken();
+  }, [skipLandingPage]);    
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

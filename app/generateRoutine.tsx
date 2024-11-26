@@ -55,10 +55,10 @@ const GenerateRoutine = () => {
   const [dailyRoutines, setRoutines] = useState<DailyRoutine[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
   const [showRoutineDisplay, setShowRoutineDisplay] = useState(false);
-  const [profile, setProfile] = useAtom(profileAtom);
+  const [profile] = useAtom(profileAtom);
 
   // Validate if measurementId exists before proceeding
-  const isBodyMeasurementValid = async () => {    
+  const isBodyMeasurementValid = useCallback(async () => {      
     if (!profile.bodyMeasurementId) {
       Alert.alert(
         "Body Measurement Required",
@@ -75,13 +75,13 @@ const GenerateRoutine = () => {
         ]
       );
     }
-  };
+  }, [profile.bodyMeasurementId]);
 
   // Check on mount 
   useFocusEffect(
     useCallback(() => {
       isBodyMeasurementValid();
-    }, []) 
+    }, [isBodyMeasurementValid]) 
   );
 
   // Fetch workout environments and muscle groups when page starts up
@@ -106,7 +106,7 @@ const GenerateRoutine = () => {
       }
     };  
     fetchData();
-  }, []);
+  }, [muscleGroups, workoutEnv]);
 
   // DatePicker handler
   const handleDateChange = (date: Date) => {
@@ -147,14 +147,14 @@ const GenerateRoutine = () => {
   };  
 
   // Helper function to fetch muscle groups for each exercise for UI display
-  const getMuscleGroups = (ids: number[]) => {
+  const getMuscleGroups = useCallback((ids: number[]) => {
       const muscleGroupDescriptions = ids.map((muscleId) => {
-        const muscleGroup = muscleGroups.find((mg) => mg.id == muscleId);
+        const muscleGroup = muscleGroups.find((mg) => Number(mg.id) === muscleId);
         return muscleGroup ? muscleGroup.description : "Unknown Group";
       });
 
     return muscleGroupDescriptions ? muscleGroupDescriptions : "Unknown Group";
-  };
+  }, [muscleGroups]);
 
   // Generate/Refresh button
   const handleGenerateRoutine = async () => {
