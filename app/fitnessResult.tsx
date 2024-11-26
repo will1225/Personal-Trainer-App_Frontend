@@ -25,13 +25,13 @@ const FitnessResult = () => {
   const gender = profile?.gender;
   
   // State variables
-  const [bodyFat, setBodyFat] = useState<number | null>(null);
-  const [muscleMass, setMuscleMass] = useState<number | null>(null);
-  const [classification, setClassification] = useState<string | null>(null);
-  const [ffmiClassification, setFFMIClassification] = useState<string | null>(null);
-  const [ranges, setRanges] = useState<any[]>([]);
+  const [currentFitnessResult, setCurrentFitnessResult] = useState<any | null>(null);
   const [progressSummary, setProgressSummary] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
+  const [prevFitnessResult, setPrevFitnessResult] = useState<any | null>(null);
+  const options: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
+  const [fatLevel, setFatLevel] = useState<string[]>([]);
+  const [ffmiLevel, setFfmiLevel] = useState<string[]>([]);
 
   // Get and set fitness data
   useEffect(() => {
@@ -39,11 +39,23 @@ const FitnessResult = () => {
       setLoading(true);
 
       const fitnessResult = await fitnessUtil.fetchFitnessResult(measurementId as string);
-      setBodyFat(fitnessResult.bodyFatPercent);
-      setMuscleMass(fitnessResult.muscleMass);
-      setClassification(fitnessResult.classification); 
-      setFFMIClassification(fitnessResult.ffmiClassification); 
-      setRanges(fitnessResult.ranges.classifications || []);
+      setCurrentFitnessResult(fitnessResult);
+
+      // Dynamically populate the classification list for comparison
+      if (fitnessResult.ranges.classifications && fitnessResult.ffmiTable) {
+        const fatLevel = fitnessResult.ranges.classifications.map((item: any) => item.classification);
+        const ffmiLevel = fitnessResult.ffmiTable.map((item: any) => item.classification);
+
+        setFatLevel([
+          "Out of classification range", // Extreme case
+          ...fatLevel,
+        ]);
+  
+        setFfmiLevel([
+          "Unusual/Extreme Result",     // Extreme case
+          ...ffmiLevel,
+        ]);
+      }
 
       if (fitnessResult.classification === "Out of classification range" || fitnessResult.ffmiClassification === "Unusual/Extreme Result") {
         Alert.alert(
@@ -64,19 +76,21 @@ const FitnessResult = () => {
       if (isProgress) {
         const progressResult = await getProgressResults();
         setProgressSummary(progressResult);
+
+        const prevFitnessResult = await fitnessUtil.fetchFitnessResult(progressResult.prevMeasurementId);
+        setPrevFitnessResult(prevFitnessResult);
       }
       setLoading(false);
     };
-
 
     getFitnessData();
   }, [isProgress, measurementId, queryClient]);
 
   // Highlight the corresponding row based on body fat %
   const isHighlighted = (range: { classification: string; min: number; max: number }) => {
-    if (bodyFat === null) return false;
+    if (currentFitnessResult.bodyFatPercent === null) return false;
     // range.max === null represents Infinity from the backend
-    return bodyFat >= range.min && (range.max === null || bodyFat <= range.max);
+    return currentFitnessResult.bodyFatPercent >= range.min && (range.max === null || currentFitnessResult.bodyFatPercent <= range.max);
   };
 
   return (
@@ -95,7 +109,7 @@ const FitnessResult = () => {
             <>
               {/* Render progress summary if needed, else render the image */}
               {progressSummary ? (
-                <ProgressSummary data={progressSummary} fontSize={17}/>
+                <ProgressSummary data={progressSummary} fontSize={19}/>
               ) : !isProgress ? (
                 <Image
                   source={image}
@@ -104,95 +118,105 @@ const FitnessResult = () => {
                 />
               ) : null}
 
-              <View className="flex flex-col items-center mb-6 mt-2">                
-                <View className="flex flex-row justify-center">
-                  <Text className="text-xl w-48 text-right">
-                    Lean Body Mass:
-                  </Text>
-                  <Text className="text-xl ml-2">
-                  { muscleMass ? (
-                    progressSummary ? (
-                    <>
-                      {muscleMass - progressSummary.gainedMuscle} {`\u2794`}{' '}
-                      <Text 
-                        style={
-                          progressSummary.gainedMuscle === 0
-                            ? {} // follow system scheme color if no changes
-                            : { color: progressSummary.gainedMuscle > 0 ? 'green' : 'red' }
-                        }
-                      >
-                        {muscleMass}{' '}
-                      </Text>
-                      kg
-                    </>
-                    ) : (
-                      <>
-                        {muscleMass} kg
-                      </>
-                    )
-                  ): (
-                    "Loading..."
-                  )} 
-                  </Text>
-                </View>
-                <View className="flex flex-row justify-center mt-2">
-                  <Text className="text-xl w-48 text-right">
-                    Body Fat %:
-                  </Text>
-                  <Text className="text-xl ml-2">
-                  { bodyFat ? (
-                    progressSummary ? (
-                    <>
-                      {bodyFat - progressSummary.gainedFat} {`\u2794`}{' '}
-                      <Text
-                        style={
-                          progressSummary.gainedFat === 0
-                            ? {} // follow system scheme color if no changes
-                            : { color: progressSummary.gainedFat < 0 ? 'green' : 'red' }
-                        }
-                      >
-                        {bodyFat}{' '}
-                      </Text>
-                      %
-                    </>
-                    ) : (
-                      <>
-                        {bodyFat} kg
-                      </>
-                    )
-                  ): (
-                    "Loading..."
-                  )} 
-                  </Text>
-                </View>
-                {classification && (
-                  <View className="flex flex-row justify-center mt-2">
-                    <Text className="text-xl w-48 text-right">
-                      Body Fat Class:
-                    </Text>
-                    <Text className="text-xl ml-2">
-                      {classification}
-                    </Text>
+              {/* Legend */}
+              <View className="items-left justify-center mt-8 w-full">
+                  <Text className="text-m ml-2 font-semibold">Legend:</Text>
+                  
+                  <View className="flex flex-row items-center mt-2">
+                    <Text className="text-m text-green-500 ml-2">{`\u2794`}</Text>
+                    <Text className="text-m ml-1">Improved</Text>
+                  
+                    <Text className="text-m text-red-500 ml-2">{`\u2794`}</Text>
+                    <Text className="text-m ml-1">Regressed</Text>
+
+                    <Text className="text-m ml-2">{`\u2794`}</Text>
+                    <Text className="text-m ml-1">Unchanged / Not Compared</Text>
                   </View>
-                )}
-                {ffmiClassification && (
-                  <View className="flex flex-row justify-center mt-2">
-                    <Text className="text-xl w-48 text-right">
-                      FFMI Class:
-                    </Text>
-                    <Text className="text-xl ml-2">
-                      {ffmiClassification}
-                    </Text>
-                  </View>
-                )}
-                <Text className="text-sm text-left px-1 mt-6">
-                  ** Body Fat Class reflects your body fat for your age, 
-                  while FFMI Class indicates your muscle mass relative to your height.
+              </View>
+
+              {/* Date Comparison */}
+              <View className="flex flex-col items-center mb-6 mt-8 w-full px-2">
+                <View className="flex flex-row justify-between items-center mb-3 w-full">
+                  <Text className="text-xl font-semibold text-right w-[28%]">{``}</Text>
+                  <Text className="text-lg w-[28%] text-center truncate font-semibold">{new Date(prevFitnessResult.date).toLocaleDateString(undefined, options)}</Text>
+                  <Text className="text-xl w-[14%] text-center">{``}</Text>
+                  <Text className="text-xl w-[28%] text-center truncate font-semibold">{new Date(currentFitnessResult.date).toLocaleDateString(undefined, options)}</Text>
+                </View>
+
+                {/* Body Fat */}
+                <View className="flex flex-row justify-between items-center mb-3 w-full">
+                  <Text className="text-xl font-semibold text-right w-[28%]">{`Body Fat:`}</Text>
+                  <Text className="text-xl w-[28%] text-center truncate">{prevFitnessResult.bodyFatPercent}</Text>
+                  <Text
+                  className={`text-xl w-[14%] text-center ${currentFitnessResult.bodyFatPercent - prevFitnessResult.bodyFatPercent > 0 ? 'text-red-500' : 'text-green-500'}`}
+                >
+                  {`\u2794`}
+                </Text>
+                  <Text className="text-xl w-[28%] text-center truncate">{currentFitnessResult.bodyFatPercent} %</Text>
+                </View>
+
+                {/* Muscle Mass */}
+                <View className="flex flex-row justify-between items-center mb-3 w-full">
+                  <Text className="text-xl font-semibold text-right w-[30%]">{`Body Mass: `}</Text>
+                  <Text className="text-xl w-[28%] text-center truncate">{prevFitnessResult.muscleMass}</Text>
+                  <Text
+                  className={`text-xl w-[14%] text-center ${prevFitnessResult.muscleMass - currentFitnessResult.muscleMass > 0 ? 'text-red-500' : 'text-green-500'}`}
+                >
+                  {`\u2794`}
+                </Text>
+                  <Text className="text-xl w-[28%] text-center truncate">{currentFitnessResult.muscleMass} kg</Text>
+                </View>
+
+                {/* Weight */}
+                <View className="flex flex-row justify-between items-center mb-3 w-full">
+                  <Text className="text-xl font-semibold text-right w-[28%]">{`Weight:`}</Text>
+                  <Text className="text-xl w-[28%] text-center truncate">{prevFitnessResult.weight}</Text>
+                  <Text
+                  className={`text-xl w-[14%] text-center`}
+                >
+                  {`\u2794`}
+                </Text>
+                  <Text className="text-xl w-[28%] text-center truncate">{currentFitnessResult.weight} kg</Text>
+                </View>
+
+                {/* Fat Level */}
+                <View className="flex flex-row justify-between items-center mb-3 w-full">
+                  <Text className="text-xl font-semibold text-right w-[28%]">{`Fat Level:`}</Text>
+                  <Text className="text-lg w-[28%] text-center truncate">{prevFitnessResult.classification}</Text>
+                  <Text
+                  className={`text-xl w-[14%] text-center
+                    ${fatLevel.indexOf(prevFitnessResult.classification) - fatLevel.indexOf(currentFitnessResult.classification) === 0 ? {} : 
+                    fatLevel.indexOf(prevFitnessResult.classification) - fatLevel.indexOf(currentFitnessResult.classification) < 0 ? 'text-red-500' : 'text-green-500'}`}
+                >
+                  {`\u2794`}
+                </Text>
+                  <Text className="text-lg w-[28%] text-center truncate">{currentFitnessResult.classification}</Text>
+                </View>
+
+                {/* FFMI */}
+                <View className="flex flex-row justify-between items-center mb-3 w-full">
+                  <Text className="text-xl font-semibold text-right w-[28%]">{`FFMI:`}</Text>
+                  <Text className="text-lg w-[28%] text-center truncate">{prevFitnessResult.ffmiClassification}</Text>
+                  <Text
+                  className={`text-xl w-[14%] text-center
+                    ${ffmiLevel.indexOf(prevFitnessResult.ffmiClassification) - ffmiLevel.indexOf(currentFitnessResult.ffmiClassification) === 0 ? {} :
+                    ffmiLevel.indexOf(prevFitnessResult.ffmiClassification) - ffmiLevel.indexOf(currentFitnessResult.ffmiClassification) > 0 ? 'text-red-500' : 'text-green-500'}`}
+                >
+                  {`\u2794`}
+                </Text>
+                  <Text className="text-lg w-[28%] text-center truncate">{currentFitnessResult.ffmiClassification}</Text>
+                </View>
+              </View>
+              
+              <View className="flex flex-col items-center px-1 mb-6 mt-2"> 
+                <Text className="text-sm text-left">
+                  ** Fat Level reflects your body fat for your age, 
+                  while FFMI indicates your muscle mass relative to your height.
                 </Text>
               </View>
 
               {/* Body Fat Percentage Table */}
-              <BodyFatChart ranges={ranges} gender={gender} isHighlighted={isHighlighted} />
+              <BodyFatChart ranges={currentFitnessResult.ranges.classifications} gender={gender} isHighlighted={isHighlighted} />
 
               <Text className="text-xl text-left mb-8">
                 Ready to get in shape?

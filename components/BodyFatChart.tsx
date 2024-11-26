@@ -79,7 +79,7 @@ const BodyFatChart = ({
                   resizeMode="contain"
                   style={{
                     position: "absolute",
-                    left: -19, 
+                    left: 0, 
                     width: 38,
                     height: 38
                   }}
