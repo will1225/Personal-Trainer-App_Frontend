@@ -70,6 +70,9 @@ const FitnessResult = () => {
         queryClient.invalidateQueries({
           queryKey: ['profile']
         });
+        queryClient.invalidateQueries({
+          queryKey: [`weekly-progress-${profile.id}`]
+        });
       }
 
       // Get the progress summary info if needed to display progress results
@@ -84,7 +87,7 @@ const FitnessResult = () => {
     };
 
     getFitnessData();
-  }, [isProgress, measurementId, queryClient]);
+  }, [isProgress, measurementId, profile.id, queryClient]);
 
   // Highlight the corresponding row based on body fat %
   const isHighlighted = (range: { classification: string; min: number; max: number }) => {
@@ -121,7 +124,7 @@ const FitnessResult = () => {
               {isProgress && (
                 <>
                 {/* Legend */}
-                <View className="items-left justify-center mt-8 w-full">
+                <View className="items-left justify-center mt-6 w-full">
                     <Text className="text-m ml-2 font-semibold">Legend:</Text>
                     
                     <View className="flex flex-row items-center mt-2">
@@ -140,7 +143,7 @@ const FitnessResult = () => {
 
               {/* Date Comparison */}
               <View className={`flex flex-col items-center mb-6 mt-8 w-full px-2`}>
-                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
+                <View className={`flex flex-row ${!isProgress ? "justify-center space-x-8" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[28%]">{``}</Text>
                   {isProgress && (
                     <>
@@ -152,7 +155,7 @@ const FitnessResult = () => {
                 </View>
 
                 {/* Body Fat */}
-                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
+                <View className={`flex flex-row ${!isProgress ? "justify-center space-x-8" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[28%]">{`Body Fat:`}</Text>
                   {isProgress && (
                     <>                    
@@ -169,7 +172,7 @@ const FitnessResult = () => {
                 </View>
 
                 {/* Muscle Mass */}
-                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
+                <View className={`flex flex-row ${!isProgress ? "justify-center space-x-8" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[30%]">{`Body Mass: `}</Text>
                   {isProgress && (
                     <>
@@ -186,7 +189,7 @@ const FitnessResult = () => {
                 </View>
 
                 {/* Weight */}
-                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
+                <View className={`flex flex-row ${!isProgress ? "justify-center space-x-8" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[28%]">{`Weight:`}</Text>
                   {isProgress && (
                     <>
@@ -202,7 +205,7 @@ const FitnessResult = () => {
                 </View>
 
                 {/* Fat Level */}
-                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
+                <View className={`flex flex-row ${!isProgress ? "justify-center space-x-8" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[28%]">{`Fat Level:`}</Text>
                   {isProgress && (
                     <>
@@ -220,7 +223,7 @@ const FitnessResult = () => {
                 </View>
 
                 {/* FFMI */}
-                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
+                <View className={`flex flex-row ${!isProgress ? "justify-center space-x-8" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[28%]">{`FFMI:`}</Text>
                   {isProgress && (
                     <>
