@@ -236,13 +236,19 @@ const FitnessResult = () => {
                   )}
                   <Text className="text-lg w-[28%] text-center truncate">{currentFitnessResult.ffmiClassification}</Text>
                 </View>
+                
+                {currentFitnessResult.age < 18 ?
+                  <Text className="text-base font-medium text-left mt-4">
+                    Note: If you are under 18 yrs old, Fat Level is calculated based on the 18 - 29 age group.
+                  </Text> : ""
+                }
               </View>
               
               <View className="flex flex-col items-center px-1 mb-6 mt-2"> 
-                <Text className="text-sm text-left">
+                <Text className="text-sm font-medium text-left">
                   ** Fat Level reflects your body fat for your age, 
                   while FFMI indicates your muscle mass relative to your height.
-                </Text>
+                </Text>                
               </View>
 
               {/* Body Fat Percentage Table */}
