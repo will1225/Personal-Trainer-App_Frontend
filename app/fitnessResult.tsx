@@ -118,92 +118,122 @@ const FitnessResult = () => {
                 />
               ) : null}
 
-              {/* Legend */}
-              <View className="items-left justify-center mt-8 w-full">
-                  <Text className="text-m ml-2 font-semibold">Legend:</Text>
-                  
-                  <View className="flex flex-row items-center mt-2">
-                    <Text className="text-m text-green-500 ml-2">{`\u2794`}</Text>
-                    <Text className="text-m ml-1">Improved</Text>
-                  
-                    <Text className="text-m text-red-500 ml-2">{`\u2794`}</Text>
-                    <Text className="text-m ml-1">Regressed</Text>
+              {isProgress && (
+                <>
+                {/* Legend */}
+                <View className="items-left justify-center mt-8 w-full">
+                    <Text className="text-m ml-2 font-semibold">Legend:</Text>
+                    
+                    <View className="flex flex-row items-center mt-2">
+                      <Text className="text-m text-green-500 ml-2">{`\u2794`}</Text>
+                      <Text className="text-m ml-1">Improved</Text>
+                    
+                      <Text className="text-m text-red-500 ml-2">{`\u2794`}</Text>
+                      <Text className="text-m ml-1">Regressed</Text>
 
-                    <Text className="text-m ml-2">{`\u2794`}</Text>
-                    <Text className="text-m ml-1">Unchanged / Not Compared</Text>
-                  </View>
-              </View>
+                      <Text className="text-m ml-2">{`\u2794`}</Text>
+                      <Text className="text-m ml-1">Unchanged / Not Compared</Text>
+                    </View>
+                </View>
+                </>
+              )}
 
               {/* Date Comparison */}
-              <View className="flex flex-col items-center mb-6 mt-8 w-full px-2">
-                <View className="flex flex-row justify-between items-center mb-3 w-full">
+              <View className={`flex flex-col items-center mb-6 mt-8 w-full px-2`}>
+                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[28%]">{``}</Text>
-                  <Text className="text-lg w-[28%] text-center truncate font-semibold">{new Date(prevFitnessResult.date).toLocaleDateString(undefined, options)}</Text>
-                  <Text className="text-xl w-[14%] text-center">{``}</Text>
+                  {isProgress && (
+                    <>
+                    <Text className="text-lg w-[28%] text-center truncate font-semibold">{new Date(prevFitnessResult.date).toLocaleDateString(undefined, options)}</Text>
+                    <Text className="text-xl w-[14%] text-center">{``}</Text>
+                    </>
+                  )}
                   <Text className="text-xl w-[28%] text-center truncate font-semibold">{new Date(currentFitnessResult.date).toLocaleDateString(undefined, options)}</Text>
                 </View>
 
                 {/* Body Fat */}
-                <View className="flex flex-row justify-between items-center mb-3 w-full">
+                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[28%]">{`Body Fat:`}</Text>
-                  <Text className="text-xl w-[28%] text-center truncate">{prevFitnessResult.bodyFatPercent}</Text>
-                  <Text
-                  className={`text-xl w-[14%] text-center ${currentFitnessResult.bodyFatPercent - prevFitnessResult.bodyFatPercent > 0 ? 'text-red-500' : 'text-green-500'}`}
-                >
-                  {`\u2794`}
-                </Text>
+                  {isProgress && (
+                    <>                    
+                    <Text className="text-xl w-[28%] text-center truncate">{prevFitnessResult.bodyFatPercent}</Text>
+                    <Text
+                      className={`text-xl w-[14%] text-center ${currentFitnessResult.bodyFatPercent - prevFitnessResult.bodyFatPercent === 0 ? {} : 
+                      currentFitnessResult.bodyFatPercent - prevFitnessResult.bodyFatPercent > 0 ?'text-red-500' : 'text-green-500'}`}
+                    >
+                      {`\u2794`}
+                    </Text>
+                    </>
+                  )}
                   <Text className="text-xl w-[28%] text-center truncate">{currentFitnessResult.bodyFatPercent} %</Text>
                 </View>
 
                 {/* Muscle Mass */}
-                <View className="flex flex-row justify-between items-center mb-3 w-full">
+                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[30%]">{`Body Mass: `}</Text>
-                  <Text className="text-xl w-[28%] text-center truncate">{prevFitnessResult.muscleMass}</Text>
-                  <Text
-                  className={`text-xl w-[14%] text-center ${prevFitnessResult.muscleMass - currentFitnessResult.muscleMass > 0 ? 'text-red-500' : 'text-green-500'}`}
-                >
-                  {`\u2794`}
-                </Text>
+                  {isProgress && (
+                    <>
+                    <Text className="text-xl w-[28%] text-center truncate">{prevFitnessResult.muscleMass}</Text>
+                    <Text
+                    className={`text-xl w-[14%] text-center ${prevFitnessResult.muscleMass - currentFitnessResult.muscleMass === 0 ? {} :
+                    prevFitnessResult.muscleMass - currentFitnessResult.muscleMass > 0 ? 'text-red-500' : 'text-green-500'}`}
+                    >
+                      {`\u2794`}
+                    </Text>
+                    </>
+                  )}
                   <Text className="text-xl w-[28%] text-center truncate">{currentFitnessResult.muscleMass} kg</Text>
                 </View>
 
                 {/* Weight */}
-                <View className="flex flex-row justify-between items-center mb-3 w-full">
+                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[28%]">{`Weight:`}</Text>
-                  <Text className="text-xl w-[28%] text-center truncate">{prevFitnessResult.weight}</Text>
-                  <Text
-                  className={`text-xl w-[14%] text-center`}
-                >
-                  {`\u2794`}
-                </Text>
+                  {isProgress && (
+                    <>
+                    <Text className="text-xl w-[28%] text-center truncate">{prevFitnessResult.weight}</Text>
+                    <Text
+                    className={`text-xl w-[14%] text-center`}
+                    >
+                      {`\u2794`}
+                    </Text>
+                    </>
+                  )}
                   <Text className="text-xl w-[28%] text-center truncate">{currentFitnessResult.weight} kg</Text>
                 </View>
 
                 {/* Fat Level */}
-                <View className="flex flex-row justify-between items-center mb-3 w-full">
+                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[28%]">{`Fat Level:`}</Text>
-                  <Text className="text-lg w-[28%] text-center truncate">{prevFitnessResult.classification}</Text>
-                  <Text
-                  className={`text-xl w-[14%] text-center
-                    ${fatLevel.indexOf(prevFitnessResult.classification) - fatLevel.indexOf(currentFitnessResult.classification) === 0 ? {} : 
-                    fatLevel.indexOf(prevFitnessResult.classification) - fatLevel.indexOf(currentFitnessResult.classification) < 0 ? 'text-red-500' : 'text-green-500'}`}
-                >
-                  {`\u2794`}
-                </Text>
+                  {isProgress && (
+                    <>
+                    <Text className="text-lg w-[28%] text-center truncate">{prevFitnessResult.classification}</Text>
+                    <Text
+                    className={`text-xl w-[14%] text-center
+                      ${fatLevel.indexOf(prevFitnessResult.classification) - fatLevel.indexOf(currentFitnessResult.classification) === 0 ? {} : 
+                      fatLevel.indexOf(prevFitnessResult.classification) - fatLevel.indexOf(currentFitnessResult.classification) < 0 ? 'text-red-500' : 'text-green-500'}`}
+                    >
+                      {`\u2794`}
+                    </Text>
+                    </>
+                  )}
                   <Text className="text-lg w-[28%] text-center truncate">{currentFitnessResult.classification}</Text>
                 </View>
 
                 {/* FFMI */}
-                <View className="flex flex-row justify-between items-center mb-3 w-full">
+                <View className={`flex flex-row ${!isProgress ? "justify-center" : "justify-between"} items-center mb-3 w-full`}>
                   <Text className="text-xl font-semibold text-right w-[28%]">{`FFMI:`}</Text>
-                  <Text className="text-lg w-[28%] text-center truncate">{prevFitnessResult.ffmiClassification}</Text>
-                  <Text
-                  className={`text-xl w-[14%] text-center
-                    ${ffmiLevel.indexOf(prevFitnessResult.ffmiClassification) - ffmiLevel.indexOf(currentFitnessResult.ffmiClassification) === 0 ? {} :
-                    ffmiLevel.indexOf(prevFitnessResult.ffmiClassification) - ffmiLevel.indexOf(currentFitnessResult.ffmiClassification) > 0 ? 'text-red-500' : 'text-green-500'}`}
-                >
-                  {`\u2794`}
-                </Text>
+                  {isProgress && (
+                    <>
+                    <Text className="text-lg w-[28%] text-center truncate">{prevFitnessResult.ffmiClassification}</Text>
+                    <Text
+                    className={`text-xl w-[14%] text-center
+                      ${ffmiLevel.indexOf(prevFitnessResult.ffmiClassification) - ffmiLevel.indexOf(currentFitnessResult.ffmiClassification) === 0 ? {} :
+                      ffmiLevel.indexOf(prevFitnessResult.ffmiClassification) - ffmiLevel.indexOf(currentFitnessResult.ffmiClassification) > 0 ? 'text-red-500' : 'text-green-500'}`}
+                    >
+                      {`\u2794`}
+                    </Text>
+                    </>
+                  )}
                   <Text className="text-lg w-[28%] text-center truncate">{currentFitnessResult.ffmiClassification}</Text>
                 </View>
               </View>
