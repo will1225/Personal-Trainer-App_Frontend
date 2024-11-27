@@ -1,20 +1,27 @@
-import { View, SafeAreaView, ScrollView, Image, TouchableOpacity } from "react-native";
+import { View, SafeAreaView, ScrollView, Image, TouchableOpacity} from "react-native";
+import { useColorScheme } from "nativewind";
 import React, { useEffect, useState } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import BackButton from "@/components/BackButton";
 import Modal from "react-native-modal";
-import { Href, Link, router, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import { getSelectedReport } from "../controllers/report";
 import { Dropdown } from "react-native-element-dropdown";
 import { CustomButton} from "@/components";
 import { Text } from "@/components/Text"
 import LoadingAnimation from "@/components/LoadingAnimation";
+import { useAtom } from "jotai";
+import { profileAtom } from "@/store";
+import BodyFatChart from "@/components/BodyFatChart";
 
 // Report Screen
-const report = () => {
+const Report = () => {
+  
+  const [profile] = useAtom(profileAtom);
   const image = require("../../assets/images/YouArrow.png"); 
   const params: any = useLocalSearchParams();
   console.log(`id ${params.id}`)
+  const { colorScheme } = useColorScheme();
   const [data, setData] = useState<any>({});
   const [ranges, setRanges] = useState<any[]>([]);
   const [isLoading, setLoading] = useState(false);
@@ -77,7 +84,8 @@ const report = () => {
     ) : (
       <>
       <BackButton />
-        <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-12">
+        <View style={{ position: 'relative'}}
+        className="w-full h-full flex justify-center items-center my-4 px-4 mt-12">
           <Text className="text-3xl font-bold text-center mb-2 pb-1">
             Progress Report
           </Text>
@@ -220,10 +228,10 @@ const report = () => {
             </View>
           </View>
 
-
-
-          
-          {/* Body Fat Percentage Table */}
+          <View className="w-full mb-11">
+            <BodyFatChart ranges={ranges} gender={profile.gender} isHighlighted={isHighlighted} />
+          </View>
+          {/* Body Fat Percentage Table 
           <View className="w-full mb-4">
             <Text
               className="text-2xl font-bold text-center mb-0 text-black"
@@ -308,48 +316,14 @@ const report = () => {
               </View>
             ))}
           </View>
-          <View className="flex flex-row justify-center min-w-full ">
-              <Dropdown
-                style={{
-                  height: 48,
-                  minWidth: 200,
-                  borderWidth: 2,
-                  borderColor: "black",
-                  backgroundColor: "white",
-                  borderRadius: 16,
-                  paddingHorizontal: 16,
-                }}
-                placeholderStyle={{ fontSize: 16, color: "gray" }}
-                selectedTextStyle={{ fontSize: 16 }}
-                data={dropdownData}
-                labelField="description"
-                valueField="id"
-                placeholder={dropdownData.length > 0 ? "Select a Report" : "No Previous Report"}
-                value={prevId}
-                onChange={(item) => {
-                  setPrevId(item.id);
-                }}
-              />
-               <CustomButton
-                        title="Compare"
-                        containerStyles="ml-2 w-26"
-                        handlePress={() => handleCompare()}
-              />
-              <TouchableOpacity
-                onPress={() => setIsModalOpen(true)}
-                >
-                <Ionicons name="help-circle-outline" size={40} color="gray" />
-            </TouchableOpacity>
-
-              
-            </View>
+          */}
 
             <Modal
                     isVisible={isModalOpen}
                     onBackdropPress={() => setIsModalOpen(false)}
                     >
                 <View style={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}>
-                    <Text className="text-center text-lg font-bold">
+                    <Text className="text-center text-lg font-bold text-black">
                        You can compare the current report with an eariler one by selecting the date
                     </Text>
                     <Text className="text-sm font-pregular text-red-600 text-center mt-6">
@@ -366,9 +340,47 @@ const report = () => {
         </View>
         
         </>)}
+        
       </ScrollView>
+      <View style={{ position: 'absolute', bottom: 25, left: 0, right: 0, padding: 10, backgroundColor: colorScheme === "light" ? "#F5F5F5" : "#181B2B"}}>
+            <View className="flex flex-row justify-center min-w-full">
+                <Dropdown
+                  style={{
+                    height: 48,
+                    minWidth: 200,
+                    borderWidth: 2,
+                    borderColor: "black",
+                    backgroundColor: "white",
+                    borderRadius: 16,
+                    paddingHorizontal: 16,
+                  }}
+                  placeholderStyle={{ fontSize: 16, color: "gray" }}
+                  selectedTextStyle={{ fontSize: 16 }}
+                  data={dropdownData}
+                  labelField="description"
+                  valueField="id"
+                  placeholder={dropdownData.length > 0 ? "Select a Report" : "No Previous Report"}
+                  value={prevId}
+                  onChange={(item) => {
+                    setPrevId(item.id);
+                  }}
+                />
+                <CustomButton
+                          title="Compare"
+                          containerStyles="ml-2 w-26"
+                          handlePress={() => handleCompare()}
+                />
+                <TouchableOpacity
+                  onPress={() => setIsModalOpen(true)}
+                  >
+                  <Ionicons name="help-circle-outline" size={40} color="gray" />
+              </TouchableOpacity>
+
+                
+              </View>
+          </View>
     </SafeAreaView>
   );
 };
 
-export default report;
+export default Report;
