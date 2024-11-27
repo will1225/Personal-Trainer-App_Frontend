@@ -31,8 +31,7 @@ const Report = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fatLevel = ["Essential Fat", "Athletes", "Fit", "Average", "Below Average", "Poor", "Out of classification range"]
-  const ffmiLevel = ["Skinny", "Average", "Intermediate Built", "Advanced Built", "Extremely Muscular", "Unusual/Extreme Result"]
-
+  const ffmiLevel = ["Extremely Muscular", "Advanced Built", "Intermediate Built", "Average", "Skinny", "Unusual/Extreme Result"]
 
   console.log(data);
   useEffect(() => {
