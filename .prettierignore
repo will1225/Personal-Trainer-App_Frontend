@@ -1,6 +1,7 @@
 # Ignore generated folders
 .expo/
 node_modules/
+husky/
 
 # Ignore all markdown files
 *.md
