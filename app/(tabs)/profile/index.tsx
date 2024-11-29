@@ -15,6 +15,7 @@ const ViewProfile = () => {
 
   const [gender, setGender] = useState("");
   const [dob, setDob] = useState<Date | undefined>(undefined);
+  const [height, setHeight] = useState<number | undefined>(profile.height);
 
   const update = () => {
     if (!gender) {
@@ -46,6 +47,12 @@ const ViewProfile = () => {
           value={profile.dob ? `${new Date(profile.dob).toDateString()}` : "N/A"}
           setText={setDob}
           textValue={dob}
+        />
+        <ProfileData
+          label="Height"
+          value={profile.height ? profile.height.toString() : "N/A"}
+          setText={setHeight}
+          textValue={height}
         />
         <View className="flex-row justify-center my-10">
           <TouchableOpacity

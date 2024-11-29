@@ -9,7 +9,7 @@ import { Text } from "@/components/Text";
 import { useColorScheme } from "nativewind";
 
 const EditProfile = () => {
-  const [profile, setProfile] = useAtom(profileAtom);
+  const [profile] = useAtom(profileAtom);
   const { colorScheme } = useColorScheme();
 
   return (
@@ -56,6 +56,11 @@ const EditProfile = () => {
           label="DOB"
           value={profile.dob ? `${new Date(profile.dob).toDateString()}` : "N/A"}
           onPress={() => router.push("/(tabs)/profile/edit/dob" as Href<string>)}
+        />
+        <EditProfileData
+          label="Height"
+          value={profile.height ? profile.height.toString() : "N/A"}
+          onPress={() => router.push("/(tabs)/profile/edit/height" as Href<string>)}
         />
       </ScrollView>
     </SafeAreaView>

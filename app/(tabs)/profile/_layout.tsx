@@ -7,6 +7,7 @@ const HomeLayout = () => {
       <Stack.Screen name="editProfile" options={{ headerShown: false }} />
       <Stack.Screen name="edit/gender" options={{ headerShown: false }} />
       <Stack.Screen name="edit/dob" options={{ headerShown: false }} />
+      <Stack.Screen name="edit/height" options={{ headerShown: false }} />
     </Stack>
   );
 };
