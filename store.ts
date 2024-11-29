@@ -1,4 +1,4 @@
-import { PrimitiveAtom, atom } from "jotai";
+import { atom } from "jotai";
 import { ProfileProps, WeeklyRoutineProps } from "./types";
 
 export const profileAtom = atom<ProfileProps>(

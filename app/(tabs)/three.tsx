@@ -1,5 +1,5 @@
 import React from "react";
-import { View, SafeAreaView, ScrollView, TouchableOpacity, Alert, Image } from "react-native";
+import { View, SafeAreaView, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Bar } from "react-native-progress";
 import { router } from "expo-router";
 import { CustomButton } from "@/components";
@@ -16,8 +16,6 @@ import ExerciseDetailsBlock from "@/components/ExerciseDetailsBlock";
 
 // Current Week's Routine Page Generation
 const CurrentWeeklyRoutine = () => {
-  const placeholderImage = require("../../assets/images/HomePagePic1.jpeg");
-
   const [weeklyRoutine, setWeeklyRoutine] = useAtom(currentWeekRoutineAtom);
 
   const { isLoading, isFetching } = useQuery("currentWeekRoutine", () =>
@@ -72,7 +70,7 @@ const CurrentWeeklyRoutine = () => {
 
   /** Handle Button Press Functions */
   const handleGenerateRoutinePress = () => {
-    if (weeklyRoutine.id != 0) {
+    if (weeklyRoutine.id !== 0) {
       Alert.alert(
         "Create a new routine?",
         "Generating a new routine will replace the current one.",
@@ -106,7 +104,7 @@ const CurrentWeeklyRoutine = () => {
 
           {isLoading || isFetching ? (
             <LoadingAnimation isLoading={isLoading} />
-          ) : weeklyRoutine.id != 0 ? (
+          ) : weeklyRoutine.id !== 0 ? (
             <>
               <Text className="text-3xl font-bold text-center">Current Week's Routine</Text>
               <Text className="text-lg font-semibold mt-2">
