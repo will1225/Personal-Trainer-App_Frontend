@@ -7,7 +7,7 @@ import { View, Alert, Image } from "react-native";
 import { LoginButton } from "react-native-fbsdk-next";
 import * as user from "../../app/controllers/user";
 import BackButton from "../../components/BackButton";
-import { Text } from "@/components/Text"
+import { Text } from "@/components/Text";
 
 /**
  * Sign in screen.
@@ -47,7 +47,7 @@ const SignIn = () => {
     if (!passwordRegex.test(password)) {
       Alert.alert(
         "Error",
-        "Password must contain at least 1 capital letter, 1 number, and be at least 8 characters long"
+        "Password must contain at least 1 capital letter, 1 number, and be at least 8 characters long",
       );
       return;
     }
@@ -78,11 +78,9 @@ const SignIn = () => {
         enableOnAndroid={true}
       >
         <BackButton />
-        <View className="w-full flex justify-center items-center px-4 my-6" >
+        <View className="w-full flex justify-center items-center px-4 my-6">
           <View className="w-full flex justify-center items-center px-4 mb-6">
-            <Text className="text-3xl font-bold text-center">
-              Personal Trainer App
-            </Text>
+            <Text className="text-3xl font-bold text-center">Personal Trainer App</Text>
 
             <Image
               source={image}

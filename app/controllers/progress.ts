@@ -7,33 +7,25 @@ import { WeeklyProgressProps } from "@/types";
  */
 export const getProgress = async (): Promise<WeeklyProgressProps[]> => {
   try {
-    const response = await fetch (
-        `${endpoint}/progress`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${await user.getToken()}`,
-          },
-        }
-      );
+    const response = await fetch(`${endpoint}/progress`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await user.getToken()}`,
+      },
+    });
 
     const res = await response.json();
-    
+
     if (!response.ok) {
-      throw new Error(
-        res.error || "Error fetching progress by profile ID"
-      );
+      throw new Error(res.error || "Error fetching progress by profile ID");
     }
 
     return res.data;
   } catch (error: any) {
-    throw new Error(
-      error.message || "Something went wrong while fetching progress"
-    );
+    throw new Error(error.message || "Something went wrong while fetching progress");
   }
 };
-
 
 /**
  * Method to get a progress entry by id
@@ -56,12 +48,9 @@ export const getProgressById = async (progressId: number) => {
 
     return res.data;
   } catch (error: any) {
-    throw new Error(
-      error.message || "Something went wrong while fetching progress by ID"
-    );
+    throw new Error(error.message || "Something went wrong while fetching progress by ID");
   }
 };
-
 
 /**
  * Method to get progress summarized progress results for completed routine
@@ -85,8 +74,6 @@ export const getProgressResults = async () => {
 
     return res.data;
   } catch (error: any) {
-    throw new Error(
-      error.message || "Something went wrong while fetching progress results"
-    );
+    throw new Error(error.message || "Something went wrong while fetching progress results");
   }
 };

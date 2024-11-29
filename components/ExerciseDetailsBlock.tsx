@@ -27,9 +27,7 @@ interface ExerciseDetailsBlockProps {
   exercise: ExerciseDetail;
 }
 
-const ExerciseDetailsBlock: React.FC<ExerciseDetailsBlockProps> = ({
-  exercise,
-}) => {
+const ExerciseDetailsBlock: React.FC<ExerciseDetailsBlockProps> = ({ exercise }) => {
   const name = "name" in exercise ? exercise.name : exercise.exercise.name;
   const thumbnailURL = exercise.thumbnailURL;
   const { colorScheme } = useColorScheme();
@@ -41,11 +39,7 @@ const ExerciseDetailsBlock: React.FC<ExerciseDetailsBlockProps> = ({
     <View className="flex-row mb-1 items-center">
       {/* YouTube Thumbnails */}
       <Image
-        source={
-          typeof thumbnailURL === "string"
-            ? { uri: thumbnailURL }
-            : thumbnailURL
-        }
+        source={typeof thumbnailURL === "string" ? { uri: thumbnailURL } : thumbnailURL}
         className="w-[70] h-[70] mr-2"
         resizeMode="cover"
       />
@@ -66,12 +60,8 @@ const ExerciseDetailsBlock: React.FC<ExerciseDetailsBlockProps> = ({
             borderTopRightRadius: 8,
           }}
         >
-          <Text className="flex-[2] text-center font-semibold text-white">
-            Exercise
-          </Text>
-          <Text className="flex-[1] text-center font-semibold text-white">
-            Sets
-          </Text>
+          <Text className="flex-[2] text-center font-semibold text-white">Exercise</Text>
+          <Text className="flex-[1] text-center font-semibold text-white">Sets</Text>
           <Text className="flex-[1] text-center font-semibold text-white">
             {exercise.reps ? "Reps" : "Mins"}
           </Text>

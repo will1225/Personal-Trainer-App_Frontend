@@ -35,9 +35,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
     >
       <LinearGradient
         colors={
-          disabled
-            ? ["#ccc", "#ccc"]
-            : ["#5851DB", "#5873F4", "#458EEF", "#25BCE7", "#10DAE2"]
+          disabled ? ["#ccc", "#ccc"] : ["#5851DB", "#5873F4", "#458EEF", "#25BCE7", "#10DAE2"]
         } // disable colors : normal colors
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -51,19 +49,10 @@ const CustomButton: React.FC<CustomButtonProps> = ({
           flexDirection: "row",
         }}
       >
-        <Text
-          className={`text-primary text-white font-bold text-lg ${textStyles}`}
-        >
-          {title}
-        </Text>
+        <Text className={`text-primary text-white font-bold text-lg ${textStyles}`}>{title}</Text>
 
         {isLoading && (
-          <ActivityIndicator
-            animating={isLoading}
-            color="#fff"
-            size="small"
-            className="ml-2"
-          />
+          <ActivityIndicator animating={isLoading} color="#fff" size="small" className="ml-2" />
         )}
       </LinearGradient>
     </TouchableOpacity>

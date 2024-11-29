@@ -1,40 +1,40 @@
 import * as user from "./user";
-import { endpoint } from '../config';
+import { endpoint } from "../config";
 
 /**
  * Method to get consolidated fitness results from the backend
  */
 export const fetchFitnessResult = async (measurementId: string) => {
-    if (!measurementId) throw "Measurement ID is required";
-  
-    try {
-      const response = await fetch(
-        `${endpoint}/measurement/result/${measurementId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${await user.getToken()}`
-          }
-        }
-      );
-  
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Error fetching Result");
-      }    
-  
-      const data = await response.json();
-      return data;
-    } catch (error: any) {
-      throw new Error(error.message || "Something went wrong");
+  if (!measurementId) throw "Measurement ID is required";
+
+  try {
+    const response = await fetch(`${endpoint}/measurement/result/${measurementId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await user.getToken()}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Error fetching Result");
     }
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    throw new Error(error.message || "Something went wrong");
+  }
 };
 
 /**
- * Method to classify profile intensity and level and save to the backend. 
+ * Method to classify profile intensity and level and save to the backend.
  */
-export const saveIntensityAndLevel = async (bodyFatClassification: string, ffmiClassification: string) => {
+export const saveIntensityAndLevel = async (
+  bodyFatClassification: string,
+  ffmiClassification: string,
+) => {
   try {
     if (!bodyFatClassification) throw "Body Fat Classification is required";
     if (!ffmiClassification) throw "FFMI Classification is required";
@@ -71,29 +71,27 @@ export const saveIntensityAndLevel = async (bodyFatClassification: string, ffmiC
     let levelId;
     if (ffmiClassification === "Skinny" || ffmiClassification === "Average") levelId = 1;
     if (ffmiClassification === "Intermediate Built") levelId = 2;
-    if (ffmiClassification === "Advanced Built" || ffmiClassification === "Extremely Muscular") levelId = 3;
+    if (ffmiClassification === "Advanced Built" || ffmiClassification === "Extremely Muscular")
+      levelId = 3;
     if (ffmiClassification === "Unusual/Extreme Result") levelId = 1;
 
-    const response = await fetch(
-      `${endpoint}/user/profile/updateIntensityAndLevel`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${await user.getToken()}`
-        },
-        body: JSON.stringify({ intensityId, levelId }),
-      }
-    );
+    const response = await fetch(`${endpoint}/user/profile/updateIntensityAndLevel`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${await user.getToken()}`,
+      },
+      body: JSON.stringify({ intensityId, levelId }),
+    });
 
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.error || "Error updating intensity and level");
-    }    
+    }
 
     const data = await response.json();
     return data;
   } catch (error: any) {
     throw new Error(error.message || "Something went wrong");
   }
-}
+};

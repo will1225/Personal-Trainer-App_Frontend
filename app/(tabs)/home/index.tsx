@@ -9,7 +9,7 @@ import { useAtom } from "jotai";
 import { profileAtom } from "@/store";
 import { useQuery } from "react-query";
 import { Profile } from "@/app/controllers/profile";
-import { Text } from "@/components/Text"
+import { Text } from "@/components/Text";
 import ThemeSwitch from "@/components/ThemeSwitch";
 
 export default function TabOneScreen() {
@@ -32,9 +32,8 @@ export default function TabOneScreen() {
       BackHandler.addEventListener("hardwareBackPress", onBackPress);
 
       // Clean up event listener
-      return () =>
-        BackHandler.removeEventListener("hardwareBackPress", onBackPress);
-    }, [])
+      return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
+    }, []),
   );
 
   return (
@@ -43,25 +42,20 @@ export default function TabOneScreen() {
         <ThemeSwitch />
         <LogoutButton />
       </View>
-      
+
       <ScrollView>
         <View className="w-full flex justify-center items-center h-full my-4">
-          
           <Text className="text-3xl font-semibold font-psemibold text-center w-full mb-4">
             Home
           </Text>
 
           <Text className="text-xl font-semibold font-psemibold text-center w-full mb-6">
-            { profile?.updatedAt ?  `Welcome back, ${profile.firstName}!` : `Welcome!`}
+            {profile?.updatedAt ? `Welcome back, ${profile.firstName}!` : `Welcome!`}
           </Text>
 
-          { !profile?.initBodyMeasurement ? (
+          {!profile?.initBodyMeasurement ? (
             <View className="w-full justify-center items-center flex ">
-              <Image
-                source={image1}
-                resizeMode="cover"
-                className="w-full h-[200px]"
-              />
+              <Image source={image1} resizeMode="cover" className="w-full h-[200px]" />
               <Link
                 href={"../../getStarted/profileEntry" as Href<string>}
                 className="bg-primary text-2xl font-psemibold text-white absolute"
@@ -69,14 +63,10 @@ export default function TabOneScreen() {
                 Get Started!
               </Link>
             </View>
-          ) : null }
+          ) : null}
 
           <View className="w-full justify-center items-center flex">
-            <Image
-              source={image2}
-              resizeMode="cover"
-              className="w-full h-[200px]"
-            />
+            <Image source={image2} resizeMode="cover" className="w-full h-[200px]" />
             <Link
               href={"../three" as Href<string>}
               className="bg-primary text-2xl font-psemibold text-white absolute"
@@ -86,11 +76,7 @@ export default function TabOneScreen() {
           </View>
 
           <View className="w-full justify-center items-center flex">
-            <Image
-              source={image3}
-              resizeMode="cover"
-              className="w-full h-[200px]"
-            />
+            <Image source={image3} resizeMode="cover" className="w-full h-[200px]" />
             <Link
               href={"../../analysis" as Href<string>}
               className="bg-primary text-2xl font-psemibold text-white absolute"
@@ -100,11 +86,7 @@ export default function TabOneScreen() {
           </View>
 
           <View className="w-full justify-center items-center flex">
-            <Image
-              source={image4}
-              resizeMode="cover"
-              className="w-full h-[200px]"
-            />
+            <Image source={image4} resizeMode="cover" className="w-full h-[200px]" />
             <Link
               href={"../library" as Href<string>}
               className="bg-primary text-2xl font-psemibold text-white absolute"

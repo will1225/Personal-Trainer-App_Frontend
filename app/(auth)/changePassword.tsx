@@ -6,7 +6,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { Href, router, useLocalSearchParams } from "expo-router";
 import * as user from "../../app/controllers/user";
 import BackButton from "../../components/BackButton";
-import { Text } from "@/components/Text"
+import { Text } from "@/components/Text";
 
 const ChangePassword = () => {
   const { email } = useLocalSearchParams(); // Get email from previous screen
@@ -36,7 +36,7 @@ const ChangePassword = () => {
     if (!passwordRegex.test(password)) {
       Alert.alert(
         "Error",
-        "Password must contain at least 1 capital letter, 1 number, and be at least 8 characters long"
+        "Password must contain at least 1 capital letter, 1 number, and be at least 8 characters long",
       );
       return;
     }
@@ -65,9 +65,7 @@ const ChangePassword = () => {
         <BackButton />
         <View className="w-full flex justify-center items-center px-4 my-6">
           <View className="w-full flex justify-center items-center px-4 mb-6">
-            <Text className="text-3xl font-bold text-center">
-              Personal Trainer App
-            </Text>
+            <Text className="text-3xl font-bold text-center">Personal Trainer App</Text>
 
             <Image
               source={image}

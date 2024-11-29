@@ -16,15 +16,8 @@ const LoadingAnimation = ({
 
   return (
     <View style={{ alignItems: "center" }}>
-      <ActivityIndicator
-        animating={isLoading}
-        color={textColor}
-        size="large"
-        className="mb-5"
-      />
-      <Text style={{ marginBottom: 30, fontSize: 18, color: textColor }}>
-        {message}
-      </Text>
+      <ActivityIndicator animating={isLoading} color={textColor} size="large" className="mb-5" />
+      <Text style={{ marginBottom: 30, fontSize: 18, color: textColor }}>{message}</Text>
     </View>
   );
 };

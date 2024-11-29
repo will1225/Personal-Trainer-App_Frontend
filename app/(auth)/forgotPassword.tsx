@@ -6,7 +6,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { Link, router } from "expo-router";
 import * as otp from "../../app/controllers/otp";
 import BackButton from "../../components/BackButton";
-import { Text } from "@/components/Text"
+import { Text } from "@/components/Text";
 
 /**
  * Forgot Password screen.
@@ -53,9 +53,7 @@ const ForgotPassword = () => {
         <BackButton />
         <View className="w-full flex justify-center items-center px-4 my-6">
           <View className="w-full flex justify-center items-center px-4 mb-6">
-            <Text className="text-3xl font-bold text-center">
-              Personal Trainer App
-            </Text>
+            <Text className="text-3xl font-bold text-center">Personal Trainer App</Text>
 
             <Image
               source={image}
@@ -68,8 +66,7 @@ const ForgotPassword = () => {
             Reset Password
           </Text>
           <Text className="text-lg mt-2 w-full">
-            An OTP will be sent to your email if it is associated with an
-            account
+            An OTP will be sent to your email if it is associated with an account
           </Text>
 
           <View className="w-full flex justify-center items-center px-4 mt-4">
@@ -91,10 +88,7 @@ const ForgotPassword = () => {
 
           <View className="flex justify-center pt-5 flex-row gap-2">
             <Text className="text-lg">Go back to</Text>
-            <Link
-              href="/sign-in"
-              className="text-lg font-semibold text-secondary"
-            >
+            <Link href="/sign-in" className="text-lg font-semibold text-secondary">
               Login
             </Link>
           </View>

@@ -2,13 +2,7 @@ import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Text } from "@/components/Text";
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  TextInputProps,
-  Platform,
-} from "react-native";
+import { View, TextInput, TouchableOpacity, TextInputProps, Platform } from "react-native";
 
 interface FormFieldProps extends TextInputProps {
   title: string;
@@ -57,10 +51,7 @@ const FormField: React.FC<FormFieldProps> = ({
       // Change validation based on title of date input
       if (title === "Start Date" && pickedDate.getTime() < today.getTime()) {
         setError("Selected date must be today or a future date.");
-      } else if (
-        title === "Date of Birth" &&
-        pickedDate.getTime() > today.getTime()
-      ) {
+      } else if (title === "Date of Birth" && pickedDate.getTime() > today.getTime()) {
         setError("Selected date cannot be in the future.");
       } else {
         setError(null);
@@ -91,10 +82,7 @@ const FormField: React.FC<FormFieldProps> = ({
           placeholder={placeholder}
           placeholderTextColor="#7B7B8B"
           onChangeText={editable ? handleChangeText : undefined}
-          secureTextEntry={
-            title === "Password" ||
-            (title === "Confirm Password" && !showPassword)
-          }
+          secureTextEntry={title === "Password" || (title === "Confirm Password" && !showPassword)}
           editable={editable && !isDatePicker} // Disable keyboard input
           style={{ color: editable ? "black" : "#7B7B8B" }}
           {...props}
@@ -103,18 +91,14 @@ const FormField: React.FC<FormFieldProps> = ({
         {/* Password field */}
         {title === "Password" ||
           (title === "Confirm Password" && (
-            <TouchableOpacity
-              onPress={() => setShowPassword(!showPassword)}
-            ></TouchableOpacity>
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}></TouchableOpacity>
           ))}
 
         {/* Date field */}
         {isDatePicker && (
           <TouchableOpacity onPress={() => setShowDatePicker(true)}>
             <View className="h-12 px-4 flex-row items-center">
-              <Text className="flex-1 font-psemibold text-base">
-                {value || placeholder}
-              </Text>
+              <Text className="flex-1 font-psemibold text-base">{value || placeholder}</Text>
               <Ionicons name="calendar" size={30} color="black" />
             </View>
           </TouchableOpacity>

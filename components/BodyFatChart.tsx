@@ -9,11 +9,7 @@ const BodyFatChart = ({
 }: {
   ranges: any[];
   gender: string | undefined;
-  isHighlighted: (range: {
-    classification: string;
-    min: number;
-    max: number;
-  }) => boolean;
+  isHighlighted: (range: { classification: string; min: number; max: number }) => boolean;
 }) => {
   const image = require("../assets/images/YouArrow.png");
 
@@ -74,21 +70,19 @@ const BodyFatChart = ({
           }}
         >
           {isHighlighted(item) && (
-                  <Image
-                  source={image}
-                  resizeMode="contain"
-                  style={{
-                    position: "absolute",
-                    left: 0, 
-                    width: 38,
-                    height: 38
-                  }}
-                  />
-                )}
-          <Text style={{ flex: 1, textAlign: "center", color: "#000", }}>
-            {item.classification}
-          </Text>
-          <Text style={{ flex: 1, textAlign: "center", color: "#000", }}>
+            <Image
+              source={image}
+              resizeMode="contain"
+              style={{
+                position: "absolute",
+                left: 0,
+                width: 38,
+                height: 38,
+              }}
+            />
+          )}
+          <Text style={{ flex: 1, textAlign: "center", color: "#000" }}>{item.classification}</Text>
+          <Text style={{ flex: 1, textAlign: "center", color: "#000" }}>
             {gender === "F" ? item.women : item.men}
           </Text>
         </View>

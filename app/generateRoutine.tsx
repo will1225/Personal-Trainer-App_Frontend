@@ -9,7 +9,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { profileAtom } from "@/store";
 import { useAtom } from "jotai";
 import { useFocusEffect } from "@react-navigation/native";
-import { Text } from "@/components/Text"
+import { Text } from "@/components/Text";
 import ExerciseDetailsBlock from "@/components/ExerciseDetailsBlock";
 
 type weeklyRoutine = {
@@ -17,7 +17,7 @@ type weeklyRoutine = {
   endDate: string;
   daysPerWeek: number;
   workoutEnvironmentId: number;
-}
+};
 
 type ExerciseDetail = {
   exerciseId: number;
@@ -42,7 +42,6 @@ type MuscleGroup = {
 
 // Weekly Routine Generation Screen
 const GenerateRoutine = () => {
-
   // State Variables
   const [workoutEnv, setWorkoutEnv] = useState<{ description: string; id: string }[]>([]);
   const [selectedEnv, setSelectedEnv] = useState<string | null>(null);
@@ -58,30 +57,26 @@ const GenerateRoutine = () => {
   const [profile] = useAtom(profileAtom);
 
   // Validate if measurementId exists before proceeding
-  const isBodyMeasurementValid = useCallback(async () => {      
+  const isBodyMeasurementValid = useCallback(async () => {
     if (!profile.bodyMeasurementId) {
-      Alert.alert(
-        "Body Measurement Required",
-        "Please input your body measurements to proceed.",
-        [
-          {
-            text: "OK",
-            onPress: () => router.push("./bodyMeasurement"), 
-          },
-          {
-            text: "Cancel",
-            onPress: () => router.push("/(tabs)/home")
-          }
-        ]
-      );
+      Alert.alert("Body Measurement Required", "Please input your body measurements to proceed.", [
+        {
+          text: "OK",
+          onPress: () => router.push("./bodyMeasurement"),
+        },
+        {
+          text: "Cancel",
+          onPress: () => router.push("/(tabs)/home"),
+        },
+      ]);
     }
   }, [profile.bodyMeasurementId]);
 
-  // Check on mount 
+  // Check on mount
   useFocusEffect(
     useCallback(() => {
       isBodyMeasurementValid();
-    }, [isBodyMeasurementValid]) 
+    }, [isBodyMeasurementValid]),
   );
 
   // Fetch workout environments and muscle groups when page starts up
@@ -90,11 +85,11 @@ const GenerateRoutine = () => {
       try {
         const envData = await generateRoutine.fetchWorkoutEnv();
         if (envData === null) return;
-        
+
         if (JSON.stringify(envData) !== JSON.stringify(workoutEnv)) {
           setWorkoutEnv(envData);
         }
-        
+
         const muscleData = await generateRoutine.fetchMuscleGroup();
         if (muscleData === null) return;
 
@@ -104,7 +99,7 @@ const GenerateRoutine = () => {
       } catch (error) {
         console.error("Error fetching data", error);
       }
-    };  
+    };
     fetchData();
   }, [muscleGroups, workoutEnv]);
 
@@ -120,41 +115,42 @@ const GenerateRoutine = () => {
       if (!Array.isArray(result)) return;
 
       return new Promise<void>((resolve) => {
-          result.forEach((log, index) => {
+        result.forEach((log, index) => {
+          setTimeout(() => {
+            // If the user is identified as overtrained, pop an alert
+            if (log.startsWith("Warning")) {
+              Alert.alert("Warning Alert", log);
+            }
+
+            setLogs((prevLogs) => [...prevLogs, log]);
+
+            // Each log is displayed one second apart for readability
+            if (index === result.length - 1) {
               setTimeout(() => {
-
-                // If the user is identified as overtrained, pop an alert
-                if (log.startsWith("Warning")) {
-                  Alert.alert("Warning Alert", log);
-                }
-
-                setLogs((prevLogs) => [...prevLogs, log]);
-
-                // Each log is displayed one second apart for readability
-                if (index === result.length - 1) {
-                    setTimeout(() => {
-                        setShowRoutineDisplay(true);
-                        resolve();
-                    }, 1000);
-                }
-              }, index * 1000);
-          });
+                setShowRoutineDisplay(true);
+                resolve();
+              }, 1000);
+            }
+          }, index * 1000);
+        });
       });
-
     } catch (error) {
       console.error("Error fetching logs:", error);
     }
-  };  
+  };
 
   // Helper function to fetch muscle groups for each exercise for UI display
-  const getMuscleGroups = useCallback((ids: number[]) => {
+  const getMuscleGroups = useCallback(
+    (ids: number[]) => {
       const muscleGroupDescriptions = ids.map((muscleId) => {
         const muscleGroup = muscleGroups.find((mg) => Number(mg.id) === muscleId);
         return muscleGroup ? muscleGroup.description : "Unknown Group";
       });
 
-    return muscleGroupDescriptions ? muscleGroupDescriptions : "Unknown Group";
-  }, [muscleGroups]);
+      return muscleGroupDescriptions ? muscleGroupDescriptions : "Unknown Group";
+    },
+    [muscleGroups],
+  );
 
   // Generate/Refresh button
   const handleGenerateRoutine = async () => {
@@ -171,7 +167,9 @@ const GenerateRoutine = () => {
       const workoutEnvironmentId = Number(selectedEnv);
       const daysPerWeek = Number(selectedDay);
       const startDate = selectedDate;
-      const endDate = new Date(new Date(startDate).getTime() + 6 * 24 * 60 * 60 * 1000).toISOString(); // Add 6 days
+      const endDate = new Date(
+        new Date(startDate).getTime() + 6 * 24 * 60 * 60 * 1000,
+      ).toISOString(); // Add 6 days
 
       // Level 1: Create Weekly Routine Object
       const weeklyRoutine = {
@@ -182,18 +180,20 @@ const GenerateRoutine = () => {
       };
 
       // Level 2: Create dailyRoutines and each of its exerciseDetails (It is now processed by the Algorithm from the backend)
-      const { dailyRoutines } = await generateRoutine.getRecommendation(daysPerWeek, workoutEnvironmentId);   
-      
+      const { dailyRoutines } = await generateRoutine.getRecommendation(
+        daysPerWeek,
+        workoutEnvironmentId,
+      );
+
       // Fetch pollLogs only for the first generation (Refresh will not refetch logs)
       if (!buttonPressed) await handlePollLogs();
 
-      // Set objects state 
+      // Set objects state
       setWeeklyRoutine(weeklyRoutine); // Save to the backend
-      setRoutines(dailyRoutines);      // Save to the backend
-      
+      setRoutines(dailyRoutines); // Save to the backend
+
       setSubmitting(false);
       setButtonPressed(true);
-      
     } catch (error) {
       console.error("Error during routine generation:", error);
       setSubmitting(false);
@@ -209,7 +209,7 @@ const GenerateRoutine = () => {
       // Bundle all Weekly, Daily, ExerciseDetails into one object
       const routineData = {
         weeklyRoutine,
-        dailyRoutines // Contain ExerciseDetails
+        dailyRoutines, // Contain ExerciseDetails
       };
 
       // API call
@@ -234,12 +234,11 @@ const GenerateRoutine = () => {
       <ScrollView contentContainerStyle={{ flexGrow: 2, justifyContent: "center" }}>
         <View className="w-full h-full flex justify-center items-center my-4 px-4 mt-28">
           <BackButton />
-          <Text className="text-3xl font-bold text-center">
-            Your Personalized Weekly Routine
-          </Text>
+          <Text className="text-3xl font-bold text-center">Your Personalized Weekly Routine</Text>
 
           <Text className="text-lg font-pregular text-left px-4 mt-4 mb-8">
-            Routines are generated tailored to your profile, fitness level, progression, and other factors.
+            Routines are generated tailored to your profile, fitness level, progression, and other
+            factors.
           </Text>
 
           {/* Environment Dropdown */}
@@ -263,10 +262,13 @@ const GenerateRoutine = () => {
                 placeholder={"Select Workout Environment"}
                 value={selectedEnv}
                 onChange={(item) => {
-                  if (item.id === '2' || item.id === '3') {
-                    Alert.alert("Note", "Some exercises may be limited to Gym. While we try to find the best alternatives for you, some exercises may be omitted");
+                  if (item.id === "2" || item.id === "3") {
+                    Alert.alert(
+                      "Note",
+                      "Some exercises may be limited to Gym. While we try to find the best alternatives for you, some exercises may be omitted",
+                    );
                   }
-                  setSelectedEnv(item.id);                  
+                  setSelectedEnv(item.id);
                 }}
               />
             </View>
@@ -296,7 +298,10 @@ const GenerateRoutine = () => {
                 onChange={(item) => {
                   const days = Number(item.value);
                   if (days < 3 || days > 4) {
-                    Alert.alert("Suggestion", "We suggest 3 to 4 days for an effective and manageable routine. \n\nNote: Some recommended plans may not exceed 4 days");
+                    Alert.alert(
+                      "Suggestion",
+                      "We suggest 3 to 4 days for an effective and manageable routine. \n\nNote: Some recommended plans may not exceed 4 days",
+                    );
                   }
                   setSelectedDay(item.value);
                 }}
@@ -315,17 +320,23 @@ const GenerateRoutine = () => {
           />
 
           {/* Generate/Refresh button */}
-          <View className={`${buttonPressed ? 'mt-6' : 'mt-10'} items-center`}>
+          <View className={`${buttonPressed ? "mt-6" : "mt-10"} items-center`}>
             {buttonPressed && (
               <Text className="font-psemibold text-base text-center mb-4">
-                Refresh as you'd like,{"\n"} 
+                Refresh as you'd like,{"\n"}
                 then scroll down and tap Confirm
               </Text>
             )}
 
             <View className="flex-row items-center">
               <CustomButton
-                title={ buttonPressed && showRoutineDisplay ? "Refresh" : isSubmitting ? "Generating..." : "Generate" }
+                title={
+                  buttonPressed && showRoutineDisplay
+                    ? "Refresh"
+                    : isSubmitting
+                      ? "Generating..."
+                      : "Generate"
+                }
                 handlePress={handleGenerateRoutine}
                 containerStyles="w-52"
                 isLoading={isSubmitting}
@@ -334,13 +345,11 @@ const GenerateRoutine = () => {
               {buttonPressed && (
                 <View className="top-[-30]">
                   <TouchableOpacity
-                    onPress={() =>  Alert.alert("Analysis Logs", logs.join('\n'))}
+                    onPress={() => Alert.alert("Analysis Logs", logs.join("\n"))}
                     className="absolute right-[-80]"
                   >
-                    <Text className="text-m font-pregular text-center">
-                      Logs:
-                    </Text>
-                    
+                    <Text className="text-m font-pregular text-center">Logs:</Text>
+
                     <Ionicons name="clipboard-outline" size={35} color="gray" />
                   </TouchableOpacity>
                 </View>
@@ -351,8 +360,8 @@ const GenerateRoutine = () => {
           {/* Display Algorithm Logs */}
           {logs.length > 0 && !showRoutineDisplay && !buttonPressed && (
             <View className="w-full py-2 mt-4 items-center">
-              <Text className="text-xl font-semibold mb-2 text-center">Analysis Logs</Text>              
-              <Text className="text-base text-left mx-4">{logs[logs.length - 1]}</Text>              
+              <Text className="text-xl font-semibold mb-2 text-center">Analysis Logs</Text>
+              <Text className="text-base text-left mx-4">{logs[logs.length - 1]}</Text>
             </View>
           )}
 
@@ -364,22 +373,24 @@ const GenerateRoutine = () => {
                 const dayNames = generateRoutine.getDayNames(selectedDate, dailyRoutines.length);
 
                 return dailyRoutines.map((routine, dayIndex) => {
-
                   // Get all included muscle group names for rendering
-                  const uniqueMuscleGroups = [...new Set(routine.exerciseDetails.flatMap((exercise) => getMuscleGroups(exercise.muscleGroups)))].join(" & ");
+                  const uniqueMuscleGroups = [
+                    ...new Set(
+                      routine.exerciseDetails.flatMap((exercise) =>
+                        getMuscleGroups(exercise.muscleGroups),
+                      ),
+                    ),
+                  ].join(" & ");
 
                   return (
                     <View key={dayIndex} className="mb-5">
-
                       {/* Day Header */}
                       <Text className="text-xl font-semibold mb-2 text-center mt-6">
                         Day {routine.dayNumber} - {dayNames[dayIndex]}
                       </Text>
 
                       {/* Muscle Groups Header */}
-                      <Text className="text-lg text-center mb-2">
-                        {uniqueMuscleGroups}
-                      </Text>
+                      <Text className="text-lg text-center mb-2">{uniqueMuscleGroups}</Text>
 
                       {/* Exercise Details blocks */}
                       {routine.exerciseDetails.map((exercise) => (

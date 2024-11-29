@@ -12,13 +12,7 @@ interface Props {
   textValue?: any;
 }
 
-const ProfileData = ({
-  label,
-  value,
-  isEditable,
-  setText,
-  textValue,
-}: Props) => {
+const ProfileData = ({ label, value, isEditable, setText, textValue }: Props) => {
   const [editMode, setEditMode] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -59,10 +53,7 @@ const ProfileData = ({
       >
         {!editMode ? (
           <>
-            <Text
-              className="text-lg font-bold flex-1"
-              style={{ color: "#000" }}
-            >
+            <Text className="text-lg font-bold flex-1" style={{ color: "#000" }}>
               {value}
             </Text>
             {isEditable && (

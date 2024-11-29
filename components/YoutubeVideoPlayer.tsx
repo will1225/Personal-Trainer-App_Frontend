@@ -21,12 +21,7 @@ const YouTubeVideoPlayer = ({ youtubeURL }: any) => {
 
   return (
     <View>
-      <YoutubePlayer
-        height={300}
-        play={playing}
-        videoId={videoId}
-        onChangeState={onStateChange}
-      />
+      <YoutubePlayer height={300} play={playing} videoId={videoId} onChangeState={onStateChange} />
     </View>
   );
 };

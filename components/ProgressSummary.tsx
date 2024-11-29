@@ -10,10 +10,7 @@ type ProgressSummaryProps = {
   fontSize?: number;
 };
 
-const ProgressSummary: React.FC<ProgressSummaryProps> = ({
-  data,
-  fontSize = 16,
-}) => {
+const ProgressSummary: React.FC<ProgressSummaryProps> = ({ data, fontSize = 16 }) => {
   return (
     <Text style={{ fontSize, textAlign: "center", marginBottom: 16 }}>
       {data.assess} You've{" "}

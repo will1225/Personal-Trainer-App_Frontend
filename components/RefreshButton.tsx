@@ -17,11 +17,7 @@ const RefreshButton: React.FC<RefreshButtonProps> = ({
   return (
     <View style={style}>
       <TouchableOpacity onPress={onRefresh} style={{ paddingBottom: 5 }}>
-        <Ionicons
-          name="refresh"
-          size={24}
-          color={colorScheme === "dark" ? "white" : "black"}
-        />
+        <Ionicons name="refresh" size={24} color={colorScheme === "dark" ? "white" : "black"} />
       </TouchableOpacity>
     </View>
   );

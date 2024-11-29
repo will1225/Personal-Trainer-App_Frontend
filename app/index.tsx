@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { router, Link, Href } from "expo-router";
-import { View,  Image } from "react-native";
+import { View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton } from "../components";
-import * as user from "../app/controllers/user"; 
-import { Text } from "@/components/Text"
+import * as user from "../app/controllers/user";
+import { Text } from "@/components/Text";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import LoadingAnimation from "@/components/LoadingAnimation";
 
@@ -20,7 +20,7 @@ const LandingPage = () => {
   let skipLandingPage = true;
 
   // Check stored token on app, skip landing page if already logged in
-  
+
   useEffect(() => {
     const checkToken = async () => {
       if (skipLandingPage) {
@@ -35,7 +35,7 @@ const LandingPage = () => {
                   "Content-Type": "application/json",
                   Authorization: `Bearer ${token}`,
                 },
-              }
+              },
             );
 
             if (response.ok) {
@@ -49,7 +49,7 @@ const LandingPage = () => {
               }
             }
           } catch (error: any) {
-            throw new Error(error.message || "Something went wrong");    
+            throw new Error(error.message || "Something went wrong");
           } finally {
             setIsLoading(false);
           }
@@ -62,49 +62,37 @@ const LandingPage = () => {
     };
 
     checkToken();
-  }, [skipLandingPage]);    
+  }, [skipLandingPage]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {isLoading ? (
         <View className="flex-1 justify-center items-center">
-          <LoadingAnimation isLoading={isLoading} message="Verifying Token..."/>
+          <LoadingAnimation isLoading={isLoading} message="Verifying Token..." />
         </View>
       ) : (
+        <View className="w-full flex justify-center items-center h-full px-4">
+          <ThemeSwitch />
+          <Text className="text-3xl font-bold text-center">Personal Trainer App</Text>
 
-      <View className="w-full flex justify-center items-center h-full px-4">
-        <ThemeSwitch />
-        <Text className="text-3xl font-bold text-center">
-          Personal Trainer App
-        </Text>
+          <Image source={image} className="max-w-[380px] w-full h-[298px]" resizeMode="contain" />
 
-        <Image
-          source={image}
-          className="max-w-[380px] w-full h-[298px]"
-          resizeMode="contain"
-        />
+          <Text className="text-xl font-bold text-center mb-8">
+            Your personal fitness coach, {"\n"}
+            tailored for your Goals
+          </Text>
 
-        <Text className="text-xl font-bold text-center mb-8">
-          Your personal fitness coach, {"\n"}
-          tailored for your Goals
-        </Text>
+          <CustomButton
+            title="Login"
+            handlePress={() => router.push("/sign-in" as Href<string>)}
+            containerStyles="w-[230px] mt-7"
+          />
 
-        <CustomButton
-          title="Login"
-          handlePress={() => router.push("/sign-in" as Href<string>)}
-          containerStyles="w-[230px] mt-7"
-        />
-
-        <Text className="text-base font-pregular mt-7 text-center">
-          Don't have an account?
-        </Text>
-        <Link
-          href={"/sign-up" as Href<string>}
-          className="text-lg font-semibold text-secondary"
-        >
-          Register Here
-        </Link>
-      </View>
+          <Text className="text-base font-pregular mt-7 text-center">Don't have an account?</Text>
+          <Link href={"/sign-up" as Href<string>} className="text-lg font-semibold text-secondary">
+            Register Here
+          </Link>
+        </View>
       )}
     </SafeAreaView>
   );

@@ -12,7 +12,7 @@ export const verifyOtp = async (otp: string) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -42,7 +42,7 @@ export const resendOtp = async (email: string) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -72,7 +72,7 @@ export const sendOtp = async (email: string) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     if (!response.ok) {
