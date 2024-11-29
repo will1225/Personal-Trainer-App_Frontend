@@ -78,9 +78,6 @@ const FitnessResult = () => {
         queryClient.invalidateQueries({
           queryKey: ["profile"],
         });
-        queryClient.invalidateQueries({
-          queryKey: [`weekly-progress-${profile.id}`],
-        });
       }
 
       // Get the progress summary info if needed to display progress results
