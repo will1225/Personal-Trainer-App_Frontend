@@ -1,5 +1,21 @@
+# Ignore generated folders
+.expo/
+node_modules/
+
 # Ignore all markdown files
 *.md
 
-# Ignore assets
+# Ignore static assets
 assets/
+
+# Ignore environment files
+expo-env.d.ts
+
+# Ignore config files
+.gitignore
+.eslintrc.js
+package-lock.json
+eas.json
+app.json
+babel.config.js
+tsconfig.json
