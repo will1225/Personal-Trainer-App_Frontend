@@ -1,18 +1,19 @@
 import { useState } from "react";
-import { View, Text, Alert, Image } from "react-native";
+import { View, Alert, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "@/components";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Link, router } from "expo-router";
 import * as otp from "../../app/controllers/otp";
 import BackButton from "../../components/BackButton";
+import { Text } from "@/components/Text";
 
 /**
  * Forgot Password screen.
  * User enters an email and proceeds to the next Change Password Screen.
  * @returns
  */
-const forgotPassword = () => {
+const ForgotPassword = () => {
   const image = require("../../assets/images/neonDumbell.png");
 
   // State variables
@@ -34,7 +35,7 @@ const forgotPassword = () => {
 
     try {
       // For security purpose, direct to the next screen even if there are errors, passing email form data
-      const result = await otp.sendOtp(email);
+      await otp.sendOtp(email);
       router.replace({ pathname: "/changePassword", params: { email: email } });
     } catch (error: any) {
       Alert.alert("Error", error.message);
@@ -52,9 +53,7 @@ const forgotPassword = () => {
         <BackButton />
         <View className="w-full flex justify-center items-center px-4 my-6">
           <View className="w-full flex justify-center items-center px-4 mb-6">
-            <Text className="text-3xl font-bold text-center">
-              Personal Trainer App
-            </Text>
+            <Text className="text-3xl font-bold text-center">Personal Trainer App</Text>
 
             <Image
               source={image}
@@ -67,8 +66,7 @@ const forgotPassword = () => {
             Reset Password
           </Text>
           <Text className="text-lg mt-2 w-full">
-            An OTP will be sent to your email if it is associated with an
-            account
+            An OTP will be sent to your email if it is associated with an account
           </Text>
 
           <View className="w-full flex justify-center items-center px-4 mt-4">
@@ -90,10 +88,7 @@ const forgotPassword = () => {
 
           <View className="flex justify-center pt-5 flex-row gap-2">
             <Text className="text-lg">Go back to</Text>
-            <Link
-              href="/sign-in"
-              className="text-lg font-semibold text-secondary"
-            >
+            <Link href="/sign-in" className="text-lg font-semibold text-secondary">
               Login
             </Link>
           </View>
@@ -103,4 +98,4 @@ const forgotPassword = () => {
   );
 };
 
-export default forgotPassword;
+export default ForgotPassword;

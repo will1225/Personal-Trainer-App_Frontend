@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton, FormField } from "../../components";
-import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
+import { View, ScrollView, Dimensions, Alert, Image } from "react-native";
 import * as user from "../../app/controllers/user";
 import BackButton from "../../components/BackButton";
+import { Text } from "@/components/Text";
 
 /**
  * Sign up screen.
@@ -20,7 +21,7 @@ const SignUp = () => {
     password: "",
     password2: "",
     firstName: "",
-    lastName: ""
+    lastName: "",
   });
 
   // Regex for email and password validation
@@ -29,17 +30,10 @@ const SignUp = () => {
 
   // Form submission handling
   const submit = async () => {
-    const { email, password, password2, firstName, lastName } =
-      form;
+    const { email, password, password2, firstName, lastName } = form;
 
     // Check empty fields
-    if (
-      !email ||
-      !password ||
-      !password2 ||
-      !firstName ||
-      !lastName
-    ) {
+    if (!email || !password || !password2 || !firstName || !lastName) {
       Alert.alert("Error", "Please fill in all fields");
       return;
     }
@@ -54,7 +48,7 @@ const SignUp = () => {
     if (!passwordRegex.test(password)) {
       Alert.alert(
         "Error",
-        "Password must contain at least 1 capital letter, 1 number, and be at least 8 characters long"
+        "Password must contain at least 1 capital letter, 1 number, and be at least 8 characters long",
       );
       return;
     }
@@ -68,7 +62,7 @@ const SignUp = () => {
         form.password,
         form.password2,
         form.firstName,
-        form.lastName
+        form.lastName,
       );
 
       if (result.status) {
@@ -154,13 +148,8 @@ const SignUp = () => {
           />
 
           <View className="flex justify-center pt-5 flex-row gap-2">
-            <Text className="text-lg font-pregular">
-              Have an account already?
-            </Text>
-            <Link
-              href="/sign-in"
-              className="text-lg font-psemibold text-secondary"
-            >
+            <Text className="text-lg font-pregular">Have an account already?</Text>
+            <Link href="/sign-in" className="text-lg font-psemibold text-secondary">
               Login
             </Link>
           </View>

@@ -1,14 +1,8 @@
 import React, { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import Ionicons from '@expo/vector-icons/Ionicons';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TextInputProps,
-  Platform,
-} from "react-native";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { Text } from "@/components/Text";
+import { View, TextInput, TouchableOpacity, TextInputProps, Platform } from "react-native";
 
 interface FormFieldProps extends TextInputProps {
   title: string;
@@ -23,8 +17,8 @@ interface FormFieldProps extends TextInputProps {
 
 /**
  * Reusable form field for different types of inputs (text, email, password, data picker)
- * @param param0 
- * @returns 
+ * @param param0
+ * @returns
  */
 const FormField: React.FC<FormFieldProps> = ({
   title,
@@ -48,7 +42,7 @@ const FormField: React.FC<FormFieldProps> = ({
     if (selectedDate) {
       // Get today
       const today = new Date();
-      today.setHours(0, 0, 0, 0); 
+      today.setHours(0, 0, 0, 0);
 
       // Get selected date for comparison
       const pickedDate = new Date(selectedDate);
@@ -63,7 +57,7 @@ const FormField: React.FC<FormFieldProps> = ({
         setError(null);
         setDate(selectedDate);
         onDateChange?.(selectedDate);
-        const formattedDate = selectedDate.toISOString().split("T")[0]; 
+        const formattedDate = selectedDate.toISOString().split("T")[0];
         handleChangeText(formattedDate);
       }
     }
@@ -74,38 +68,37 @@ const FormField: React.FC<FormFieldProps> = ({
       <Text className="text-base font-pmedium">{title}</Text>
 
       {/* Standard field */}
-      <View className={`w-full h-12 px-4 rounded-2xl border-2 ${
-          editable ? 'border-black-200' : 'border-gray-300'
+      <View
+        className={`w-full h-12 px-4 rounded-2xl border-2 ${
+          editable ? "border-black-200" : "border-gray-300"
         } flex flex-row items-center`}
         style={{
-          backgroundColor: editable ? 'white' : 'lightgray',
-        }}>
+          backgroundColor: editable ? "white" : "lightgray",
+        }}
+      >
         <TextInput
           className="flex-1 font-psemibold text-base"
           value={value}
           placeholder={placeholder}
           placeholderTextColor="#7B7B8B"
           onChangeText={editable ? handleChangeText : undefined}
-          secureTextEntry={title === "Password" || title === "Confirm Password" && !showPassword}
+          secureTextEntry={title === "Password" || (title === "Confirm Password" && !showPassword)}
           editable={editable && !isDatePicker} // Disable keyboard input
           style={{ color: editable ? "black" : "#7B7B8B" }}
           {...props}
         />
 
         {/* Password field */}
-        {title === "Password" || title === "Confirm Password" && (
-          <TouchableOpacity
-            onPress={() => setShowPassword(!showPassword)}
-          ></TouchableOpacity>
-        )}
+        {title === "Password" ||
+          (title === "Confirm Password" && (
+            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}></TouchableOpacity>
+          ))}
 
         {/* Date field */}
         {isDatePicker && (
           <TouchableOpacity onPress={() => setShowDatePicker(true)}>
             <View className="h-12 px-4 flex-row items-center">
-              <Text className="flex-1 font-psemibold text-base">
-                {value || placeholder}
-              </Text>
+              <Text className="flex-1 font-psemibold text-base">{value || placeholder}</Text>
               <Ionicons name="calendar" size={30} color="black" />
             </View>
           </TouchableOpacity>

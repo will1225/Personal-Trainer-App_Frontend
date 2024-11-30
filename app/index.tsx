@@ -1,14 +1,15 @@
-import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { router, Link, Href } from "expo-router";
-import { View, Text, Image } from "react-native";
+import { View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton } from "../components";
-import * as user from "../app/controllers/user"; 
+import * as user from "../app/controllers/user";
 import { endpoint } from "./config";
 import { useSetAtom } from "jotai";
 import { trialAtom } from "@/store";
-import { isThreeMonthsOld } from "./controllers/utils";
+import { isThreeMonthsOld } from "./controllers/utils";import { Text } from "@/components/Text";
+import ThemeSwitch from "@/components/ThemeSwitch";
+import LoadingAnimation from "@/components/LoadingAnimation";
 
 /**
  * Landing screen
@@ -16,14 +17,16 @@ import { isThreeMonthsOld } from "./controllers/utils";
  */
 const LandingPage = () => {
   const image = require("../assets/images/download.jpeg");
-  const trial = useSetAtom(trialAtom);
+  const trial = useSetAtom(trialAtom);  const [isLoading, setIsLoading] = useState(true);
+
   // Flag to skip landing screen if token presents, must set to true in production
   let skipLandingPage = true;
 
   // Check stored token on app, skip landing page if already logged in
-  if (skipLandingPage) {
-    useEffect(() => {
-      const checkToken = async () => {
+
+  useEffect(() => {
+    const checkToken = async () => {
+      if (skipLandingPage) {
         const token = await user.getToken();
         if (token) {
           try {
@@ -33,9 +36,9 @@ const LandingPage = () => {
                 method: "GET",
                 headers: {
                   "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`
-                }
-              }
+                  Authorization: `Bearer ${token}`,
+                },
+              },
             );
 
             if (response.ok) {
@@ -69,49 +72,51 @@ const LandingPage = () => {
               }
             }
           } catch (error: any) {
-            throw new Error(error.message || "Something went wrong");    
-          }      
+            throw new Error(error.message || "Something went wrong");
+          } finally {
+            setIsLoading(false);
+          }
+        } else {
+          setIsLoading(false);
         }
-      };
-      checkToken();
-    }, []);
-  }
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    checkToken();
+  }, [skipLandingPage]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View className="w-full flex justify-center items-center h-full px-4">
-        <Text className="text-3xl font-bold text-center">
-          Personal Trainer App
-        </Text>
+      {isLoading ? (
+        <View className="flex-1 justify-center items-center">
+          <LoadingAnimation isLoading={isLoading} message="Verifying Token..." />
+        </View>
+      ) : (
+        <View className="w-full flex justify-center items-center h-full px-4">
+          <ThemeSwitch />
+          <Text className="text-3xl font-bold text-center">Personal Trainer App</Text>
 
-        <Image
-          source={image}
-          className="max-w-[380px] w-full h-[298px]"
-          resizeMode="contain"
-        />
+          <Image source={image} className="max-w-[380px] w-full h-[298px]" resizeMode="contain" />
 
-        <Text className="text-xl font-bold text-center mb-8">
-          Your personal fitness coach, {"\n"}
-          tailored for your Goals
-        </Text>
+          <Text className="text-xl font-bold text-center mb-8">
+            Your personal fitness coach, {"\n"}
+            tailored for your Goals
+          </Text>
 
-        <CustomButton
-          title="Login"
-          handlePress={() => router.push("/sign-in" as Href<string>)}
-          containerStyles="w-[230px] mt-7"
-        />
+          <CustomButton
+            title="Login"
+            handlePress={() => router.push("/sign-in" as Href<string>)}
+            containerStyles="w-[230px] mt-7"
+          />
 
-        <Text className="text-base font-pregular mt-7 text-center">
-          Don't have an account?
-        </Text>
-        <Link
-          href={"/sign-up" as Href<string>}
-          className="text-lg font-psemibold text-secondary"
-        >
-          Register Here
-        </Link>
-      </View>
-      <StatusBar backgroundColor="#161622" style="light" />
+          <Text className="text-base font-pregular mt-7 text-center">Don't have an account?</Text>
+          <Link href={"/sign-up" as Href<string>} className="text-lg font-semibold text-secondary">
+            Register Here
+          </Link>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

@@ -6,21 +6,13 @@ import Modal from "react-native-modal";
 import BackButton from "../components/BackButton";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as measurement from "./controllers/bodyMeasurement";
-import {
-  View,
-  Text,
-  Alert,
-  Image,
-  Switch,
-  TouchableOpacity,
-  Linking,
-} from "react-native";
+import { View, Alert, Image, Switch, TouchableOpacity, Linking } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useAtom } from "jotai";
 import { profileAtom } from "@/store";
 import { useQuery, useQueryClient } from "react-query";
 import { Profile } from "./controllers/profile";
-
+import { Text } from "@/components/Text";
 
 /**
  * Body Measurement screen.
@@ -35,7 +27,7 @@ const BodyMeasurement = () => {
   const femaleSuprailiac = require("../assets/images/suprailiacFemale.jpg");
   const femaleThigh = require("../assets/images/thighFemale.jpg");
   const params = useLocalSearchParams();
-  const weeklyRoutineId = params.weeklyRoutineId ? Number(params.weeklyRoutineId): null;
+  const weeklyRoutineId = params.weeklyRoutineId ? Number(params.weeklyRoutineId) : null;
 
   const queryClient = useQueryClient();
 
@@ -60,20 +52,13 @@ const BodyMeasurement = () => {
 
   // Get gender from the profile atom
   useQuery("profile", () => Profile.setProfileByToken(setProfile));
-  const gender = profile?.gender; 
-  
+  const gender = profile?.gender;
+
   // Form submission handling
   const submit = async () => {
-    const {
-      weight,
-      chest,
-      abdomen,
-      thigh,
-      bypassMeasurementFlag,
-      bodyFatPercent,
-      muscleMass,
-    } = form;
-    
+    const { weight, chest, abdomen, thigh, bypassMeasurementFlag, bodyFatPercent, muscleMass } =
+      form;
+
     // Convert input values to float for validation
     const weightValue = parseFloat(weight);
     const chestValue = parseFloat(chest);
@@ -88,15 +73,12 @@ const BodyMeasurement = () => {
     const adjustedThigh = bypassMeasurementFlag ? null : parseFloat(thigh);
 
     // Determine if body measurement was recorded to update results
-    const progress = weeklyRoutineId ? "progress" : null; 
+    const progress = weeklyRoutineId ? "progress" : null;
 
     // Validation logic
     if (bypassMeasurementFlag) {
       if (!weight || !bodyFatPercent || !muscleMass) {
-        Alert.alert(
-          "Error",
-          "Please fill in weight, body fat, and muscle mass."
-        );
+        Alert.alert("Error", "Please fill in weight, body fat, and muscle mass.");
         return;
       }
       if (bodyFatPercentValue >= 50) {
@@ -138,29 +120,28 @@ const BodyMeasurement = () => {
         form.bypassMeasurementFlag,
         parseFloat(form.bodyFatPercent),
         parseFloat(form.muscleMass),
-        weeklyRoutineId
+        weeklyRoutineId,
       );
 
       if (result.status) {
         //Invalidate the profile to refetch
         console.log("Invalidating profile");
         await queryClient.invalidateQueries({
-          queryKey: ['profile']
+          queryKey: ["profile"],
         });
         // Invalidate the query in case body measurements
         //  were updated to track progress
         if (weeklyRoutineId) {
           await queryClient.invalidateQueries({
-            queryKey: ['currentWeekRoutine']
+            queryKey: ["currentWeekRoutine"],
           });
         }
         //////////////////////////////////
         router.replace({
           pathname: "/fitnessResult",
-          params: { 
+          params: {
             measurementId: result.data.id,
             isProgress: progress,
-          
           },
         });
       }
@@ -176,10 +157,7 @@ const BodyMeasurement = () => {
     switch (part) {
       case "chest":
         setModalContent({
-          title:
-            gender === "M"
-              ? "How to Measure Chest"
-              : "How to Measure Tricep",
+          title: gender === "M" ? "How to Measure Chest" : "How to Measure Tricep",
           text:
             gender === "M"
               ? "Diagonal fold, midway between upper armpit and nipple"
@@ -189,10 +167,7 @@ const BodyMeasurement = () => {
         break;
       case "abdomen":
         setModalContent({
-          title:
-            gender === "M"
-              ? "How to Measure Abdomen"
-              : "How to Measure Suprailiac",
+          title: gender === "M" ? "How to Measure Abdomen" : "How to Measure Suprailiac",
           text:
             gender === "M"
               ? "Vertical fold, one inch to the right of navel"
@@ -225,16 +200,13 @@ const BodyMeasurement = () => {
           <Text className="text-2xl font-semibold mt-10 font-psemibold text-center w-full">
             Body Measurement
           </Text>
-          <Text
-            style={{ width: 280 }}
-            className="text-lg font-pregular text-left ml-14 mt-4"
-          >
+          <Text style={{ width: 280 }} className="text-lg font-pregular text-left ml-14 mt-4">
             Please use a{" "}
             <Text
               style={{ color: "blue", textDecorationLine: "underline" }}
               onPress={() =>
                 Linking.openURL(
-                  "https://www.google.com/search?q=body+fat+caliper&oq=body+fat+caliper"
+                  "https://www.google.com/search?q=body+fat+caliper&oq=body+fat+caliper",
                 )
               }
             >
@@ -262,14 +234,8 @@ const BodyMeasurement = () => {
               containerStyles="w-[270px]"
               editable={!form.bypassMeasurementFlag}
             />
-            <TouchableOpacity
-              onPress={() => handleShowModal("chest")}
-              className="ml-8 mt-3"
-            >
-              <Text
-                style={{ width: 60 }}
-                className="text-m font-pregular text-left"
-              >
+            <TouchableOpacity onPress={() => handleShowModal("chest")} className="ml-8 mt-3">
+              <Text style={{ width: 60 }} className="text-m font-pregular text-left">
                 How to measure:
               </Text>
               <Ionicons name="help-circle-outline" size={40} color="gray" />
@@ -286,10 +252,7 @@ const BodyMeasurement = () => {
               containerStyles="w-[270px]"
               editable={!form.bypassMeasurementFlag}
             />
-            <TouchableOpacity
-              onPress={() => handleShowModal("abdomen")}
-              className="ml-8 mt-12"
-            >
+            <TouchableOpacity onPress={() => handleShowModal("abdomen")} className="ml-8 mt-12">
               <Ionicons name="help-circle-outline" size={40} color="gray" />
             </TouchableOpacity>
           </View>
@@ -304,10 +267,7 @@ const BodyMeasurement = () => {
               containerStyles="w-[270px]"
               editable={!form.bypassMeasurementFlag}
             />
-            <TouchableOpacity
-              onPress={() => handleShowModal("thigh")}
-              className="ml-8 mt-12"
-            >
+            <TouchableOpacity onPress={() => handleShowModal("thigh")} className="ml-8 mt-12">
               <Ionicons name="help-circle-outline" size={40} color="gray" />
             </TouchableOpacity>
           </View>
@@ -356,19 +316,14 @@ const BodyMeasurement = () => {
             />
           </View>
         </View>
-        <Modal
-          isVisible={showModal}
-          onBackdropPress={() => setShowModal(false)}
-        >
-          <View
-            style={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}
-          >
-            <Text
-              style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10 }}
-            >
+        <Modal isVisible={showModal} onBackdropPress={() => setShowModal(false)}>
+          <View style={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 10, color: "#000" }}>
               {modalContent.title}
             </Text>
-            <Text className="text-lg font-pregular">{modalContent.text}</Text>
+            <Text className="text-lg font-pregular" style={{ color: "#000" }}>
+              {modalContent.text}
+            </Text>
             {modalContent.image && (
               <Image
                 source={modalContent.image}
@@ -376,10 +331,7 @@ const BodyMeasurement = () => {
                 resizeMode="contain"
               />
             )}
-            <CustomButton
-              title="Close"
-              handlePress={() => setShowModal(false)}
-            />
+            <CustomButton title="Close" handlePress={() => setShowModal(false)} />
           </View>
         </Modal>
       </KeyboardAwareScrollView>

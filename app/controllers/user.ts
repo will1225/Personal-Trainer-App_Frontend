@@ -20,7 +20,7 @@ export const getToken = async () => {
 
 /**
  * Method to save the token generated from the backend (not facebook token) to secure store
- * @param req 
+ * @param req
  */
 export const saveBackendToken = async (req: Response) => {
   try {
@@ -80,7 +80,7 @@ export const loginUser = async (email: string, password: string) => {
         },
         body: JSON.stringify({ email, password }),
         credentials: "include",
-      }
+      },
     );
 
     if (!response.ok) {
@@ -115,7 +115,7 @@ export const createUser = async (
   password: string,
   password2: string,
   firstName: string,
-  lastName: string
+  lastName: string,
 ) => {
   try {
     const response = await fetch(
@@ -132,7 +132,7 @@ export const createUser = async (
           firstName,
           lastName,
         }),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -154,11 +154,7 @@ export const createUser = async (
  * @param password2
  * @returns
  */
-export const changePasswordApi = async (
-  otp: string,
-  password: string,
-  password2: string
-) => {
+export const changePasswordApi = async (otp: string, password: string, password2: string) => {
   try {
     const response = await fetch(
       "https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/forgot",
@@ -168,7 +164,7 @@ export const changePasswordApi = async (
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ otp, password, password2 }),
-      }
+      },
     );
 
     if (!response.ok) {
@@ -196,7 +192,7 @@ export const facebookLogin = async (error: any, result: LoginResult) => {
     if (accessToken) {
       // Fetch facebook user data
       const fbResponse = await fetch(
-        `https://graph.facebook.com/me?fields=email,name&access_token=${accessToken}`
+        `https://graph.facebook.com/me?fields=email,name&access_token=${accessToken}`,
       );
       const userData = await fbResponse.json();
 
@@ -217,14 +213,14 @@ export const facebookLogin = async (error: any, result: LoginResult) => {
               provider: "facebook",
               name,
             }),
-          }
+          },
         );
         const result = await response.json();
         console.log(result);
 
         // Direct to Home page if succeeded
         if (result.status) {
-          saveBackendToken(response);          
+          saveBackendToken(response);
           if (!result.data.gender) {
             router.replace("/getStarted");
           } else {
@@ -239,10 +235,7 @@ export const facebookLogin = async (error: any, result: LoginResult) => {
       }
     }
   } catch (err: any) {
-    Alert.alert(
-      "Error",
-      err.message || "An error occurred while logging in with Facebook"
-    );
+    Alert.alert("Error", err.message || "An error occurred while logging in with Facebook");
   }
 };
 

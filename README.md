@@ -16,7 +16,41 @@
    
    ![image](https://github.com/user-attachments/assets/e73bedb6-039c-4ad3-b945-e3782843df91)
 
+# Formatting and Linting
 
+## **Recommended IDE Extensions**
+
+Please install the following extensions in your IDE:
+- **ESLint**
+- **Prettier**
+
+## **Formatting and Linting Commands**
+
+- **Format Code**:
+  ```sh
+  npm run prettier
+  ```
+
+- **Run Linter**:
+  ```sh
+  npm run lint
+  ```
+
+- **Run Linter with Autofix**
+  ```sh
+  npm run lint:fix
+  ```
+
+## **Pre-commit Hooks Setup**
+
+**Husky** and **lint-staged** are used to automatically format and fix linting issues during commits.
+
+- Run `npm install` from the root of the project.
+- Install Husky hooks:
+    ```sh
+    npx husky init
+    ```
+    
 # Dynamic Debugging between the Frontend and Backend
 This debugging method requires specific setups in both the frontend and backend. It is not mandatory for this project, you are free to use other debugging methods like Thunder Client or simply console logs.
 

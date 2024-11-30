@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { Href, router, useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { CustomButton, FormField } from "../../components";
-import { View, Text, Alert, Image, TouchableOpacity } from "react-native";
+import { View, Alert, Image, TouchableOpacity } from "react-native";
 import * as otp from "../../app/controllers/otp";
 import BackButton from "../../components/BackButton";
+import { Text } from "@/components/Text";
 
 /**
  * OTP Verification Screen.
@@ -68,9 +69,7 @@ const Otp = () => {
         <BackButton />
         <View className="w-full flex justify-center items-center px-4 my-6">
           <View className="w-full flex justify-center items-center px-4 mb-6">
-            <Text className="text-3xl font-bold text-center">
-              Personal Trainer App
-            </Text>
+            <Text className="text-3xl font-bold text-center">Personal Trainer App</Text>
 
             <Image
               source={image}
@@ -83,9 +82,7 @@ const Otp = () => {
             Email Verification
           </Text>
 
-          <Text className="text-xl mt-5 mb-5 font-semibold text-center w-full">
-            {email}
-          </Text>
+          <Text className="text-xl mt-5 mb-5 font-semibold text-center w-full">{email}</Text>
 
           <FormField
             title="Enter Verification Code"
@@ -103,13 +100,9 @@ const Otp = () => {
           />
 
           <View className="flex justify-center pt-5 flex-row gap-2">
-            <Text className="text-lg font-pregular">
-              Did not receive the email?
-            </Text>
+            <Text className="text-lg font-pregular">Did not receive the email?</Text>
             <TouchableOpacity onPress={handleResendOtp}>
-              <Text className="text-lg font-psemibold text-secondary">
-                Resend OTP
-              </Text>
+              <Text className="text-lg font-psemibold text-secondary">Resend OTP</Text>
             </TouchableOpacity>
           </View>
         </View>

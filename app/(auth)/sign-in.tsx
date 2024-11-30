@@ -3,13 +3,14 @@ import { Href, Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { CustomButton, FormField } from "../../components";
-import { View, Text, Alert, Image } from "react-native";
+import { View, Alert, Image } from "react-native";
 import { LoginButton } from "react-native-fbsdk-next";
 import * as user from "../../app/controllers/user";
 import BackButton from "../../components/BackButton";
 import { isThreeMonthsOld } from "../controllers/utils";
 import { useSetAtom } from "jotai";
 import { trialAtom } from "@/store";
+import { Text } from "@/components/Text";
 
 /**
  * Sign in screen.
@@ -50,7 +51,7 @@ const SignIn = () => {
     if (!passwordRegex.test(password)) {
       Alert.alert(
         "Error",
-        "Password must contain at least 1 capital letter, 1 number, and be at least 8 characters long"
+        "Password must contain at least 1 capital letter, 1 number, and be at least 8 characters long",
       );
       return;
     }
@@ -98,11 +99,9 @@ const SignIn = () => {
         enableOnAndroid={true}
       >
         <BackButton />
-        <View className="w-full flex justify-center items-center px-4 my-6" >
+        <View className="w-full flex justify-center items-center px-4 my-6">
           <View className="w-full flex justify-center items-center px-4 mb-6">
-            <Text className="text-3xl font-bold text-center">
-              Personal Trainer App
-            </Text>
+            <Text className="text-3xl font-bold text-center">Personal Trainer App</Text>
 
             <Image
               source={image}
@@ -139,7 +138,7 @@ const SignIn = () => {
 
           <Link
             href={"/forgotPassword" as Href<string>}
-            className="text-lg font-psemibold text-secondary mt-4 mb-8"
+            className="text-lg font-semibold text-secondary mt-4 mb-8"
           >
             Forgot Password
           </Link>

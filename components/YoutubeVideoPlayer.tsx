@@ -1,14 +1,14 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text } from 'react-native';
-import YoutubePlayer from 'react-native-youtube-iframe';
+import React, { useState, useCallback } from "react";
+import { View, Text } from "react-native";
+import YoutubePlayer from "react-native-youtube-iframe";
 
-const YouTubeVideoPlayer = ({ youtubeURL } : any) => {
+const YouTubeVideoPlayer = ({ youtubeURL }: any) => {
   const [playing, setPlaying] = useState(false);
 
   const onStateChange = useCallback((state: any) => {
-    if (state === 'ended') {
+    if (state === "ended") {
       setPlaying(false);
-      alert('Video has finished playing!');
+      alert("Video has finished playing!");
     }
   }, []);
 
@@ -17,16 +17,11 @@ const YouTubeVideoPlayer = ({ youtubeURL } : any) => {
   }, []);
 
   // Extract video ID from the YouTube URL
-  const videoId = youtubeURL.split('v=')[1];
+  const videoId = youtubeURL.split("v=")[1];
 
   return (
     <View>
-      <YoutubePlayer
-        height={300}
-        play={playing}
-        videoId={videoId}
-        onChangeState={onStateChange}
-      />
+      <YoutubePlayer height={300} play={playing} videoId={videoId} onChangeState={onStateChange} />
     </View>
   );
 };
