@@ -29,10 +29,10 @@ const AboutUs = () => {
       image: null,
     },
     {
-      name: "Member",
-      role: "Role",
-      email: "Email",
-      description: "Say anything",
+      name: "Hyunjin Shin",
+      role: "Full-Stack Developer (Focused on UI)",
+      email: "dev.hshin41@gmail.com",
+      description: "Hello!",
       image: null,
     },
     {

@@ -154,7 +154,15 @@ const Report = () => {
                   <Text className="text-xl font-semibold text-right w-[28%]">{`Body Fat:`}</Text>
                   <Text className="text-xl w-[28%] text-center truncate">{data.prevFat}</Text>
                   <Text
-                    className={`text-xl w-[14%] text-center ${data.fat - data.prevFat > 0 ? "text-red-500" : "text-green-500"}`}
+                    className={`text-xl w-[14%] text-center ${
+                      data.prevFat - data.fat > 0
+                        ? "text-red-500"
+                        : data.prevMuscle - data.muscle < 0
+                          ? "text-green-500"
+                          : colorScheme === "light"
+                            ? "text-gray-500"
+                            : "text-gray-400"
+                    }`}
                   >
                     {`\u2794`}
                   </Text>
@@ -166,7 +174,15 @@ const Report = () => {
                   <Text className="text-xl font-semibold text-right w-[28%]">{`Muscle Mass:`}</Text>
                   <Text className="text-xl w-[28%] text-center truncate">{data.prevMuscle}</Text>
                   <Text
-                    className={`text-xl w-[14%] text-center ${data.prevMuscle - data.muscle > 0 ? "text-red-500" : "text-green-500"}`}
+                    className={`text-xl w-[14%] text-center ${
+                      data.prevMuscle - data.muscle > 0
+                        ? "text-red-500"
+                        : data.prevMuscle - data.muscle < 0
+                          ? "text-green-500"
+                          : colorScheme === "light"
+                            ? "text-gray-500"
+                            : "text-gray-400"
+                    }`}
                   >
                     {`\u2794`}
                   </Text>
@@ -178,7 +194,15 @@ const Report = () => {
                   <Text className="text-xl font-semibold text-right w-[28%]">{`Chest:`}</Text>
                   <Text className="text-xl w-[28%] text-center truncate">{data.prevChest}</Text>
                   <Text
-                    className={`text-xl w-[14%] text-center ${data.prevChest - data.chest < 0 ? "text-red-500" : "text-green-500"}`}
+                    className={`text-xl w-[14%] text-center ${
+                      data.prevChest - data.chest > 0
+                        ? "text-red-500"
+                        : data.prevChest - data.chest < 0
+                          ? "text-green-500"
+                          : colorScheme === "light"
+                            ? "text-gray-500"
+                            : "text-gray-400"
+                    }`}
                   >
                     {`\u2794`}
                   </Text>
@@ -190,7 +214,15 @@ const Report = () => {
                   <Text className="text-xl font-semibold text-right w-[29%]">{`Abdomen:`}</Text>
                   <Text className="text-xl w-[28%] text-center truncate">{data.prevAbdomen}</Text>
                   <Text
-                    className={`text-xl w-[14%] text-center ${data.prevAbdomen - data.abdomen < 0 ? "text-red-500" : "text-green-500"}`}
+                    className={`text-xl w-[14%] text-center ${
+                      data.prevAbdomen - data.abdomen > 0
+                        ? "text-red-500"
+                        : data.prevAbdomen - data.abdomen < 0
+                          ? "text-green-500"
+                          : colorScheme === "light"
+                            ? "text-gray-500"
+                            : "text-gray-400"
+                    }`}
                   >
                     {`\u2794`}
                   </Text>
@@ -202,7 +234,15 @@ const Report = () => {
                   <Text className="text-xl font-semibold text-right w-[28%]">{`Thigh:`}</Text>
                   <Text className="text-xl w-[28%] text-center truncate">{data.prevThigh}</Text>
                   <Text
-                    className={`text-xl w-[14%] text-center ${data.prevThigh - data.thigh < 0 ? "text-red-500" : "text-green-500"}`}
+                    className={`text-xl w-[14%] text-center ${
+                      data.prevThigh - data.thigh > 0
+                        ? "text-red-500"
+                        : data.prevThigh - data.thigh < 0
+                          ? "text-green-500"
+                          : colorScheme === "light"
+                            ? "text-gray-500"
+                            : "text-gray-400"
+                    }`}
                   >
                     {`\u2794`}
                   </Text>
@@ -214,7 +254,7 @@ const Report = () => {
                   <Text className="text-xl font-semibold text-right w-[28%]">{`Weight:`}</Text>
                   <Text className="text-xl w-[28%] text-center truncate">{data.prevWeight}</Text>
                   <Text
-                    className={`text-xl w-[14%] text-center ${data.prevWeight - data.weight < 0 ? "text-red-500" : "text-green-500"}`}
+                    className={`text-xl w-[14%] text-center ${colorScheme === "light" ? "text-gray-500" : "text-gray-400"}`}
                   >
                     {`\u2794`}
                   </Text>
@@ -227,8 +267,19 @@ const Report = () => {
                     {data.prevFatClassification}
                   </Text>
                   <Text
-                    className={`text-xl w-[14%] text-center
-                ${fatLevel.indexOf(data.prevFatClassification) - fatLevel.indexOf(data.fatClassification) < 0 ? "text-red-500" : "text-green-500"}`}
+                    className={`text-xl w-[14%] text-center ${
+                      fatLevel.indexOf(data.prevFatClassification) -
+                        fatLevel.indexOf(data.fatClassification) <
+                      0
+                        ? "text-red-500"
+                        : fatLevel.indexOf(data.prevFatClassification) -
+                              fatLevel.indexOf(data.fatClassification) >
+                            0
+                          ? "text-green-500"
+                          : colorScheme === "light"
+                            ? "text-gray-500"
+                            : "text-gray-400"
+                    }`}
                   >
                     {`\u2794`}
                   </Text>
@@ -243,8 +294,19 @@ const Report = () => {
                     {data.prevFfmiClassification}
                   </Text>
                   <Text
-                    className={`text-xl w-[14%] text-center
-                ${ffmiLevel.indexOf(data.prevFfmiClassification) - ffmiLevel.indexOf(data.ffmiClassification) < 0 ? "text-red-500" : "text-green-500"}`}
+                    className={`text-xl w-[14%] text-center ${
+                      ffmiLevel.indexOf(data.prevFfmiClassification) -
+                        ffmiLevel.indexOf(data.ffmiClassification) <
+                      0
+                        ? "text-red-500"
+                        : ffmiLevel.indexOf(data.prevFfmiClassification) -
+                              ffmiLevel.indexOf(data.ffmiClassification) >
+                            0
+                          ? "text-green-500"
+                          : colorScheme === "light"
+                            ? "text-gray-500"
+                            : "text-gray-400"
+                    }`}
                   >
                     {`\u2794`}
                   </Text>
@@ -261,92 +323,6 @@ const Report = () => {
                   isHighlighted={isHighlighted}
                 />
               </View>
-              {/* Body Fat Percentage Table 
-          <View className="w-full mb-4">
-            <Text
-              className="text-2xl font-bold text-center mb-0 text-black"
-              style={{ backgroundColor: "#fbbf24", height: 40, lineHeight: 40 }}
-            >
-              Body Fat Chart
-            </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                backgroundColor: "#fcd34d",
-                height: 30,
-              }}
-            >
-              <Text
-                className="font-bold"
-                style={{
-                  flex: 1,
-                  textAlign: "center",
-                  fontSize: 16,
-                  backgroundColor: "#fcd34d",
-                  color: '#000'
-                }}
-              >
-                Classification
-              </Text>
-              <Text
-                className="font-bold"
-                style={{
-                  flex: 1,
-                  textAlign: "center",
-                  fontSize: 16,
-                  backgroundColor: "#fcd34d",
-                  color: '#000'
-                }}
-              >
-                Men
-              </Text>
-              <Text
-                className="font-bold"
-                style={{
-                  flex: 1,
-                  textAlign: "center",
-                  fontSize: 16,
-                  backgroundColor: "#fcd34d",
-                  color: '#000'
-                }}
-              >
-                Women
-              </Text>
-            </View>
-            {ranges.map((item, index) => (
-              <View
-                key={index}
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  height: 32,
-                  backgroundColor: isHighlighted(item) ? "#4ade80" : "#e5e5e5",
-                  borderBottomWidth: 1,
-                  borderBottomColor: "#ddd",
-                }}
-              >
-                {isHighlighted(item) && (
-                  <Image
-                  source={image}
-                  resizeMode="contain"
-                  style={{
-                    position: "absolute",
-                    left: -19, 
-                    width: 38,
-                    height: 38
-                  }}
-                  />
-                )}
-                <Text style={{ flex: 1, textAlign: "center", color: '#000' }}>{item.classification}</Text>
-                <Text style={{ flex: 1, textAlign: "center", color: '#000' }}>{item.men}</Text>
-                <Text style={{ flex: 1, textAlign: "center", color: '#000' }}>{item.women}</Text>
-              </View>
-            ))}
-          </View>
-          */}
 
               <Modal isVisible={isModalOpen} onBackdropPress={() => setIsModalOpen(false)}>
                 <View style={{ backgroundColor: "white", padding: 20, borderRadius: 10 }}>
@@ -371,7 +347,7 @@ const Report = () => {
       <View
         style={{
           position: "absolute",
-          bottom: 25,
+          bottom: 0,
           left: 0,
           right: 0,
           padding: 10,
