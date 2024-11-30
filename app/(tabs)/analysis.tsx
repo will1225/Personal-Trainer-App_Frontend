@@ -1,12 +1,5 @@
-import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Dimensions,
-  ScrollView,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
-} from "react-native";
+import { useMemo, useState } from "react";
+import { ActivityIndicator, Dimensions, ScrollView, TouchableOpacity, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getProgress } from "../controllers/progress";
@@ -19,6 +12,7 @@ import { useAtomValue } from "jotai";
 import { profileAtom } from "@/store";
 import { Text } from "@/components/Text";
 import CustomButton from "@/components/CustomButton";
+import LoadingAnimation from "@/components/LoadingAnimation";
 
 interface SelectedData {
   x: number;
@@ -41,34 +35,49 @@ export default function AnalysisScreen() {
   // const [dummyData, setDummyData] = useState<number[]>([])
 
   const getWeeklAllWeeklyProgress = async () => {
-    const data = await getProgress();
-    if (!data) return [];
-
+    // Clear accumulated state data
     setMonths([]);
     setLeanMuscles([]);
     setWeights([]);
     setBodyFats([]);
+    setSelectedData(null);
+    setSelectedReport({ id: 0, date: "" });
 
-    data.map((e) => {
+    const data = await getProgress();
+    if (!data) return [];
+
+    // Performance issue here and update: Use temp arrays to store the fetched values instead of setting state for each variable inside the loop right away.
+    let tempMonths: string[] = [];
+    let tempLeanMuscles: number[] = [];
+    let tempWeights: number[] = [];
+    let tempBodyFats: number[] = [];
+
+    data.forEach((e) => {
       const monthString = monthToString(new Date(e.date).getMonth()).substring(0, 3);
 
-      setMonths((prevVal) => {
-        if (!prevVal.includes(monthString)) {
-          return [...prevVal, monthString];
-        }
+      // Store unique months to temp array
+      if (!tempMonths.includes(monthString)) {
+        tempMonths.push(monthString);
+      }
 
-        return prevVal;
+      // Store these to temp arrays as well
+      tempLeanMuscles.push(e.bodyMeasurement.muscleMass);
+      tempWeights.push(e.bodyMeasurement.weight);
+      tempBodyFats.push(e.bodyMeasurement.bodyFatPercent);
+    });
+
+    // Update the state all at once after the loop
+    setMonths(tempMonths);
+    setLeanMuscles(tempLeanMuscles);
+    setWeights(tempWeights);
+    setBodyFats(tempBodyFats);
+
+    if (data.length > 0) {
+      setSelectedReport({
+        id: data[0].id,
+        date: `${data[0].date}`,
       });
-
-      setLeanMuscles((prevVal) => [...prevVal, e.bodyMeasurement.muscleMass]);
-      setWeights((prevVal) => [...prevVal, e.bodyMeasurement.weight]);
-      setBodyFats((prevVal) => [...prevVal, e.bodyMeasurement.bodyFatPercent]);
-      // setDummyData((prevVal) => [...prevVal, 100]);
-    });
-    setSelectedReport({
-      id: data[0].id,
-      date: `${data[0].date}`,
-    });
+    }
     return data;
   };
 
@@ -76,6 +85,30 @@ export default function AnalysisScreen() {
     queryKey: [`weekly-progress-${profile.id}`],
     queryFn: getWeeklAllWeeklyProgress,
   });
+
+  // Performance improvement: Use memo to memoize chart data to improve rendering performance
+  const chartData = useMemo(
+    () => ({
+      labels: months,
+      //Each datasets represents Lean muscle, Weight, Body Fat
+      datasets: [
+        {
+          data: leanMuscles,
+          color: (opacity = 0.8) => `rgba(3, 0, 255, 0.8)`,
+        },
+        {
+          data: weights,
+          color: (opacity = 0.8) => `rgba(247, 0, 0, 0.8)`,
+        },
+        {
+          data: bodyFats,
+          color: (opacity = 0.8) => `rgba(166, 97, 4, 0.8)`,
+        },
+      ],
+      legend: ["Lean Muscle", "Weight", "Body Fat"],
+    }),
+    [months, leanMuscles, weights, bodyFats],
+  );
 
   const handleDataPointClick = (data: any) => {
     const { x, y, value } = data;
@@ -124,25 +157,7 @@ export default function AnalysisScreen() {
             <Text className="text-[12px] text-blue-500 font-bold">Hide value</Text>
           </TouchableOpacity>
           <LineChart
-            data={{
-              labels: months,
-              //Each datasets represents Lean muscle, Weight, Body Fat
-              datasets: [
-                {
-                  data: leanMuscles, //Lean Muscles
-                  color: (opacity = 0.8) => `rgba(3, 0, 255, 0.8)`,
-                },
-                {
-                  data: weights, //Weight,
-                  color: (opacity = 0.8) => `rgba(247, 0, 0, 0.8)`,
-                },
-                {
-                  data: bodyFats, //Body Fat
-                  color: (opacity = 0.8) => `rgba(166, 97, 4, 0.8)`,
-                },
-              ],
-              legend: ["Lean Muscle", "Weight", "Body Fat"],
-            }}
+            data={chartData}
             width={Dimensions.get("window").width - 32} // Width of the chart
             height={220} // Height of the chart
             //yAxisLabel="$"
@@ -261,9 +276,13 @@ export default function AnalysisScreen() {
             </View>
           )}
         </ScrollView>
-      ) : (
+      ) : !data ? (
         <View className="flex-1 justify-center items-center">
           <Text className="text-xl font-bold text-center">No weekly Progress Data to display</Text>
+        </View>
+      ) : (
+        <View className="flex-1 justify-center items-center">
+          <LoadingAnimation isLoading={true} message="Generating Chart..." />
         </View>
       )}
     </SafeAreaView>

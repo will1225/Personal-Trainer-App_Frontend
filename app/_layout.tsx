@@ -11,7 +11,7 @@ import { View } from "react-native";
 import "react-native-reanimated";
 import { QueryClient, QueryClientProvider } from "react-query";
 import * as SecureStore from "expo-secure-store"; // Roll back point
-import { StripeProvider } from '@stripe/stripe-react-native';
+import { StripeProvider } from "@stripe/stripe-react-native";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -50,15 +50,15 @@ export default function RootLayout() {
   }
 
   return (
-      <QueryClientProvider client={queryClient}>
-        <StripeProvider publishableKey='pk_test_51NRGPKALN5ZJppZ0Xp5gr0YfkzxtyHkO9aiExVZWEoG0ymHjcogM2yzmHgjOTbtyYBDCNDs0Rirn5KRRZ0cniR1T005TNFcdX0'>
-          <RootLayoutNav goHome={goHome} />
-        </StripeProvider>
-      </QueryClientProvider>
+    <QueryClientProvider client={queryClient}>
+      <StripeProvider publishableKey="pk_test_51NRGPKALN5ZJppZ0Xp5gr0YfkzxtyHkO9aiExVZWEoG0ymHjcogM2yzmHgjOTbtyYBDCNDs0Rirn5KRRZ0cniR1T005TNFcdX0">
+        <RootLayoutNav goHome={goHome} />
+      </StripeProvider>
+    </QueryClientProvider>
   );
 }
 
-function RootLayoutNav({goHome}: {goHome: boolean}) {
+function RootLayoutNav({ goHome }: { goHome: boolean }) {
   const { colorScheme, setColorScheme } = useColorScheme(); // Using NativeWind's color scheme hook
 
   // Load the stored theme from SecureStore when starts up
@@ -71,6 +71,7 @@ function RootLayoutNav({goHome}: {goHome: boolean}) {
     };
 
     loadTheme();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Save theme changes to SecureStore

@@ -39,40 +39,52 @@ export default function TabOneScreen() {
       return () => BackHandler.removeEventListener("hardwareBackPress", onBackPress);
     }, []),
   );
-  
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      {
-        openModal &&
-        (
-          <Modal className="flex-1 items-center justify-center" transparent={true}>
-            <View className="items-center justify-center flex-1">
-              <View className="bg-white p-[8px] rounded-xl">
-                <Text className="text-base">You are on a 3-month free trial</Text>
-                <Text className="text-base">After 3 months, you will need to subscribe to continue using the app</Text>
-                <View className="mt-5">
-                  <Button title="Close" onPress={() => setOpenModal(false)} />
+      {trial.isTrial && (
+        <>
+          {openModal && (
+            <Modal className="flex-1 items-center justify-center" transparent={true}>
+              <View className="items-center justify-center flex-1">
+                <View className="bg-white p-[8px] rounded-xl">
+                  <Text className="text-base text-black">You are on a 3-month free trial</Text>
+                  <Text className="text-base text-black">
+                    After 3 months, you will need to subscribe to continue using the app
+                  </Text>
+                  <View className="mt-5">
+                    <Button title="Close" onPress={() => setOpenModal(false)} />
+                  </View>
                 </View>
               </View>
-            </View>
-          </Modal>
-        )
-      }
-      <View style={{ padding: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        {
-          trial.isTrial &&
-          (
-            <>
-              <TouchableOpacity className="bg-indigo-500 p-1 rounded-md flex-row items-center" onPress={() => setOpenModal(true)}>
-                <AntDesign name="infocirlce" size={15} color="white" />
-                <Text className="text-white ml-2">
-                  Free Trial ends in: <Text className="font-bold">{dateToString(trial.remaining)}</Text>
-                </Text>
-              </TouchableOpacity>
-            </>
-          )
-        }
-      </View>
+            </Modal>
+          )}
+          <View
+            style={{
+              padding: 15,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            {trial.isTrial && (
+              <>
+                <TouchableOpacity
+                  className="bg-indigo-500 p-1 rounded-md flex-row items-center"
+                  onPress={() => setOpenModal(true)}
+                >
+                  <AntDesign name="infocirlce" size={15} color="white" />
+                  <Text className="text-white ml-2">
+                    Free Trial ends in:{" "}
+                    <Text className="font-bold">{dateToString(trial.remaining)}</Text>
+                  </Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </>
+      )}
+
       <View className="w-full flex-row justify-between items-center" style={{ padding: 15 }}>
         <ThemeSwitch />
         <LogoutButton />
