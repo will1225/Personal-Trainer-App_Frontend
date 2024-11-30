@@ -64,19 +64,6 @@ const SubscriptionPolicy = () => {
                     </Text>
                 </TouchableOpacity>
             </View>
-            {
-                <Modal transparent>
-                    <View className="flex-1 items-center justify-center flex flex-col" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                        {/* <ActivityIndicator size={50} color={"white"} /> */}
-                        <Text className="text-white text-xl my-5 font-bold">
-                            Thank you for subscribing!
-                        </Text>
-                        <View className="flex-row items-center justify-center">
-                            <Button title="Yes" />
-                        </View>
-                    </View>
-                </Modal>
-            }
             <ScrollView contentContainerStyle={{ marginHorizontal: 16, gap: 10, marginBottom: 30 }}>
                 <Text className="text-2xl font-bold text-center mb-5">
                     Subscription Policy

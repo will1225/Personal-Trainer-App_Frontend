@@ -19,7 +19,7 @@ import { Text } from "@/components/Text";
 const SignIn = () => {
   const image = require("../../assets/images/neonDumbell.png");
   const trial = useSetAtom(trialAtom);
-  
+
   // State variables
   const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
@@ -79,9 +79,13 @@ const SignIn = () => {
           } else {
             //if stripe id is present then check if the subscription is valid
             const isSubActive = await user.isSubscriptionActive();
-            console.log(`${isSubActive}`);
+            // const dummy = false;
+            if (isSubActive.isActive) {
+              router.replace({ pathname: "/(tabs)/home" });
+            } else {
+              router.replace("/subscription/expired" as Href<string>);
+            }
             //If subscription is not active, then redirect to Subscribe page
-            router.replace({ pathname: "/(tabs)/home" });
           }
         }
       }

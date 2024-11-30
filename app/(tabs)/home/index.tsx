@@ -42,7 +42,6 @@ export default function TabOneScreen() {
   
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ThemeSwitch />
       {
         openModal &&
         (
@@ -75,6 +74,7 @@ export default function TabOneScreen() {
         }
       </View>
       <View className="w-full flex-row justify-between items-center" style={{ padding: 15 }}>
+        <ThemeSwitch />
         <LogoutButton />
       </View>
 

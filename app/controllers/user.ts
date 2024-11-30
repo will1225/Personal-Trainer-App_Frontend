@@ -89,6 +89,7 @@ export const loginUser = async (email: string, password: string) => {
         router.replace({ pathname: "/otp", params: { email: email } });
       }
       const errorData = await response.json();
+      console.log(errorData.error)
       throw new Error(errorData.error || "Login failed");
     }
 
@@ -97,6 +98,7 @@ export const loginUser = async (email: string, password: string) => {
 
     return data;
   } catch (error: any) {
+    console.log(error)
     throw new Error(error.message || "Something went wrong");
   }
 };

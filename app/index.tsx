@@ -61,8 +61,8 @@ const LandingPage = () => {
                 } else {
                   //if stripe id is present then check if the subscription is valid
                   const isSubActive = await user.isSubscriptionActive();
-                  const dummy = false;
-                  if (dummy) {
+                  // const dummy = false;
+                  if (isSubActive.isActive) {
                     router.replace({ pathname: "/(tabs)/home" });
                   } else {
                     router.replace("/subscription/expired" as Href<string>);
