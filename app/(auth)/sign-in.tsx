@@ -7,6 +7,9 @@ import { View, Text, Alert, Image } from "react-native";
 import { LoginButton } from "react-native-fbsdk-next";
 import * as user from "../../app/controllers/user";
 import BackButton from "../../components/BackButton";
+import { isThreeMonthsOld } from "../controllers/utils";
+import { useSetAtom } from "jotai";
+import { trialAtom } from "@/store";
 
 /**
  * Sign in screen.
@@ -14,7 +17,8 @@ import BackButton from "../../components/BackButton";
  */
 const SignIn = () => {
   const image = require("../../assets/images/neonDumbell.png");
-
+  const trial = useSetAtom(trialAtom);
+  
   // State variables
   const [isSubmitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
@@ -60,7 +64,24 @@ const SignIn = () => {
         if (!result.data.gender) {
           router.replace("/getStarted");
         } else {
-          router.replace({ pathname: "/(tabs)/home" });
+          if (!result.data.userAccount.stripeId) {
+            if (isThreeMonthsOld(new Date(result.data.createdAt))) {
+              router.replace("/subscription/trial_ended" as Href<string>);
+              return;
+            } else {
+              router.replace({ pathname: "/(tabs)/home" });
+            }
+
+            const rem = new Date(result.data.createdAt);
+            rem.setMonth(rem.getMonth() + 3);
+            trial({ isTrial: true, remaining: rem })
+          } else {
+            //if stripe id is present then check if the subscription is valid
+            const isSubActive = await user.isSubscriptionActive();
+            console.log(`${isSubActive}`);
+            //If subscription is not active, then redirect to Subscribe page
+            router.replace({ pathname: "/(tabs)/home" });
+          }
         }
       }
     } catch (error: any) {

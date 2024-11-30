@@ -1,13 +1,17 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { router, Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { StripeProvider } from '@stripe/stripe-react-native';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import * as user from './controllers/user';
+import { endpoint } from './config';
+import React from 'react';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -24,6 +28,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [queryClient] = useState(() => new QueryClient());
+  const [goHome, setGoHome] = useState(false);
 
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -46,13 +51,15 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <RootLayoutNav />
-    </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <StripeProvider publishableKey='pk_test_51NRGPKALN5ZJppZ0Xp5gr0YfkzxtyHkO9aiExVZWEoG0ymHjcogM2yzmHgjOTbtyYBDCNDs0Rirn5KRRZ0cniR1T005TNFcdX0'>
+          <RootLayoutNav goHome={goHome} />
+        </StripeProvider>
+      </QueryClientProvider>
   )
 }
 
-function RootLayoutNav() {
+function RootLayoutNav({goHome}: {goHome: boolean}) {
   const colorScheme = useColorScheme();
 
   return (

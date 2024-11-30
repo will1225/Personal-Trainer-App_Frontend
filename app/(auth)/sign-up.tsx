@@ -97,9 +97,18 @@ const SignUp = () => {
             className="w-[115px] h-[34px] justify-center"
           />
 
-          <Text className="text-2xl font-semibold mt-10 font-psemibold text-left w-full">
+          <Text className="text-2xl font-semibold my-10 font-psemibold text-left w-full">
             Sign Up
           </Text>
+
+          <View className="gap-2 p-2 bg-indigo-500 rounded-lg">
+            <Text className="font-bold text-center mt-5 text-white">
+              Upon signing up you get 3 months free trial no card required!
+            </Text>
+            <Text className="font-bold text-center text-white">
+              After 3 months, you will need to subscribe and pay $1 every month
+            </Text>
+          </View>
 
           <FormField
             title="Email"

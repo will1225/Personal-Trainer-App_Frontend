@@ -5,6 +5,7 @@ export interface UserAccountProps {
     otp?: OTPProps,
     verified: boolean,
     provider?: string,
+    stripeId?: string,
     createdAt: Date,
     updatedAt?: Date
 }
@@ -16,6 +17,7 @@ export interface ProfileProps {
     firstName: string,
     lastName: string,
     dob?: Date,
+    subscriptionStatus: string,
     gender?: string,
     height?: number,
     initBodyMeasurement?: BodyMeasurementProps,
@@ -122,5 +124,12 @@ export interface WeeklyProgressProps {
     bodyMeasurement: BodyMeasurementProps,
     bodyMeasurementId: number,
     date: Date
+}
+
+export interface PaymentMethodProps {
+    id: string,
+    card: {
+        last4: string
+    }
 }
 // * ****** * //

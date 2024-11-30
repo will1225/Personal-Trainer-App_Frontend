@@ -2,6 +2,8 @@ import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { AccessToken, LoginManager, LoginResult } from "react-native-fbsdk-next";
+import { endpoint } from "../config";
+import { PaymentMethodProps } from "@/types";
 
 /**
  * Method to retrieve user token from expo secure storage
@@ -70,7 +72,7 @@ export const clearAllTokenData = async () => {
 export const loginUser = async (email: string, password: string) => {
   try {
     const response = await fetch(
-      "https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/signin",
+      `${endpoint}/user/signin`,
       {
         method: "POST",
         headers: {
@@ -243,3 +245,97 @@ export const facebookLogin = async (error: any, result: LoginResult) => {
     );
   }
 };
+
+//Method to subscribe for a free trial (called once)
+export const subscribe = async (paymentMethodId: string) => {
+  const res = await fetch(`${endpoint}/user/subscribe`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${await getToken()}`
+    },
+    body: JSON.stringify({paymentMethodId})
+  });
+
+  const data = await res.json();
+
+  if (!data.status) {
+    throw "Something went wrong while subscribing";
+  }
+
+  return data.data;
+}
+
+/**
+ * Method to check if subscription is active or is still valid (free-trial or not end of cycle)
+ */
+export const isSubscriptionActive = async () => {
+  const res = await fetch(`${endpoint}/user/subscription/status`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${await getToken()}`
+    }
+  });
+
+  const data = await res.json();
+
+  if (!data.status) throw data.eror;
+
+  return data.data;
+} 
+
+/**
+ * 
+ * @returns The date when the subscription ends {endDate}
+ */
+export const cancelSubscription = async () => {
+  const res = await fetch(`${endpoint}/user/subscription/cancel`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${await getToken()}`
+    }
+  });
+
+  const data = await res.json();
+
+  if (!data.status) throw data.error;
+
+  return data.data;
+}
+
+export const getPaymentMethods = async (): Promise<PaymentMethodProps[]> => {
+  const res = await fetch(`${endpoint}/user/payment-methods`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${await getToken()}`
+    }
+  });
+
+  const data = await res.json();
+
+  if (!data.status) throw data.error;
+
+  return data.data;
+}
+
+export const renewSubscription = async (paymentMethodId: string) => {
+  if (!paymentMethodId) throw "Payment method id is missing";
+
+  const res = await fetch(`${endpoint}/user/subscription/renew`, {
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${await getToken()}`
+    },
+    body: JSON.stringify({paymentMethodId})
+  });
+
+  const data = await res.json();
+
+  if (!data.status) throw data.error;
+
+  return data.data;
+}

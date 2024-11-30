@@ -1,14 +1,16 @@
 import { Href, Link } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, ScrollView, Image } from "react-native";
+import { View, Text, ScrollView, Image, Modal, Button, TouchableOpacity } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { BackHandler } from "react-native";
 import LogoutButton from "../../../components/LogoutButton";
-import React from "react";
-import { useAtom } from "jotai";
-import { profileAtom } from "@/store";
+import React, { useState } from "react";
+import { useAtom, useAtomValue } from "jotai";
+import { profileAtom, trialAtom } from "@/store";
 import { useQuery } from "react-query";
 import { Profile } from "@/app/controllers/profile";
+import { dateToString } from "@/app/controllers/utils";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function TabOneScreen() {
   const image1 = require("../../../assets/images/HomePagePic1.jpeg");
@@ -17,8 +19,10 @@ export default function TabOneScreen() {
   const image4 = require("../../../assets/images/HomePagePic4.jpeg");
 
   // Get global user profile data
-  const [profile, setProfile] = useAtom(profileAtom);
-  useQuery("profile", () => Profile.setProfileByToken(setProfile));
+  const profile = useAtomValue(profileAtom);
+  const trial = useAtomValue(trialAtom);
+  const [openModal, setOpenModal] = useState(false);
+  // useQuery("profile", () => Profile.setProfileByToken(setProfile));
 
   useFocusEffect(
     React.useCallback(() => {
@@ -37,7 +41,36 @@ export default function TabOneScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={{ padding: 15 }}>
+      {
+        openModal &&
+        (
+          <Modal className="flex-1 items-center justify-center" transparent={true}>
+            <View className="items-center justify-center flex-1">
+              <View className="bg-white p-[8px] rounded-xl">
+                <Text className="text-base">You are on a 3-month free trial</Text>
+                <Text className="text-base">After 3 months, you will need to subscribe to continue using the app</Text>
+                <View className="mt-5">
+                  <Button title="Close" onPress={() => setOpenModal(false)} />
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )
+      }
+      <View style={{ padding: 15, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        {
+          trial.isTrial &&
+          (
+            <>
+              <TouchableOpacity className="bg-indigo-500 p-1 rounded-md flex-row items-center" onPress={() => setOpenModal(true)}>
+                <AntDesign name="infocirlce" size={15} color="white" />
+                <Text className="text-white ml-2">
+                  Free Trial ends in: <Text className="font-bold">{dateToString(trial.remaining)}</Text>
+                </Text>
+              </TouchableOpacity>
+            </>
+          )
+        }
         <LogoutButton />
       </View>
       <ScrollView>
@@ -47,10 +80,10 @@ export default function TabOneScreen() {
           </Text>
 
           <Text className="text-xl font-semibold font-psemibold text-center w-full mb-6">
-            { profile?.updatedAt ?  `Welcome back, ${profile.firstName}!` : `Welcome!`}
+            {profile?.updatedAt ? `Welcome back, ${profile.firstName}!` : `Welcome!`}
           </Text>
 
-          { !profile?.initBodyMeasurement ? (
+          {!profile?.initBodyMeasurement ? (
             <View className="w-full justify-center items-center flex ">
               <Image
                 source={image1}
@@ -64,7 +97,7 @@ export default function TabOneScreen() {
                 Get Started!
               </Link>
             </View>
-          ) : null }
+          ) : null}
 
           <View className="w-full justify-center items-center flex">
             <Image

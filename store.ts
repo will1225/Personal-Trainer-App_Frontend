@@ -31,3 +31,5 @@ export const currentWeekRoutineAtom = atom<WeeklyRoutineProps>(
         dailyRoutines: [],
     }
 )
+
+export const trialAtom = atom({isTrial: false, remaining: new Date()});

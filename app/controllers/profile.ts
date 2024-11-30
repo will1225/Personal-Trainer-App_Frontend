@@ -83,7 +83,7 @@ export class Profile {
       });
 
       const data = await res.json();
-      console.log(data.data)
+      console.log(data.data);
       setProfile(data.data);
     }
 

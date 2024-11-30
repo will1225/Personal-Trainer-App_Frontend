@@ -5,7 +5,10 @@ import { View, Text, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton } from "../components";
 import * as user from "../app/controllers/user"; 
-
+import { endpoint } from "./config";
+import { useSetAtom } from "jotai";
+import { trialAtom } from "@/store";
+import { isThreeMonthsOld } from "./controllers/utils";
 
 /**
  * Landing screen
@@ -13,7 +16,7 @@ import * as user from "../app/controllers/user";
  */
 const LandingPage = () => {
   const image = require("../assets/images/download.jpeg");
-
+  const trial = useSetAtom(trialAtom);
   // Flag to skip landing screen if token presents, must set to true in production
   let skipLandingPage = true;
 
@@ -25,7 +28,7 @@ const LandingPage = () => {
         if (token) {
           try {
             const response = await fetch(
-              "https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/user/authenticate",
+              `${endpoint}/user/authenticate`,
               {
                 method: "GET",
                 headers: {
@@ -34,15 +37,35 @@ const LandingPage = () => {
                 }
               }
             );
-        
+
             if (response.ok) {
               const data = await response.json();
-
+              console.log("Index data:", data.data)
               if (!data.data.gender) {
                 router.replace("/getStarted");
               } else {
-                console.log("Token verified");
-                router.replace({ pathname: "/(tabs)/home" });
+                if (!data.data.userAccount.stripeId) {
+                  if (isThreeMonthsOld(new Date(data.data.createdAt))) {
+                    router.replace("/subscription/trial_ended" as Href<string>);
+                    return;
+                  } else {
+                    router.replace({ pathname: "/(tabs)/home" });
+                  }
+
+                  const rem = new Date(data.data.createdAt);
+                  rem.setMonth(rem.getMonth() + 3);
+                  trial({isTrial: true, remaining: rem})
+                } else {
+                  //if stripe id is present then check if the subscription is valid
+                  const isSubActive = await user.isSubscriptionActive();
+                  const dummy = false;
+                  if (dummy) {
+                    router.replace({ pathname: "/(tabs)/home" });
+                  } else {
+                    router.replace("/subscription/expired" as Href<string>);
+                  }
+                  //If subscription is not active, then redirect to Subscribe page
+                }
               }
             }
           } catch (error: any) {

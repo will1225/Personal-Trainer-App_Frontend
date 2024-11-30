@@ -20,3 +20,15 @@ export const monthToString = (month: number) => {
 export const dateToString = (date: Date) => {
     return `${monthToString(date.getMonth())} ${date.getDate()}, ${date.getFullYear()}`;
 }
+
+export function isThreeMonthsOld(dateToCheck: Date): boolean {
+    const today = new Date();
+    // Calculate the date 3 months ago
+    const threeMonthsAgo = new Date(
+        today.getFullYear(),
+        today.getMonth() - 3,
+        today.getDate()
+    );
+    // Check if the given date is before or equal to the date 3 months ago
+    return dateToCheck <= threeMonthsAgo;
+}

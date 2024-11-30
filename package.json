@@ -17,6 +17,7 @@
     "@react-native-community/datetimepicker": "^8.2.0",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
+    "@stripe/stripe-react-native": "0.37.2",
     "expo": "~51.0.28",
     "expo-dev-client": "^4.0.26",
     "expo-font": "~12.0.9",
@@ -36,6 +37,7 @@
     "react-native-element-dropdown": "^2.12.1",
     "react-native-fbsdk-next": "^13.0.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
+    "react-native-linear-gradient": "^2.8.3",
     "react-native-modal": "^13.0.1",
     "react-native-progress": "^5.0.1",
     "react-native-reanimated": "~3.10.1",
@@ -43,10 +45,10 @@
     "react-native-screens": "3.31.1",
     "react-native-svg": "^15.2.0",
     "react-native-web": "~0.19.10",
-    "uri-scheme": "^1.2.2",
     "react-native-webview": "^13.12.3",
     "react-native-youtube-iframe": "^2.3.0",
-    "react-query": "^3.39.3"
+    "react-query": "^3.39.3",
+    "uri-scheme": "^1.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
