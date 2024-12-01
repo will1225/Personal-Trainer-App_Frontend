@@ -47,10 +47,19 @@ export default function AnalysisScreen() {
     if (!data) return [];
 
     // Performance issue here and update: Use temp arrays to store the fetched values instead of setting state for each variable inside the loop right away.
-    let tempMonths: string[] = [];
-    let tempLeanMuscles: number[] = [];
-    let tempWeights: number[] = [];
-    let tempBodyFats: number[] = [];
+    let tempMonths: string[] = profile.initBodyMeasurement?.date
+      ? [monthToString(new Date(profile.initBodyMeasurement.date).getMonth()).substring(0, 3)]
+      : [];
+    let tempLeanMuscles: number[] =
+      profile.initBodyMeasurement?.muscleMass !== undefined
+        ? [profile.initBodyMeasurement.muscleMass]
+        : [];
+    let tempWeights: number[] =
+      profile.initBodyMeasurement?.weight !== undefined ? [profile.initBodyMeasurement.weight] : [];
+    let tempBodyFats: number[] =
+      profile.initBodyMeasurement?.bodyFatPercent !== undefined
+        ? [profile.initBodyMeasurement.bodyFatPercent]
+        : [];
 
     data.forEach((e) => {
       const monthString = monthToString(new Date(e.date).getMonth()).substring(0, 3);
@@ -201,11 +210,12 @@ export default function AnalysisScreen() {
             <Text className="text-[12px] text-amber-500">Body Fat - %</Text>
           </View>
           <Text className="text-xl my-5 font-bold text-center">
-            Started from {dateToString(new Date(data[0].date))}, you have{" "}
+            Starting from{" "}
+            {dateToString(new Date(profile.initBodyMeasurement?.date || data[0]?.date))}, you have{" "}
             <Text className="text-blue-500">
               {calculateLostOrGained(
                 data[data.length - 1].bodyMeasurement.muscleMass,
-                data[0].bodyMeasurement.muscleMass,
+                leanMuscles[0],
               )}
               kg
             </Text>{" "}
@@ -213,7 +223,7 @@ export default function AnalysisScreen() {
             <Text className="text-amber-500">
               {calculateLostOrGained(
                 data[data.length - 1].bodyMeasurement.bodyFatPercent,
-                data[0].bodyMeasurement.bodyFatPercent,
+                bodyFats[0],
               )}
               %
             </Text>{" "}
