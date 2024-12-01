@@ -110,7 +110,18 @@ const Report = () => {
                 {data && typeof data.gainedMuscle === "number" ? (
                   <>
                     {data.gainedMuscle < 0 ? "lost " : "gained "}
-                    <Text style={{ color: data.gainedMuscle < 0 ? "red" : "green" }}>
+                    <Text
+                      style={{
+                        color:
+                          data.gainedMuscle < 0
+                            ? "red"
+                            : data.gainedMuscle > 0
+                              ? "green"
+                              : colorScheme === "light"
+                                ? "#744210"
+                                : "#b7791f",
+                      }}
+                    >
                       {Math.abs(data.gainedMuscle).toFixed(2)} kg
                     </Text>{" "}
                     of Lean Muscle and{" "}
@@ -121,7 +132,18 @@ const Report = () => {
                 {data && typeof data.gainedFat === "number" ? (
                   <>
                     {data.gainedFat < 0 ? "lost " : "gained "}
-                    <Text style={{ color: data.gainedFat < 0 ? "green" : "red" }}>
+                    <Text
+                      style={{
+                        color:
+                          data.gainedFat < 0
+                            ? "green"
+                            : data.gainedFat > 0
+                              ? "red"
+                              : colorScheme === "light"
+                                ? "#744210"
+                                : "#b7791f",
+                      }}
+                    >
                       {Math.abs(data.gainedFat).toFixed(2)} %
                     </Text>
                   </>
@@ -155,9 +177,9 @@ const Report = () => {
                   <Text className="text-xl w-[28%] text-center truncate">{data.prevFat}</Text>
                   <Text
                     className={`text-xl w-[14%] text-center ${
-                      data.prevFat - data.fat > 0
+                      data.prevFat - data.fat < 0
                         ? "text-red-500"
-                        : data.prevMuscle - data.muscle < 0
+                        : data.prevFat - data.fat > 0
                           ? "text-green-500"
                           : colorScheme === "light"
                             ? "text-gray-500"
@@ -195,9 +217,9 @@ const Report = () => {
                   <Text className="text-xl w-[28%] text-center truncate">{data.prevChest}</Text>
                   <Text
                     className={`text-xl w-[14%] text-center ${
-                      data.prevChest - data.chest > 0
+                      data.prevChest - data.chest < 0
                         ? "text-red-500"
-                        : data.prevChest - data.chest < 0
+                        : data.prevChest - data.chest > 0
                           ? "text-green-500"
                           : colorScheme === "light"
                             ? "text-gray-500"
@@ -215,9 +237,9 @@ const Report = () => {
                   <Text className="text-xl w-[28%] text-center truncate">{data.prevAbdomen}</Text>
                   <Text
                     className={`text-xl w-[14%] text-center ${
-                      data.prevAbdomen - data.abdomen > 0
+                      data.prevAbdomen - data.abdomen < 0
                         ? "text-red-500"
-                        : data.prevAbdomen - data.abdomen < 0
+                        : data.prevAbdomen - data.abdomen > 0
                           ? "text-green-500"
                           : colorScheme === "light"
                             ? "text-gray-500"
@@ -235,9 +257,9 @@ const Report = () => {
                   <Text className="text-xl w-[28%] text-center truncate">{data.prevThigh}</Text>
                   <Text
                     className={`text-xl w-[14%] text-center ${
-                      data.prevThigh - data.thigh > 0
+                      data.prevThigh - data.thigh < 0
                         ? "text-red-500"
-                        : data.prevThigh - data.thigh < 0
+                        : data.prevThigh - data.thigh > 0
                           ? "text-green-500"
                           : colorScheme === "light"
                             ? "text-gray-500"
@@ -316,7 +338,7 @@ const Report = () => {
                 </View>
               </View>
 
-              <View className="w-full mb-11">
+              <View className="w-full mb-5">
                 <BodyFatChart
                   ranges={ranges}
                   gender={profile.gender}
