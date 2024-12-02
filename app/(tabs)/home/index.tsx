@@ -1,4 +1,4 @@
-import { Href, Link } from "expo-router";
+import { Href, Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, ScrollView, Image, Modal, Button, TouchableOpacity } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -13,6 +13,7 @@ import { dateToString } from "@/app/controllers/utils";
 import { AntDesign } from "@expo/vector-icons";
 import { Text } from "@/components/Text";
 import ThemeSwitch from "@/components/ThemeSwitch";
+import { isDemoMode } from "@/app/config";
 
 export default function TabOneScreen() {
   const image1 = require("../../../assets/images/HomePagePic1.jpeg");
@@ -55,6 +56,19 @@ export default function TabOneScreen() {
                   <View className="mt-5">
                     <Button title="Close" onPress={() => setOpenModal(false)} />
                   </View>
+                  {
+                    isDemoMode &&
+                    (
+                      <View className="mt-5 border-t-[1px] b-black p-1">
+                        <Text className="text-center">
+                          You are seeing this because you're on <Text className="font-bold">DEMO MODE</Text>
+                        </Text>
+                        <View className="mtt-5">
+                          <Button title="Free Trial End" color="black" onPress={() => router.replace("/subscription/trial_ended")} />
+                        </View>
+                      </View>
+                    )
+                  }
                 </View>
               </View>
             </Modal>

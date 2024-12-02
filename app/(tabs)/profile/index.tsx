@@ -4,9 +4,10 @@ import { ProfileProps } from "@/types";
 import { Href, router } from "expo-router";
 import { useAtomValue } from "jotai";
 import { useState } from "react";
-import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+import { Alert, Button, ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "@/components/Text";
+import { isDemoMode } from "@/app/config";
 
 const ViewProfile = () => {
   const [updatable, isUpdatable] = useState(false);
@@ -55,6 +56,17 @@ const ViewProfile = () => {
             textValue={height}
           />
           <ProfileData label="Subscription Status" value={profile.subscriptionStatus === 'trialing' ? "Free Trial" : profile.subscriptionStatus} />
+          {
+            isDemoMode &&
+            (
+              <View className="border-t-[1px] border-black">
+                <Text className="font-bold my-2">
+                  Demo Mode:
+                </Text>
+                <Button title="Set Subscription to EXPIRE" color="black" onPress={() => router.replace("/subscription/expired")} />
+              </View>
+            )
+          }
           <View className="flex-row justify-center my-10">
             <TouchableOpacity
               className={`px-[16px] py-[8px] bg-blue-600 rounded-lg`}
@@ -66,7 +78,7 @@ const ViewProfile = () => {
           {
             profile.subscriptionStatus === 'active' &&
             (
-              <View className="items-center justify-center">
+              <View className="items-center justify-center mb-3">
                 <TouchableOpacity onPress={() => router.push("/subscription/cancel" as Href<string>)}>
                   <Text className="text-red-500 font-bold">
                     Cancel Subscription

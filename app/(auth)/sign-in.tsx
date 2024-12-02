@@ -66,6 +66,7 @@ const SignIn = () => {
           router.replace("/getStarted");
         } else {
           if (!result.data.userAccount.stripeId) {
+            console.log(result.data.createdAt)
             if (isThreeMonthsOld(new Date(result.data.createdAt))) {
               router.replace("/subscription/trial_ended" as Href<string>);
               return;

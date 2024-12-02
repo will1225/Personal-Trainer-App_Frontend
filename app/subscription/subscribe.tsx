@@ -14,8 +14,8 @@ import { useEffect, useState } from "react";
 import { Href, router } from "expo-router";
 import LogoutButton from "@/components/LogoutButton";
 import { useQueryClient } from "react-query";
-import { useAtomValue } from "jotai";
-import { profileAtom } from "@/store";
+import { useAtomValue, useSetAtom } from "jotai";
+import { profileAtom, trialAtom } from "@/store";
 import { PaymentMethodProps } from "@/types";
 import { Text } from "@/components/Text";
 
@@ -27,6 +27,7 @@ const Subscribe = () => {
   const [confirmPayment, setConfirmPayment] = useState(false);
   const profile = useAtomValue(profileAtom);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodProps[] | null>(null);
+  const setTrial = useSetAtom(trialAtom);
 
   const createSubscription = async () => {
     setConfirmPayment(false);
@@ -45,6 +46,7 @@ const Subscribe = () => {
           queryClient.invalidateQueries({
             queryKey: ["profile"],
           });
+          setTrial({isTrial: false, remaining: new Date()})
           setThanks(true);
         }
       } else {
@@ -75,7 +77,9 @@ const Subscribe = () => {
       setPaymentMethods(await getPaymentMethods());
     };
 
-    getPayments();
+    if (profile.userAccount?.stripeId) {
+      getPayments();
+    }
   }, []);
 
   return (
@@ -95,7 +99,7 @@ const Subscribe = () => {
         </Modal>
       )}
       {thanks && (
-        <Modal transparent>
+        <Modal>
           <View
             className="flex-1 items-center justify-center flex flex-col"
             style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
@@ -139,7 +143,7 @@ const Subscribe = () => {
             <Text>Loading payment methods...</Text>
           ) : (
             <Text className="my-[16px]">
-              Proceed with payment ending with {paymentMethods[0].card.last4}
+              Proceed with payment ending with <Text className="font-bold">{paymentMethods[0].card.last4}</Text>
             </Text>
           )
         ) : (
