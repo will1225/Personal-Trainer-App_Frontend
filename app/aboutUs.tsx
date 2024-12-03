@@ -18,30 +18,30 @@ const AboutUs = () => {
       name: "William",
       role: "Team Lead",
       email: "ixus_tse@hotmail.com",
-      description: "Hi there! I'll save the things I want to say at the end of the course.",
+      description: null,
       image: require("../assets/images/William.jpg"),
-    },
-    {
-      name: "Member",
-      role: "Role",
-      email: "Email",
-      description: "Say anything",
-      image: null,
     },
     {
       name: "Hyunjin Shin",
       role: "Full-Stack Developer (Focused on UI)",
       email: "dev.hshin41@gmail.com",
-      description: "Hello!",
+      description: null,
       image: null,
     },
     {
       name: "Arina",
       role: "Full-Stack Developer",
       email: "arinak1017@gmail.com",
-      description:
-        "Hi all, if you see this it means I forgot to edit the description at the end of the term",
+      description: null,
+      //"Hi all, if you see this it means I forgot to edit the description at the end of the term",
       image: require("../assets/images/Arina.jpg"),
+    },
+    {
+      name: "Anonymous",
+      role: "Developer",
+      email: null,
+      description: null,
+      image: null,
     },
   ];
 
@@ -99,9 +99,11 @@ const AboutUs = () => {
                 <View className="ml-8 flex-1 justify-between" style={{ gap: 8 }}>
                   <Text className="text-xl font-bold">{member.name}</Text>
                   <Text className="text-base">{member.role}</Text>
-                  <TouchableOpacity onPress={() => handleEmailPress(member.email)}>
-                    <Text className="text-base underline">{member.email}</Text>
-                  </TouchableOpacity>
+                  {member.email ? (
+                    <TouchableOpacity onPress={() => handleEmailPress(member.email)}>
+                      <Text className="text-base underline">{member.email}</Text>
+                    </TouchableOpacity>
+                  ) : null}
                   <Text className="text-base italic">{member.description}</Text>
                 </View>
               </View>
