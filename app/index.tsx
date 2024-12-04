@@ -4,7 +4,7 @@ import { View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { CustomButton } from "../components";
 import * as user from "../app/controllers/user";
-import { endpoint } from "./config";
+import { endpoint } from "./env";
 import { useSetAtom } from "jotai";
 import { trialAtom } from "@/store";
 import { isThreeMonthsOld } from "./controllers/utils";import { Text } from "@/components/Text";

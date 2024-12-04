@@ -1,6 +1,6 @@
 import * as user from "./user";
 import { fetchWithTimeout } from "./generateRoutine";
-import { endpoint } from "../config";
+import { endpoint } from "../env";
 
 export class CurrentWeekRoutine {
   // Method to fetch Current Weekly Routine from the backend

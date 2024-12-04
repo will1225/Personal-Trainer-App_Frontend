@@ -1,6 +1,6 @@
 import { fetchWithTimeout, fetchVideoData } from "./generateRoutine";
 import { SaveRoutine } from "../../types";
-import { endpoint } from "../config";
+import { endpoint } from "../env";
 
 export const getOneExercise = async (
   name?: string,

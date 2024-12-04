@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { Alert } from "react-native";
 import { AccessToken, LoginManager, LoginResult } from "react-native-fbsdk-next";
-import { endpoint } from "../config";
+import { endpoint } from "../env";
 import { PaymentMethodProps } from "@/types";
 
 /**

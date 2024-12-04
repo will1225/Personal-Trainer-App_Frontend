@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Alert, Button, ScrollView, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "@/components/Text";
-import { isDemoMode } from "@/app/config";
+import { isDemoMode } from "../../env";
 
 const ViewProfile = () => {
   const [updatable, isUpdatable] = useState(false);

@@ -1,5 +1,5 @@
 import * as user from "./user";
-import { endpoint } from "../config";
+import { endpoint } from "../env";
 
 /**
  * Method to get consolidated fitness results from the backend
