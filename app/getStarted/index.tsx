@@ -1,6 +1,6 @@
 import LogoutButton from "@/components/LogoutButton";
-import { router } from "expo-router";
-import { ScrollView, TouchableOpacity, View, Image } from "react-native";
+import { Href, Link, router } from "expo-router";
+import { ScrollView, View, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text } from "@/components/Text";
 import CustomButton from "@/components/CustomButton";
@@ -37,6 +37,10 @@ const GetStarted = () => {
             handlePress={() => router.push("/getStarted/profileEntry")}
             containerStyles="w-48 mt-6"
           />
+
+          <Link href={"/(tabs)/home" as Href<string>} className="mt-6 mb-8">
+            <Text className="text-lg font-psemibold text-grey ">I'll do it later.</Text>
+          </Link>
         </View>
       </ScrollView>
     </SafeAreaView>

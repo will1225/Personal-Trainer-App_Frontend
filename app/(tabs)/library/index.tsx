@@ -133,7 +133,7 @@ const ExerciseLibrary = () => {
             {muscleGroups.map((group) => (
               <TouchableOpacity
                 key={group.id}
-                style={{ width: 110, margin: 8 }}
+                style={{ flexBasis: "29%", margin: 8 }}
                 onPress={() =>
                   router.push({
                     pathname: "/library/exerciseList",
