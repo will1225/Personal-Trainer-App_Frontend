@@ -1,5 +1,5 @@
 import { fetchWithTimeout } from "./generateRoutine";
-import { endpoint } from "../config";
+import { endpoint } from "../env";
 import * as user from "./user";
 
 export const getSelectedReport = async (id: number, prevId: string | null) => {

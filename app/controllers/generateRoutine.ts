@@ -1,5 +1,5 @@
 import * as user from "./user";
-import { endpoint } from "../config";
+import { endpoint } from "../env";
 
 /**
  * Timeout mechanism to prevent infinite loading if there are any connection issues to the backend.

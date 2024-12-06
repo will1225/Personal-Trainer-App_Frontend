@@ -1,5 +1,5 @@
 import { getToken } from "./user";
-import { endpoint } from "../config";
+import { endpoint } from "../env";
 
 export class Profile {
   private _dob: string;

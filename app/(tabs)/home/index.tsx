@@ -13,7 +13,7 @@ import { dateToString } from "@/app/controllers/utils";
 import { AntDesign } from "@expo/vector-icons";
 import { Text } from "@/components/Text";
 import ThemeSwitch from "@/components/ThemeSwitch";
-import { isDemoMode } from "@/app/config";
+import { isDemoMode } from "@/app/env";
 
 export default function TabOneScreen() {
   const image1 = require("../../../assets/images/HomePagePic1.jpeg");
