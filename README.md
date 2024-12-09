@@ -1,22 +1,27 @@
-# Getting Started
+# Welcome to the Personal Trainer App Frontend
+This is the Personal Trainer App frontend.<br>
+- For backend repo, please go to https://github.com/Kratos3434/Personal-Trainer-App.<br>
+- For frontend and backend installation instructions: Please refer to https://github.com/Kratos3434/Personal-Trainer-App/blob/main/installation.md.<br>
+
+
+# 01_Getting Started
 1. Run **npm install** to install dependencies.
 2. Pull the latest code: **git pull origin main** (Always pull before development and push)
 3. Start Expo with: **npx expo --dev-client** or **npx expo --dev-client -c** to clear cache
 4. Open the emulator (e.g., press a for Android).
    
    ![image](https://github.com/user-attachments/assets/b71a6f35-29a6-424a-ac95-8a398b8533b9)  
-6. Install the development build using the emulator's built-in Chrome browser with address **https://expo.dev/accounts/kwcarlos/projects/pta/builds/26af2051-8391-41b0-b452-976516ebf573**
+6. Install the development build using the emulator's built-in Chrome browser with address https://expo.dev/accounts/kwcarlos/projects/pta/builds/ad86b40c-d07f-4cd3-9509-4e20349e3c1e
    
    ![image](https://github.com/user-attachments/assets/08412310-0936-406c-bc23-dfb3af0485ad)
 
 7. If the app doesn't load automatically, manually open the pta app in the emulator menu.
    
    ![image](https://github.com/user-attachments/assets/9ac571bc-02c5-450a-8f74-9e18c5cc85bb)
-8. In any case if the emulator freezes, try to press the Overview button, or stop the server (Ctrl + C) and rerun **npx expo --dev-client -c**
+8. In any case if there are any abnormal behavors from the emulator, stop the server (Ctrl + C), clean cache and rerun **npx expo --dev-client -c**
    
-   ![image](https://github.com/user-attachments/assets/e73bedb6-039c-4ad3-b945-e3782843df91)
 
-# Formatting and Linting
+# 02_Formatting and Linting
 
 ## **Recommended IDE Extensions**
 
@@ -51,7 +56,7 @@ Please install the following extensions in your IDE:
     npx husky init
     ```
     
-# Dynamic Debugging between the Frontend and Backend
+# 03_Dynamic Debugging between the Frontend and Backend
 This debugging method requires specific setups in both the frontend and backend. It is not mandatory for this project, you are free to use other debugging methods like Thunder Client or simply console logs.
 
 ## Frontend
