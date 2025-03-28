@@ -3,160 +3,46 @@ This is the Personal Trainer App frontend.<br>
 - For backend repo, please go to https://github.com/Kratos3434/Personal-Trainer-App.<br>
 - For frontend and backend installation instructions: Please refer to https://github.com/Kratos3434/Personal-Trainer-App/blob/main/installation.md.<br>
 
+## Technologies Used:
+JavaScript, TypeScript, React Native, PostgreSQL, Expo, Rest APIs, Neon.tech, Prisma, AWS, GitHub, ExpressJS, NodeJS 
 
-# 01_Getting Started
-1. Run **npm install** to install dependencies.
-2. Pull the latest code: **git pull origin main** (Always pull before development and push)
-3. Start Expo with: **npx expo --dev-client** or **npx expo --dev-client -c** to clear cache
-4. Open the emulator (e.g., press a for Android).
-   
-   ![image](https://github.com/user-attachments/assets/b71a6f35-29a6-424a-ac95-8a398b8533b9)  
-6. Install the development build using the emulator's built-in Chrome browser with address https://expo.dev/accounts/kwcarlos/projects/pta/builds/ad86b40c-d07f-4cd3-9509-4e20349e3c1e
-   
-   ![image](https://github.com/user-attachments/assets/08412310-0936-406c-bc23-dfb3af0485ad)
+## Usage:
+This app dynamically tailors workout routines based on users' fitness levels, body compositions, and progression. Users input personal data such as body measurements(3-Site skinfold Method), weight, height, and workout preferences. The app uses this data to generate personalized weekly exercise routines, refining recommendations based on progress updates. It also integrates YouTube APIs to provide video guidance for each exercise.
 
-7. If the app doesn't load automatically, manually open the pta app in the emulator menu.
-   
-   ![image](https://github.com/user-attachments/assets/9ac571bc-02c5-450a-8f74-9e18c5cc85bb)
-8. In any case if there are any abnormal behavors from the emulator, stop the server (Ctrl + C), clean cache and rerun **npx expo --dev-client -c**
-   
+## Features:
+* Cross-platform compatibility for Android and iOS
+* Intuitive and user-friendly UI design
+* Personalized workout plans based on user data (fitness level, body measurements, etc.)
+* Progress tracking and weekly routine adjustments
+* YouTube integration for exercise video guidance
+* Option to reset weekly routines
+* Serverless Database infrastructure for managing user data and exercise objects
 
-# 02_Formatting and Linting
+## Company Value Add:
+The app provides a cost-effective alternative to hiring a personal trainer, offering flexibility for users to follow personalized workouts anytime. This increases accessibility and convenience, potentially boosting revenue by catering to the growing fitness trend.
 
-## **Recommended IDE Extensions**
+## End-User Value Add:
+Personal Trainer App offers tailored workout routines designed specifically for each user. It eliminates the guesswork in exercise planning, providing a more personalized fitness journey that evolves with users’ progress.
 
-Please install the following extensions in your IDE:
-- **ESLint**
-- **Prettier**
+## Demo:
+### 1. Login Page
+![image](https://github.com/user-attachments/assets/c078bac6-1c7b-463e-9f72-ef0fb6be67b2)
 
-## **Formatting and Linting Commands**
+### 2. Home Page
+![image](https://github.com/user-attachments/assets/9aaf0a8c-0e78-4feb-8508-8afa25f38557)
 
-- **Format Code**:
-  ```sh
-  npm run prettier
-  ```
+### 3. Fitness Evaluation & Fitness Report
+![image](https://github.com/user-attachments/assets/d74c48ed-c64b-4fa9-81bb-459b16d2d9dd)
 
-- **Run Linter**:
-  ```sh
-  npm run lint
-  ```
+### 4. Generating Weekly Workout Plans
+![image](https://github.com/user-attachments/assets/5f58f6bb-7ac5-49e9-966b-4926f5415d74)
 
-- **Run Linter with Autofix**
-  ```sh
-  npm run lint:fix
-  ```
+### 5. Workout Plan Details & Video
+![image](https://github.com/user-attachments/assets/ac9ffcfe-ad29-4a86-9555-e8153c89d27b)
 
-## **Pre-commit Hooks Setup**
+### 6. Update Progress
+![image](https://github.com/user-attachments/assets/a23afe90-a421-4b37-b091-e689aa35e1f3)
 
-**Husky** and **lint-staged** are used to automatically format and fix linting issues during commits.
-
-- Run `npm install` from the root of the project.
-- Install Husky hooks:
-    ```sh
-    npx husky init
-    ```
-    
-# 03_Dynamic Debugging between the Frontend and Backend
-This debugging method requires specific setups in both the frontend and backend. It is not mandatory for this project, you are free to use other debugging methods like Thunder Client or simply console logs.
-
-## Frontend
-1. In the `Run and Debug window` (Ctrl + Shift + D), add a new config
-   ![image](https://github.com/user-attachments/assets/0639bd3d-c109-4837-a265-8f4b1b521cf0)
-
-2. Select React Native > Attach to application > Application in direct mode(Hermes) > Hermes engine > localhost > confirm your default port. This should create a new `launch.json` file under .vscode folder.
-   
-3. Copy the following config to the newly created `launch.json` file (**Be sure to add it to .gitignore**):
-   
-   ```json
-   {
-     "version": "0.2.0",
-     "configurations": [
-       {
-         "name": "Debug Android - Experimental",
-         "request": "launch",
-         "type": "reactnative",
-         "cwd": "${workspaceFolder}",
-         "platform": "android"
-       },
-       {
-         "name": "Attach to Hermes application",
-         "request": "attach",
-         "type": "reactnativedirect",
-         "cwd": "${workspaceFolder}"
-       },
-       {
-         "name": "Debug Android",
-         "type": "reactnative",
-         "request": "launch",
-         "platform": "android",
-         "target": "emulator",
-         "remoteRoot": "${workspaceFolder}",
-         "localRoot": "${workspaceFolder}",
-         "sourceMaps": true
-       },
-       {
-         "name": "Debug iOS",
-         "type": "reactnative",
-         "request": "launch",
-         "platform": "ios",
-         "target": "simulator",
-         "remoteRoot": "${workspaceFolder}",
-         "localRoot": "${workspaceFolder}",
-         "sourceMaps": true
-       }
-     ]
-   }
-
-4. Select `Attached to Hermes application` as the debugger and run F5
-   
-   ![image](https://github.com/user-attachments/assets/8dc97afb-6521-4da8-841f-dd4b9dc678c7)
-
-5. When the debugger successfully attached, it should show the status(blue bar) at the bottom:
-
-   ![image](https://github.com/user-attachments/assets/1870de08-74d7-4754-8aa0-3c37df4bee83)
-
-
-## Backend
-1. In the Run and Debug Window (Ctrl + Shift + D), choose **JavaScript Debug Terminal**
-   ![image](https://github.com/user-attachments/assets/06bb035a-65d7-4d13-b3c8-595993aa841f)
-
-2. Open a JavaScript Debug Terminal
-   
-   ![image](https://github.com/user-attachments/assets/830070be-0e5a-489c-8aeb-66be3fbbf7f0)
-
-3. Run **node app.js** in the src folder to start the server. The debugger should automatically attach.
-   
-   ![image](https://github.com/user-attachments/assets/b85055eb-cbfc-4bdc-b449-73da3b280313)
-
-
-## Usage
-With the debuggers successfully set up in the frontend and backend, change only the endpoints you need to test to local with you ip address(**Be sure to change it back to production when pushing**). For example:
-
-```
-export const fetchWorkoutEnv = async () => {
-    try {
-      const response = await fetch(
-        // Local testing
-        `http://${your ip4 address}:8080/routine/workoutEnv`,
-
-        // Production
-        //`https://7u45qve0xl.execute-api.ca-central-1.amazonaws.com/dev/routine/workoutEnv`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-```
-
-**Summary**: 
-From now on, when you run `node app.js` in the backend AND run `F5` in the Frontend, you should be able to dynamically hit the breakpoints and see the data flow with the frontend and backend connected.
-
-Backend:
-![image](https://github.com/user-attachments/assets/154905ea-1078-48b0-be0d-419d3da7fa63)
-
-Frontend:
-![image](https://github.com/user-attachments/assets/64179175-cf53-4cdf-aa52-2d9e924315ee)
-
+### 7. Progress Analysis & Reports
+![image](https://github.com/user-attachments/assets/aa79c5f9-2ab5-4956-81c5-50879ef231f6)
 
